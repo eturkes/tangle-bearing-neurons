@@ -2,7 +2,7 @@
 #### *This analysis is a work-in-progress.*
 
 ```
-This file is part of tangle-bearing-neurons
+This file is part of tangle-bearing-neurons.
 Copyright (C) 2024  Emir Turkes, UK DRI at UCL
 
 This program is free software: you can redistribute it and/or modify
