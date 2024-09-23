@@ -1,3 +1,13 @@
+---
+title: "Tangle Bearing Neurons Viewer"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r global, include = FALSE}
 #    This file is part of tangle-bearing-neurons.
 #    Copyright (C) 2024  Emir Turkes, UK DRI at UCL
 #
@@ -16,12 +26,5 @@
 #
 #    Emir Turkes can be contacted at emir.turkes@eturkes.com
 
-FROM rocker/rstudio:4.3.3
-
-LABEL org.opencontainers.image.authors="Emir Turkes emir.turkes@eturkes.com"
-
-RUN Rscript -e "install.packages('flexdashboard')" \
-        -e "install.packages('stringr')" \
-        -e "install.packages('conflicted')" \
-    && rm -Rf /tmp/downloaded_packages/ \
-        /tmp/*.rds
+library(conflicted)
+```
