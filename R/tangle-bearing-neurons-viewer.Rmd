@@ -101,6 +101,7 @@ for (i in seq_along(res_gse)) {
 range_deg <- vector("list", length = length(data_sets))
 sig_deg <- vector("list", length = length(data_sets))
 top_deg <- vector("list", length = length(data_sets))
+n_deg <- vector("list", length = length(data_sets))
 
 for (i in seq_along(data_sets)) {
 
@@ -126,9 +127,11 @@ for (i in seq_along(data_sets)) {
   res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
   rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
 
-  top_deg[[i]] <- sig_deg[[i]][
-    c(which(sig[ , 2] == "↑")[1:10], which(sig[ , 2] == "↓")[1:10]),
-  ]
+  up <- sig[ , 2] == "↑"
+  dn <- sig[ , 2] == "↓"
+
+  n_deg[[i]] <- c(length(which(up)), length(which(dn)))
+  top_deg[[i]] <- sig_deg[[i]][c(which(up)[1:10], which(dn)[1:10]), ]
 
 }
 
@@ -212,7 +215,11 @@ renderPlot(
       Heatmap(
         mat,
         col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        column_title = data_sets[idx],
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
@@ -280,7 +287,11 @@ renderPlot(
       Heatmap(
         mat,
         col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
-        column_title = data_sets[idx],
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
@@ -372,7 +383,11 @@ renderPlot(
       Heatmap(
         mat,
         col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        column_title = data_sets[idx],
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
@@ -440,7 +455,11 @@ renderPlot(
       Heatmap(
         mat,
         col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
-        column_title = data_sets[idx],
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
@@ -479,6 +498,6 @@ datatable_download_exp_15(res_deg[[idx]])
 ```
 
 ```{r, include = FALSE}
-rm(data_dir, n, anno_colour, p_adj, direction)
+rm(data_dir, n, anno_colour, p_adj, direction, up, dn)
 gc()
 ```
