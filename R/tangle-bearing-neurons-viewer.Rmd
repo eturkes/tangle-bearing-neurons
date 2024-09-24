@@ -239,6 +239,112 @@ Single-cell Transcriptomics - Human AD BA9
 Row {.tabset}
 ---
 
+### Differentially Enriched Pathways
+
+```{r}
+idx <- 1
+
+selectizeInput(
+  paste0("gse", idx),
+  label = "Type to Search Pathways:",
+  choices = res_gse[[idx]]$GeneSet,
+  selected = rownames(top_gse[[idx]]),
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1400,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Enrichment Stats
+
+```{r}
+datatable_download_exp_15(res_gse[[idx]])
+```
+
 ### Differentially Expressed Genes
 
 ```{r}
@@ -401,10 +507,16 @@ renderPlot(
 datatable_download_exp_15(res_deg[[idx]])
 ```
 
+Laser-capture Microdissection Proteomics - Human AD BA9
+===
+
+Row {.tabset}
+---
+
 ### Differentially Enriched Pathways
 
 ```{r}
-idx <- 1
+idx <- 2
 
 selectizeInput(
   paste0("gse", idx),
@@ -426,7 +538,7 @@ radioButtons(
 ```{r}
 renderPlot(
   {
-    idx <- 1
+    idx <- 2
 
     sig <- sig_gse[[idx]][
       rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
@@ -506,12 +618,6 @@ renderPlot(
 ```{r}
 datatable_download_exp_15(res_gse[[idx]])
 ```
-
-Laser-capture Microdissection Proteomics - Human AD BA9
-===
-
-Row {.tabset}
----
 
 ### Differentially Expressed Genes
 
@@ -673,112 +779,6 @@ renderPlot(
 
 ```{r}
 datatable_download_exp_15(res_deg[[idx]])
-```
-
-### Differentially Enriched Pathways
-
-```{r}
-idx <- 2
-
-selectizeInput(
-  paste0("gse", idx),
-  label = "Type to Search Pathways:",
-  choices = res_gse[[idx]]$GeneSet,
-  selected = rownames(top_gse[[idx]]),
-  multiple = TRUE,
-  width = "100%"
-)
-
-radioButtons(
-  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
-)
-```
-
-<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
-<div>
-
-```{r}
-renderPlot(
-  {
-    idx <- 2
-
-    sig <- sig_gse[[idx]][
-      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
-    ]
-    if (nrow(sig) > 1) {
-      sig <- sig[
-        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
-      ]
-    }
-
-    mat <- gse[[idx]][
-      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
-    }
-
-    if (input[[paste0("scaling", idx)]] == "Scaled") {
-      mat <- t(
-        apply(
-          mat, MARGIN = 1,
-          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
-        )
-      )
-      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
-      title <- paste0("Scaled ", data_types[idx + 2])
-    } else {
-      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
-      title <- data_types[idx + 2]
-    }
-
-    draw(
-      Heatmap(
-        mat,
-        col = col,
-        column_title = paste0(
-          data_sets[idx], "\n",
-          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
-          "(Adj. P < 0.05)"
-        ),
-        cluster_columns = FALSE,
-        cluster_rows = FALSE,
-        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
-        column_gap = unit(1, units = "mm"),
-        rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
-        column_title_gp = gpar(fontsize = 14),
-        row_title_rot = 0,
-        top_annotation = top_anno[[idx]],
-        show_column_names = FALSE,
-        row_names_max_width = max_text_width(
-          rownames(mat), gp = gpar(fontsize = 14)
-        ),
-        cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
-        },
-        heatmap_legend_param = list(
-          title = title, direction = "horizontal",
-          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
-          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
-        )
-      ),
-      heatmap_legend_side = "top"
-    )
-  },
-  width = 1400,
-  height = 615,
-  res = 96
-)
-```
-
-</div>
-</div>
-
-### Enrichment Stats
-
-```{r}
-datatable_download_exp_15(res_gse[[idx]])
 ```
 
 ```{r, include = FALSE}
