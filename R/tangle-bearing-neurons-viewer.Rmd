@@ -99,6 +99,23 @@ for (i in seq_along(res_gse)) {
   res_gse[[i]]$P.value.adj <- p_adj[[i + length(data_sets)]]
 }
 
+priority_gse <- c(
+  "tau-protein", "tau protein", "neurofi", "microtubule", "dynein", "cytoskele",
+  "laminin", "inclusion", "aggrep", "death", "necro", "folding", "folded",
+  "synap", "axon", "dendrit", "senescen", "apopto", "exocyt", "endocyt",
+  "phagocyt", "proteasom", "lysosom", "endoplasmic", "Golgi", "Hsp",
+  "heat shock", "ESCRT", "ubiqui", "heparan", "chondroitin", "sulfotransferase",
+  "glycosaminoglycan", "transcription", "translation", "amyloid",
+  "apolipoprotein", "lipoprotein", "fatty", "cholesterol", "insulin", "pruning",
+  "phosphatidylserine", "complement", "T cell", "B cell", "immun", "inflammat",
+  "stress", "cortisol", "interleukin", "leukocyte", "myeloid", "NF-kappaB",
+  "toll-like", "macrophage", "astrocyte", "oligodendrocyte", "Schwann", "myelin"
+)
+priority_deg <- gene_sets[
+  unique(unlist(sapply(priority_gse, FUN = grep, x = names(gene_sets))))
+]
+priority_deg <- unique(unlist(geneIds(gene_sets)))
+
 range_deg <- vector("list", length = length(data_sets))
 sig_deg <- vector("list", length = length(data_sets))
 top_deg <- vector("list", length = length(data_sets))
@@ -126,13 +143,22 @@ for (i in seq_along(data_sets)) {
   sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
 
   res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
+  rownames(sig_deg[[i]]) <- rownames(res_deg[[i]])
+
+  n_deg[[i]] <- c(
+    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
+  )
+  top_deg[[i]] <- sig_deg[[i]][rownames(sig_deg[[i]]) %in% priority_deg, ]
+  sig <- sig[rownames(sig) %in% rownames(top_deg[[i]]), ]
+  sig <- sig[match(rownames(top_deg[[i]]), rownames(sig)), ]
+  top_deg[[i]] <- sig_deg[[i]][
+    c(which(sig[ , 2] == "↑")[1:10], which(sig[ , 2] == "↓")[1:10]),
+  ]
+
   rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
-
-  up <- sig[ , 2] == "↑"
-  dn <- sig[ , 2] == "↓"
-
-  n_deg[[i]] <- c(length(which(up)), length(which(dn)))
-  top_deg[[i]] <- sig_deg[[i]][c(which(up)[1:10], which(dn)[1:10]), ]
+  rownames(top_deg[[i]]) <- res_deg[[i]][
+    rownames(res_deg[[i]]) %in% rownames(top_deg[[i]]),
+  ]$Gene
 
 }
 
@@ -165,11 +191,19 @@ for (i in seq_along(data_sets)) {
   res_gse[[i]] <- res_gse[[i]][match(rownames(sig), rownames(res_gse[[i]])), ]
   rownames(sig_gse[[i]]) <- res_gse[[i]]$GeneSet
 
-  up <- sig[ , 2] == "↑"
-  dn <- sig[ , 2] == "↓"
-
-  n_gse[[i]] <- c(length(which(up)), length(which(dn)))
-  top_gse[[i]] <- sig_gse[[i]][c(which(up)[1:8], which(dn)[1:8]), ]
+  n_gse[[i]] <- c(
+    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
+  )
+  top_gse[[i]] <- sig_gse[[i]][
+    unique(
+      unlist(sapply(priority_gse, FUN = grep, x = rownames(sig_gse[[i]])))
+    ),
+  ]
+  sig <- sig[rownames(sig) %in% rownames(top_gse[[i]]), ]
+  sig <- sig[match(rownames(top_gse[[i]]), rownames(sig)), ]
+  top_gse[[i]] <- top_gse[[i]][
+    c(which(sig[ , 2] == "↑")[1:8], which(sig[ , 2] == "↓")[1:8]),
+  ]
 
 }
 
@@ -748,6 +782,6 @@ datatable_download_exp_15(res_gse[[idx]])
 ```
 
 ```{r, include = FALSE}
-rm(data_dir, n, anno_colour, p_adj, direction, up, dn)
+rm(data_dir, n, anno_colour, p_adj, direction)
 gc()
 ```
