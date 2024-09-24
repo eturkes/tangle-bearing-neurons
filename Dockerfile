@@ -20,11 +20,17 @@ FROM rocker/rstudio:4.3.3
 
 LABEL org.opencontainers.image.authors="Emir Turkes emir.turkes@eturkes.com"
 
-RUN Rscript -e "install.packages('flexdashboard')" \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        zlib1g-dev \
+    && Rscript -e "install.packages('flexdashboard')" \
         -e "install.packages('stringr')" \
         -e "install.packages('conflicted')" \
         -e "install.packages('DT')" \
         -e "install.packages('BiocManager')" \
         -e "BiocManager::install('ComplexHeatmap')" \
-    && rm -Rf /tmp/downloaded_packages/ \
+        -e "BiocManager::install('GSEABase')" \
+    && apt-get clean \
+    && rm -Rf /var/lib/apt/lists/ \
+        /tmp/downloaded_packages/ \
         /tmp/*.rds

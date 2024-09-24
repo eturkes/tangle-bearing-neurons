@@ -20,13 +20,13 @@ version: "3"
 
 services:
   all:
-    image: eturkes/tangle-bearing-neurons:R4.3.3v4
+    image: eturkes/tangle-bearing-neurons:R4.3.3v5
     volumes:
       - ".:/home/rstudio/tangle-bearing-neurons:rw"
     command: Rscript -e "source('/home/rstudio/tangle-bearing-neurons/R/run_all.R')"
 
   rstudio:
-    image: eturkes/tangle-bearing-neurons:R4.3.3v4
+    image: eturkes/tangle-bearing-neurons:R4.3.3v5
     volumes:
       - ".:/home/rstudio/tangle-bearing-neurons:rw"
     ports:

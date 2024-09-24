@@ -30,6 +30,7 @@ library(scales)
 library(ComplexHeatmap)
 library(circlize)
 library(DT)
+library(GSEABase)
 
 data_sets <- c(
   "Single-cell Transcriptomics - Human AD BA9",
@@ -132,6 +133,43 @@ for (i in seq_along(data_sets)) {
 
   n_deg[[i]] <- c(length(which(up)), length(which(dn)))
   top_deg[[i]] <- sig_deg[[i]][c(which(up)[1:10], which(dn)[1:10]), ]
+
+}
+
+range_gse <- vector("list", length = length(data_sets))
+sig_gse <- vector("list", length = length(data_sets))
+top_gse <- vector("list", length = length(data_sets))
+n_gse <- vector("list", length = length(data_sets))
+
+for (i in seq_along(data_sets)) {
+
+  range_gse[[i]] <- c(
+    min(gse[[i]]), (min(gse[[i]]) + max(gse[[i]])) / 2, max(gse[[i]])
+  )
+
+  sig <- ifelse(res_gse[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
+  direction <- ifelse(res_gse[[i]]$Coef > 0, yes = 1, no = -1)
+  sig <- sig * direction
+
+  names(sig) <- rownames(res_gse[[i]])
+  sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
+  sig <- ifelse(sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = ""))
+
+  sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
+  sig_gse[[i]] <- vector("list", length = 2)
+  for (j in seq_along(sig)) {
+    sig_gse[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
+  }
+  sig_gse[[i]] <- do.call(cbind, args = sig_gse[[i]])
+
+  res_gse[[i]] <- res_gse[[i]][match(rownames(sig), rownames(res_gse[[i]])), ]
+  rownames(sig_gse[[i]]) <- res_gse[[i]]$GeneSet
+
+  up <- sig[ , 2] == "↑"
+  dn <- sig[ , 2] == "↓"
+
+  n_gse[[i]] <- c(length(which(up)), length(which(dn)))
+  top_gse[[i]] <- sig_gse[[i]][c(which(up)[1:10], which(dn)[1:10]), ]
 
 }
 
@@ -329,6 +367,94 @@ renderPlot(
 datatable_download_exp_15(res_deg[[idx]])
 ```
 
+### Differentially Enriched Pathways
+
+```{r}
+idx <- 1
+
+selectizeInput(
+  paste0("gse", idx),
+  label = "Type to Search Pathways:",
+  choices = res_gse[[idx]]$GeneSet,
+  selected = rownames(top_gse[[idx]]),
+  multiple = TRUE,
+  width = "100%"
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red")),
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = data_types[idx + 2], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1400,
+  height = 650,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Enrichment Stats
+
+```{r}
+datatable_download_exp_15(res_gse[[idx]])
+```
+
 Laser-capture Microdissection Proteomics - Human AD BA9
 ===
 
@@ -495,6 +621,94 @@ renderPlot(
 
 ```{r}
 datatable_download_exp_15(res_deg[[idx]])
+```
+
+### Differentially Enriched Pathways
+
+```{r}
+idx <- 2
+
+selectizeInput(
+  paste0("gse", idx),
+  label = "Type to Search Pathways:",
+  choices = res_gse[[idx]]$GeneSet,
+  selected = rownames(top_gse[[idx]]),
+  multiple = TRUE,
+  width = "100%"
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red")),
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = data_types[idx + 2], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1400,
+  height = 650,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Enrichment Stats
+
+```{r}
+datatable_download_exp_15(res_gse[[idx]])
 ```
 
 ```{r, include = FALSE}
