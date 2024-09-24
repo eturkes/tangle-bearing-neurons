@@ -239,14 +239,16 @@ datatable_download_exp_15 <- function(dt) {
 Single-cell Transcriptomics - Human AD BA9
 ===
 
+```{r}
+idx <- 1
+```
+
 Row {.tabset}
 ---
 
 ### Differentially Enriched Pathways
 
 ```{r}
-idx <- 1
-
 selectizeInput(
   paste0("gse", idx),
   label = "Type to Search Pathways:",
@@ -351,8 +353,6 @@ datatable_download_exp_15(res_gse[[idx]])
 ### Differentially Expressed Genes
 
 ```{r}
-idx <- 1
-
 selectizeInput(
   paste0("deg", idx),
   label = "Type to Search Genes:",
@@ -513,14 +513,16 @@ datatable_download_exp_15(res_deg[[idx]])
 Laser-capture Microdissection Proteomics - Human AD BA9
 ===
 
+```{r}
+idx <- 2
+```
+
 Row {.tabset}
 ---
 
 ### Differentially Enriched Pathways
 
 ```{r}
-idx <- 2
-
 selectizeInput(
   paste0("gse", idx),
   label = "Type to Search Pathways:",
@@ -625,8 +627,6 @@ datatable_download_exp_15(res_gse[[idx]])
 ### Differentially Expressed Genes
 
 ```{r}
-idx <- 2
-
 selectizeInput(
   paste0("deg", idx),
   label = "Type to Search Genes:",
