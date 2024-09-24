@@ -152,9 +152,6 @@ for (i in seq_along(data_sets)) {
       unlist(sapply(priority_gse, FUN = grep, x = rownames(sig_gse[[i]])))
     ),
   ]
-  top_gse[[i]] <- sig_gse[[i]][
-    rownames(sig_gse[[i]]) %in% rownames(top_gse[[i]]),
-  ]
   sig <- sig[rownames(sig) %in% rownames(top_gse[[i]]), ]
   sig <- sig[match(rownames(top_gse[[i]]), rownames(sig)), ]
   top_gse[[i]] <- top_gse[[i]][
@@ -522,7 +519,7 @@ selectizeInput(
   paste0("path_deg", idx),
   label = "Type to Search Pathways:",
   choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[1],
+  selected = rownames(top_gse[[idx]])[2],
   width = "100%"
 )
 ```
