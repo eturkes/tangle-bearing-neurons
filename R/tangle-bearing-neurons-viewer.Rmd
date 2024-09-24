@@ -111,56 +111,6 @@ priority_gse <- c(
   "stress", "cortisol", "interleukin", "leukocyte", "myeloid", "NF-kappaB",
   "toll-like", "macrophage", "astrocyte", "oligodendrocyte", "Schwann", "myelin"
 )
-priority_deg <- gene_sets[
-  unique(unlist(sapply(priority_gse, FUN = grep, x = names(gene_sets))))
-]
-priority_deg <- unique(unlist(geneIds(gene_sets)))
-
-range_deg <- vector("list", length = length(data_sets))
-sig_deg <- vector("list", length = length(data_sets))
-top_deg <- vector("list", length = length(data_sets))
-n_deg <- vector("list", length = length(data_sets))
-
-for (i in seq_along(data_sets)) {
-
-  range_deg[[i]] <- c(
-    min(deg[[i]]), (min(deg[[i]]) + max(deg[[i]])) / 2, max(deg[[i]])
-  )
-
-  sig <- ifelse(res_deg[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
-  direction <- ifelse(res_deg[[i]]$Coef > 0, yes = 1, no = -1)
-  sig <- sig * direction
-
-  names(sig) <- rownames(res_deg[[i]])
-  sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
-  sig <- ifelse(sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = ""))
-
-  sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
-  sig_deg[[i]] <- vector("list", length = 2)
-  for (j in seq_along(sig)) {
-    sig_deg[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
-  }
-  sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
-
-  res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
-  rownames(sig_deg[[i]]) <- rownames(res_deg[[i]])
-
-  n_deg[[i]] <- c(
-    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
-  )
-  top_deg[[i]] <- sig_deg[[i]][rownames(sig_deg[[i]]) %in% priority_deg, ]
-  sig <- sig[rownames(sig) %in% rownames(top_deg[[i]]), ]
-  sig <- sig[match(rownames(top_deg[[i]]), rownames(sig)), ]
-  top_deg[[i]] <- sig_deg[[i]][
-    c(which(sig[ , 2] == "↑")[1:10], which(sig[ , 2] == "↓")[1:10]),
-  ]
-
-  rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
-  rownames(top_deg[[i]]) <- res_deg[[i]][
-    rownames(res_deg[[i]]) %in% rownames(top_deg[[i]]),
-  ]$Gene
-
-}
 
 range_gse <- vector("list", length = length(data_sets))
 sig_gse <- vector("list", length = length(data_sets))
@@ -194,6 +144,7 @@ for (i in seq_along(data_sets)) {
   n_gse[[i]] <- c(
     length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
   )
+
   top_gse[[i]] <- sig_gse[[i]][
     unique(
       unlist(sapply(priority_gse, FUN = grep, x = rownames(sig_gse[[i]])))
@@ -204,6 +155,58 @@ for (i in seq_along(data_sets)) {
   top_gse[[i]] <- top_gse[[i]][
     c(which(sig[ , 2] == "↑")[1:8], which(sig[ , 2] == "↓")[1:8]),
   ]
+
+}
+
+range_deg <- vector("list", length = length(data_sets))
+sig_deg <- vector("list", length = length(data_sets))
+top_deg <- vector("list", length = length(data_sets))
+n_deg <- vector("list", length = length(data_sets))
+
+for (i in seq_along(data_sets)) {
+
+  range_deg[[i]] <- c(
+    min(deg[[i]]), (min(deg[[i]]) + max(deg[[i]])) / 2, max(deg[[i]])
+  )
+
+  sig <- ifelse(res_deg[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
+  direction <- ifelse(res_deg[[i]]$Coef > 0, yes = 1, no = -1)
+  sig <- sig * direction
+
+  names(sig) <- rownames(res_deg[[i]])
+  sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
+  sig <- ifelse(sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = ""))
+
+  sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
+  sig_deg[[i]] <- vector("list", length = 2)
+  for (j in seq_along(sig)) {
+    sig_deg[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
+  }
+  sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
+
+  res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
+  rownames(sig_deg[[i]]) <- rownames(res_deg[[i]])
+
+  n_deg[[i]] <- c(
+    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
+  )
+
+  priority_deg <- top_gse[[i]][
+    unique(unlist(sapply(priority_gse, FUN = grep, x = rownames(top_gse[[i]])))),
+  ]
+  priority_deg <- gene_sets[names(gene_sets) %in% rownames(priority_deg)]
+  priority_deg <- unique(unlist(geneIds(priority_deg)))
+  top_deg[[i]] <- sig_deg[[i]][rownames(sig_deg[[i]]) %in% priority_deg, ]
+  sig <- sig[rownames(sig) %in% rownames(top_deg[[i]]), ]
+  sig <- sig[match(rownames(top_deg[[i]]), rownames(sig)), ]
+  top_deg[[i]] <- top_deg[[i]][
+    c(which(sig[ , 2] == "↑"), which(sig[ , 2] == "↓")),
+  ]
+
+  rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
+  rownames(top_deg[[i]]) <- res_deg[[i]][
+    rownames(res_deg[[i]]) %in% rownames(top_deg[[i]]),
+  ]$Gene
 
 }
 
@@ -403,13 +406,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
         },
         heatmap_legend_param = list(
           title = data_types[idx], direction = "horizontal",
@@ -475,13 +478,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
@@ -782,6 +785,6 @@ datatable_download_exp_15(res_deg[[idx]])
 ```
 
 ```{r, include = FALSE}
-rm(data_dir, n, anno_colour, p_adj, direction)
+rm(data_dir, n, anno_colour, p_adj, direction, priority_gse, priority_deg)
 gc()
 ```
