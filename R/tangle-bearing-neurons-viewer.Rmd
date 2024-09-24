@@ -29,6 +29,7 @@ library(conflicted)
 library(scales)
 library(ComplexHeatmap)
 library(circlize)
+library(DT)
 
 data_sets <- c(
   "Single-cell Transcriptomics - Human AD BA9",
@@ -129,6 +130,31 @@ for (i in seq_along(data_sets)) {
     c(which(sig[ , 2] == "↑")[1:10], which(sig[ , 2] == "↓")[1:10]),
   ]
 
+}
+
+datatable_download_exp_15 <- function(dt) {
+  datatable(
+    dt,
+    options = list(
+      pageLength = 15,
+      scrollX = TRUE,
+      dom = "Blfrtip",
+      buttons = list(
+        "copy", "print",
+        list(
+          extend = "collection", buttons = c("csv", "excel", "pdf"),
+          text = "Download"
+        )
+      ),
+      rowCallback = JS(
+        "function(row, data) {",
+        "for (i = 1; i < data.length; i++) {",
+        "if (data[i]>=1000 | data[i]<1000) {",
+        "$('td:eq('+i+')', row).html(data[i].toExponential(2));}}}"
+      )
+    ),
+    extensions = "Buttons"
+  )
 }
 ```
 
@@ -286,6 +312,12 @@ renderPlot(
 </div>
 </div>
 
+### Gene Stats
+
+```{r}
+datatable_download_exp_15(res_deg[[idx]])
+```
+
 Laser-capture Microdissection Proteomics - Human AD BA9
 ===
 
@@ -439,6 +471,12 @@ renderPlot(
 
 </div>
 </div>
+
+### Protein Stats
+
+```{r}
+datatable_download_exp_15(res_deg[[idx]])
+```
 
 ```{r, include = FALSE}
 rm(data_dir, n, anno_colour, p_adj, direction)
