@@ -169,7 +169,7 @@ for (i in seq_along(data_sets)) {
   dn <- sig[ , 2] == "↓"
 
   n_gse[[i]] <- c(length(which(up)), length(which(dn)))
-  top_gse[[i]] <- sig_gse[[i]][c(which(up)[1:10], which(dn)[1:10]), ]
+  top_gse[[i]] <- sig_gse[[i]][c(which(up)[1:8], which(dn)[1:8]), ]
 
 }
 
@@ -380,6 +380,10 @@ selectizeInput(
   multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -406,10 +410,24 @@ renderPlot(
       mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
+    if (input[[paste0("scaling", idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red")),
+        col = col,
         column_title = paste0(
           data_sets[idx], "\n",
           n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
@@ -432,7 +450,7 @@ renderPlot(
           grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = data_types[idx + 2], direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -441,7 +459,7 @@ renderPlot(
     )
   },
   width = 1400,
-  height = 650,
+  height = 615,
   res = 96
 )
 ```
@@ -636,6 +654,10 @@ selectizeInput(
   multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -662,10 +684,24 @@ renderPlot(
       mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
+    if (input[[paste0("scaling", idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red")),
+        col = col,
         column_title = paste0(
           data_sets[idx], "\n",
           n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
@@ -688,7 +724,7 @@ renderPlot(
           grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = data_types[idx + 2], direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -697,7 +733,7 @@ renderPlot(
     )
   },
   width = 1400,
-  height = 650,
+  height = 615,
   res = 96
 )
 ```
