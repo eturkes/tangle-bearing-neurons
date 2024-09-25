@@ -172,12 +172,12 @@ for (i in seq_along(data_sets)) {
 
   top_gse[[i]] <- sapply(
     priority_gse,
-    function (pattern) {
-      individual_patterns <- unlist(strsplit(pattern, " \\| "))
+    function (x) {
+      patterns <- unlist(strsplit(x, " \\| "))
       matches <- sapply(
-        individual_patterns, function(individual_pattern) {
+        patterns, function(y) {
           grep(
-            paste0(".*", individual_pattern, ".*"),
+            paste0(".*", y, ".*"),
             rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ]),
             value = TRUE
           )
