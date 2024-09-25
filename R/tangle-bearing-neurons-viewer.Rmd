@@ -35,11 +35,11 @@ library(GSEABase)
 `%notin%` <- Negate(`%in%`)
 
 data_sets <- c(
-  "Single-cell Transcriptomics - Human AD BA9",
-  "Laser-capture Microdissection Proteomics - Human AD BA9"
+  "Laser-capture Microdissection Proteomics - Human AD BA9",
+  "Single-cell Transcriptomics - Human AD BA9"
 )
 data_types <- c(
-  "log2 CPM", "log2 LFQ Intensity",
+  "log2 LFQ Intensity", "log2 CPM",
   "log2 Enrichment Score", "log2 Enrichment Score"
 )
 
@@ -55,7 +55,7 @@ res_deg <- vector("list", length = length(data_sets))
 res_gse <- vector("list", length = length(data_sets))
 
 data_dir <- list.dirs(data_dir)
-data_dir <- data_dir[c(3, 2)]
+data_dir <- data_dir[c(2, 3)]
 for (i in seq_along(data_sets)) {
   meta[[i]] <- readRDS(file.path(data_dir[i], "meta.rds"))
   deg[[i]] <- readRDS(file.path(data_dir[i], "deg.rds"))
@@ -238,7 +238,7 @@ datatable_download_exp_15 <- function(dt) {
 }
 ```
 
-Single-cell Transcriptomics - Human AD BA9
+Laser-capture Microdissection Proteomics - Human AD BA9
 ===
 
 ```{r}
@@ -408,13 +408,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
           title = data_types[idx], direction = "horizontal",
@@ -480,13 +480,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
@@ -506,7 +506,7 @@ renderPlot(
 </div>
 </div>
 
-### Gene Stats
+### Protein Stats
 
 ```{r}
 datatable_download_exp_15(res_deg[[idx]])
@@ -519,7 +519,7 @@ selectizeInput(
   paste0("path_deg", idx),
   label = "Type to Search Pathways:",
   choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[2],
+  selected = rownames(top_gse[[idx]])[1],
   width = "100%"
 )
 ```
@@ -696,7 +696,7 @@ renderPlot(
 </div>
 </div>
 
-Laser-capture Microdissection Proteomics - Human AD BA9
+Single-cell Transcriptomics - Human AD BA9
 ===
 
 ```{r}
@@ -866,13 +866,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
         },
         heatmap_legend_param = list(
           title = data_types[idx], direction = "horizontal",
@@ -938,13 +938,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
@@ -964,7 +964,7 @@ renderPlot(
 </div>
 </div>
 
-### Protein Stats
+### Gene Stats
 
 ```{r}
 datatable_download_exp_15(res_deg[[idx]])
@@ -977,7 +977,7 @@ selectizeInput(
   paste0("path_deg", idx),
   label = "Type to Search Pathways:",
   choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[1],
+  selected = rownames(top_gse[[idx]])[2],
   width = "100%"
 )
 ```
