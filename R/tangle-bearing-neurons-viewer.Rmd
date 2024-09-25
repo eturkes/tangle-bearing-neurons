@@ -31,8 +31,6 @@ library(ComplexHeatmap)
 library(circlize)
 library(GSEABase)
 
-`%notin%` <- Negate(`%in%`)
-
 data_sets <- c(
   "Laser-capture Microdissection Proteomics - Human AD BA9 - New Data",
   "Laser-capture Microdissection Proteomics - Human AD BA9 - Old Data",
@@ -6351,6 +6349,6 @@ renderPlot(
 </div>
 
 ```{r, include = FALSE}
-rm(p_adj, anno_colour, data_dir, priority_gse, cache_dir)
+rm(p_adj, anno_colour, cache_dir, data_dir, priority_gse)
 gc()
 ```
