@@ -118,9 +118,7 @@ priority_gse <- c(
   `Apoptosis & Autophagy`=
     "apopto | autophag | phagocyt",
   `Proteasomal & Lysosomal`=
-    "proteasom | lysosom | endoplasmic | Golgi | ESCRT | ubiqui",
-  `Heat Shock`=
-    "Hsp | heat shock",
+    "proteasom | lysosom | endoplasmic | Golgi",
   `Glycosaminoglycan`=
     "heparan | chondroitin | sulfotransferase | glycosaminoglycan",
   `Transcription & Translation` =
@@ -138,7 +136,21 @@ priority_gse <- c(
   `Macrophage & Astrocyte` =
     "macrophage | astrocyte",
   `Oligodendrocyte & Myelin` =
-    "oligodendrocyte | Schwann | myelin"
+    "oligodendrocyte | Schwann | myelin",
+  `Developmental`=
+    "development | differentiation | morphogenesis"
+)
+ref <- sapply(
+  priority_gse,
+  function (x) {
+    patterns <- unlist(strsplit(x, " \\| "))
+    matches <- sapply(
+      patterns, function(y) {
+        grep(paste0(".*", y, ".*"), names(gene_sets), value = TRUE)
+      }
+    )
+    unique(unlist(matches))
+  }
 )
 
 range_gse <- vector("list", length = length(data_sets))
@@ -185,6 +197,14 @@ for (i in seq_along(data_sets)) {
       )
       unique(unlist(matches))
     }
+  )
+
+  n_gse[[i]] <- Map(
+    function(x, y) {
+      ratio <- round(length(x) / length(y), digits = 2) * 100
+      ifelse(is.na(ratio), yes = 0, no = ratio)
+    },
+    top_gse[[i]], ref
   )
 
 }
@@ -257,7 +277,14 @@ sub_idx <- 0
 Row {.tabset}
 ---
 
-### Tau & Neurofibrillary Tangle
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -362,7 +389,14 @@ renderPlot(
 </div>
 </div>
 
-### Microtubule & Cytoskeletal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -467,7 +501,14 @@ renderPlot(
 </div>
 </div>
 
-### Death, Stress, & Ageing
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -572,7 +613,14 @@ renderPlot(
 </div>
 </div>
 
-### Protein Folding
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -677,7 +725,14 @@ renderPlot(
 </div>
 </div>
 
-### Synapse, Axon, & Dendrite
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -782,7 +837,14 @@ renderPlot(
 </div>
 </div>
 
-### Exocytosis & Endocytosis
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -887,7 +949,14 @@ renderPlot(
 </div>
 </div>
 
-### Apoptosis & Autophagy
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -992,7 +1061,14 @@ renderPlot(
 </div>
 </div>
 
-### Proteasomal & Lysosomal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1097,7 +1173,14 @@ renderPlot(
 </div>
 </div>
 
-### Heat Shock
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1202,7 +1285,14 @@ renderPlot(
 </div>
 </div>
 
-### Glycosaminoglycan
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1307,7 +1397,14 @@ renderPlot(
 </div>
 </div>
 
-### Transcription & Translation
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1412,7 +1509,14 @@ renderPlot(
 </div>
 </div>
 
-### Amyloid & Lipoprotein
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1517,7 +1621,14 @@ renderPlot(
 </div>
 </div>
 
-### Lipid Metabolism
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1622,7 +1733,14 @@ renderPlot(
 </div>
 </div>
 
-### Synaptic Pruning
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1727,7 +1845,14 @@ renderPlot(
 </div>
 </div>
 
-### T Cell, B Cell, & Other Immune Cell
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1832,7 +1957,14 @@ renderPlot(
 </div>
 </div>
 
-### Inflammatory Response
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -1937,7 +2069,14 @@ renderPlot(
 </div>
 </div>
 
-### Macrophage & Astrocyte
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2042,7 +2181,14 @@ renderPlot(
 </div>
 </div>
 
-### Oligodendrocyte & Myelin
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2158,7 +2304,14 @@ sub_idx <- 0
 Row {.tabset}
 ---
 
-### Tau & Neurofibrillary Tangle
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2263,7 +2416,14 @@ renderPlot(
 </div>
 </div>
 
-### Microtubule & Cytoskeletal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2368,7 +2528,14 @@ renderPlot(
 </div>
 </div>
 
-### Death, Stress, & Ageing
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2473,7 +2640,14 @@ renderPlot(
 </div>
 </div>
 
-### Protein Folding
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2578,7 +2752,14 @@ renderPlot(
 </div>
 </div>
 
-### Synapse, Axon, & Dendrite
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2683,7 +2864,14 @@ renderPlot(
 </div>
 </div>
 
-### Exocytosis & Endocytosis
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2788,7 +2976,14 @@ renderPlot(
 </div>
 </div>
 
-### Apoptosis & Autophagy
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2893,7 +3088,14 @@ renderPlot(
 </div>
 </div>
 
-### Proteasomal & Lysosomal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -2998,7 +3200,14 @@ renderPlot(
 </div>
 </div>
 
-### Heat Shock
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3103,7 +3312,14 @@ renderPlot(
 </div>
 </div>
 
-### Glycosaminoglycan
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3208,7 +3424,14 @@ renderPlot(
 </div>
 </div>
 
-### Transcription & Translation
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3313,7 +3536,14 @@ renderPlot(
 </div>
 </div>
 
-### Amyloid & Lipoprotein
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3418,7 +3648,14 @@ renderPlot(
 </div>
 </div>
 
-### Lipid Metabolism
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3523,7 +3760,14 @@ renderPlot(
 </div>
 </div>
 
-### Synaptic Pruning
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3628,7 +3872,14 @@ renderPlot(
 </div>
 </div>
 
-### T Cell, B Cell, & Other Immune Cell
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3733,7 +3984,14 @@ renderPlot(
 </div>
 </div>
 
-### Inflammatory Response
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3838,7 +4096,14 @@ renderPlot(
 </div>
 </div>
 
-### Macrophage & Astrocyte
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -3943,7 +4208,14 @@ renderPlot(
 </div>
 </div>
 
-### Oligodendrocyte & Myelin
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4059,7 +4331,14 @@ sub_idx <- 0
 Row {.tabset}
 ---
 
-### Tau & Neurofibrillary Tangle
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4164,7 +4443,14 @@ renderPlot(
 </div>
 </div>
 
-### Microtubule & Cytoskeletal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4269,7 +4555,14 @@ renderPlot(
 </div>
 </div>
 
-### Death, Stress, & Ageing
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4374,7 +4667,14 @@ renderPlot(
 </div>
 </div>
 
-### Protein Folding
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4479,7 +4779,14 @@ renderPlot(
 </div>
 </div>
 
-### Synapse, Axon, & Dendrite
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4584,7 +4891,14 @@ renderPlot(
 </div>
 </div>
 
-### Exocytosis & Endocytosis
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4689,7 +5003,14 @@ renderPlot(
 </div>
 </div>
 
-### Apoptosis & Autophagy
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4794,7 +5115,14 @@ renderPlot(
 </div>
 </div>
 
-### Proteasomal & Lysosomal
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -4899,7 +5227,14 @@ renderPlot(
 </div>
 </div>
 
-### Heat Shock
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5004,7 +5339,14 @@ renderPlot(
 </div>
 </div>
 
-### Glycosaminoglycan
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5109,7 +5451,14 @@ renderPlot(
 </div>
 </div>
 
-### Transcription & Translation
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5214,7 +5563,14 @@ renderPlot(
 </div>
 </div>
 
-### Amyloid & Lipoprotein
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5319,7 +5675,14 @@ renderPlot(
 </div>
 </div>
 
-### Lipid Metabolism
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5424,7 +5787,14 @@ renderPlot(
 </div>
 </div>
 
-### Synaptic Pruning
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5529,7 +5899,14 @@ renderPlot(
 </div>
 </div>
 
-### T Cell, B Cell, & Other Immune Cell
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5634,7 +6011,14 @@ renderPlot(
 </div>
 </div>
 
-### Inflammatory Response
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5739,7 +6123,14 @@ renderPlot(
 </div>
 </div>
 
-### Macrophage & Astrocyte
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5844,7 +6235,14 @@ renderPlot(
 </div>
 </div>
 
-### Oligodendrocyte & Myelin
+```{r results='asis'}
+cat(
+  paste0(
+    "### ", names(priority_gse)[sub_idx + 1],
+    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+  )
+)
+```
 
 ```{r}
 sub_idx <- sub_idx + 1
@@ -5950,6 +6348,6 @@ renderPlot(
 </div>
 
 ```{r, include = FALSE}
-rm(data_dir, n, anno_colour, p_adj, direction, priority_gse, priority_deg)
+rm(p_adj, ref, anno_colour, data_dir, direction, priority_gse)
 gc()
 ```
