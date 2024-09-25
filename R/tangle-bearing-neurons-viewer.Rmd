@@ -45,6 +45,10 @@ data_types <- c(
 )
 
 data_dir <- file.path("..", "data")
+cache_dir <- file.path("..", "cache")
+if (!dir.exists(cache_dir)) {
+  dir.create(cache_dir, recursive = TRUE)
+}
 
 gene_sets <- readRDS(file.path(data_dir, "gene_sets.rds"))
 gene_anno <- readRDS(file.path(data_dir, "gene_anno.rds"))
@@ -140,104 +144,129 @@ priority_gse <- c(
   `Developmental`=
     "development | differentiation | morphogenesis"
 )
-ref <- sapply(
-  priority_gse,
-  function (x) {
-    patterns <- unlist(strsplit(x, " \\| "))
-    matches <- sapply(
-      patterns, function(y) {
-        grep(paste0(".*", y, ".*"), names(gene_sets), value = TRUE)
-      }
-    )
-    unique(unlist(matches))
-  }
-)
 
-range_gse <- vector("list", length = length(data_sets))
-sig_gse <- vector("list", length = length(data_sets))
-top_gse <- vector("list", length = length(data_sets))
-n_gse <- vector("list", length = length(data_sets))
+if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
+  range_gse <- readRDS(file.path(cache_dir, "range_gse.rds"))
+  sig_gse <- readRDS(file.path(cache_dir, "sig_gse.rds"))
+  top_gse <- readRDS(file.path(cache_dir, "top_gse.rds"))
+  n_gse <- readRDS(file.path(cache_dir, "n_gse.rds"))
+  range_deg <- readRDS(file.path(cache_dir, "range_deg.rds"))
+  sig_deg <- readRDS(file.path(cache_dir, "sig_deg.rds"))
+  top_deg <- readRDS(file.path(cache_dir, "top_deg.rds"))
+  n_deg <- readRDS(file.path(cache_dir, "n_deg.rds"))
+} else {
 
-for (i in seq_along(data_sets)) {
-
-  range_gse[[i]] <- c(
-    min(gse[[i]]), (min(gse[[i]]) + max(gse[[i]])) / 2, max(gse[[i]])
-  )
-
-  sig <- ifelse(res_gse[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
-  direction <- ifelse(res_gse[[i]]$Coef > 0, yes = 1, no = -1)
-  sig <- sig * direction
-
-  names(sig) <- rownames(res_gse[[i]])
-  sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
-  sig <- ifelse(sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = ""))
-
-  sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
-  sig_gse[[i]] <- vector("list", length = 2)
-  for (j in seq_along(sig)) {
-    sig_gse[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
-  }
-  sig_gse[[i]] <- do.call(cbind, args = sig_gse[[i]])
-
-  res_gse[[i]] <- res_gse[[i]][match(rownames(sig), rownames(res_gse[[i]])), ]
-  rownames(sig_gse[[i]]) <- res_gse[[i]]$GeneSet
-
-  top_gse[[i]] <- sapply(
+  ref <- sapply(
     priority_gse,
     function (x) {
       patterns <- unlist(strsplit(x, " \\| "))
       matches <- sapply(
         patterns, function(y) {
-          grep(
-            paste0(".*", y, ".*"),
-            rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ]),
-            value = TRUE
-          )
+          grep(paste0(".*", y, ".*"), names(gene_sets), value = TRUE)
         }
       )
       unique(unlist(matches))
     }
   )
 
-  n_gse[[i]] <- Map(
-    function(x, y) {
-      ratio <- round(length(x) / length(y), digits = 2) * 100
-      ifelse(is.na(ratio), yes = 0, no = ratio)
-    },
-    top_gse[[i]], ref
-  )
+  range_gse <- vector("list", length = length(data_sets))
+  sig_gse <- vector("list", length = length(data_sets))
+  top_gse <- vector("list", length = length(data_sets))
+  n_gse <- vector("list", length = length(data_sets))
 
-}
+  for (i in seq_along(data_sets)) {
 
-range_deg <- vector("list", length = length(data_sets))
-sig_deg <- vector("list", length = length(data_sets))
-top_deg <- vector("list", length = length(data_sets))
-n_deg <- vector("list", length = length(data_sets))
+    range_gse[[i]] <- c(
+      min(gse[[i]]), (min(gse[[i]]) + max(gse[[i]])) / 2, max(gse[[i]])
+    )
 
-for (i in seq_along(data_sets)) {
+    sig <- ifelse(res_gse[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
+    direction <- ifelse(res_gse[[i]]$Coef > 0, yes = 1, no = -1)
+    sig <- sig * direction
 
-  range_deg[[i]] <- c(
-    min(deg[[i]]), (min(deg[[i]]) + max(deg[[i]])) / 2, max(deg[[i]])
-  )
+    names(sig) <- rownames(res_gse[[i]])
+    sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
+    sig <- ifelse(
+      sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = "")
+    )
 
-  sig <- ifelse(res_deg[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
-  direction <- ifelse(res_deg[[i]]$Coef > 0, yes = 1, no = -1)
-  sig <- sig * direction
+    sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
+    sig_gse[[i]] <- vector("list", length = 2)
+    for (j in seq_along(sig)) {
+      sig_gse[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
+    }
+    sig_gse[[i]] <- do.call(cbind, args = sig_gse[[i]])
 
-  names(sig) <- rownames(res_deg[[i]])
-  sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
-  sig <- ifelse(sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = ""))
+    res_gse[[i]] <- res_gse[[i]][match(rownames(sig), rownames(res_gse[[i]])), ]
+    rownames(sig_gse[[i]]) <- res_gse[[i]]$GeneSet
 
-  sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
-  sig_deg[[i]] <- vector("list", length = 2)
-  for (j in seq_along(sig)) {
-    sig_deg[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
+    top_gse[[i]] <- sapply(
+      priority_gse,
+      function (x) {
+        patterns <- unlist(strsplit(x, " \\| "))
+        matches <- sapply(
+          patterns, function(y) {
+            grep(
+              paste0(".*", y, ".*"),
+              rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ]),
+              value = TRUE
+            )
+          }
+        )
+        unique(unlist(matches))
+      }
+    )
+
+    n_gse[[i]] <- Map(
+      function(x, y) {
+        ratio <- round(length(x) / length(y), digits = 2) * 100
+        ifelse(is.na(ratio), yes = 0, no = ratio)
+      },
+      top_gse[[i]], ref
+    )
+
   }
-  sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
 
-  res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
-  rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
+  range_deg <- vector("list", length = length(data_sets))
+  sig_deg <- vector("list", length = length(data_sets))
+  top_deg <- vector("list", length = length(data_sets))
+  n_deg <- vector("list", length = length(data_sets))
 
+  for (i in seq_along(data_sets)) {
+
+    range_deg[[i]] <- c(
+      min(deg[[i]]), (min(deg[[i]]) + max(deg[[i]])) / 2, max(deg[[i]])
+    )
+
+    sig <- ifelse(res_deg[[i]]$P.value.adj < 0.05, yes = 1, no = 0)
+    direction <- ifelse(res_deg[[i]]$Coef > 0, yes = 1, no = -1)
+    sig <- sig * direction
+
+    names(sig) <- rownames(res_deg[[i]])
+    sig <- sig[c(which(sig == 1), which(sig == -1), which(sig == 0))]
+    sig <- ifelse(
+      sig == -1, yes = "↓", no = ifelse(sig == 1, yes = "↑", no = "")
+    )
+
+    sig <- data.frame(CTRL = rep("", times = length(sig)), NFT = sig)
+    sig_deg[[i]] <- vector("list", length = 2)
+    for (j in seq_along(sig)) {
+      sig_deg[[i]][[j]] <- replicate(nrow(meta[[i]]) / 2, expr = sig[ , j])
+    }
+    sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
+
+    res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
+    rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
+
+  }
+  saveRDS(range_gse, file = file.path(cache_dir, "range_gse.rds"))
+  saveRDS(sig_gse, file = file.path(cache_dir, "sig_gse.rds"))
+  saveRDS(top_gse, file = file.path(cache_dir, "top_gse.rds"))
+  saveRDS(n_gse, file = file.path(cache_dir, "n_gse.rds"))
+  saveRDS(range_deg, file = file.path(cache_dir, "range_deg.rds"))
+  saveRDS(sig_deg, file = file.path(cache_dir, "sig_deg.rds"))
+  saveRDS(top_deg, file = file.path(cache_dir, "top_deg.rds"))
+  saveRDS(n_deg, file = file.path(cache_dir, "n_deg.rds"))
 }
 
 datatable_download_exp_15 <- function(dt) {
@@ -6348,6 +6377,6 @@ renderPlot(
 </div>
 
 ```{r, include = FALSE}
-rm(p_adj, ref, anno_colour, data_dir, direction, priority_gse)
+rm(p_adj, anno_colour, data_dir, priority_gse, cache_dir)
 gc()
 ```
