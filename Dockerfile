@@ -28,8 +28,8 @@ RUN apt-get update \
         -e "install.packages('conflicted')" \
         -e "install.packages('DT')" \
         -e "install.packages('BiocManager')" \
-        -e "BiocManager::install('ComplexHeatmap')" \
         -e "BiocManager::install('GSEABase')" \
+        -e "BiocManager::install('InteractiveComplexHeatmap')" \
     && apt-get clean \
     && rm -Rf /var/lib/apt/lists/ \
         /tmp/downloaded_packages/ \
