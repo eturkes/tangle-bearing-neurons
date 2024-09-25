@@ -103,16 +103,42 @@ for (i in seq_along(res_gse)) {
 }
 
 priority_gse <- c(
-  "tau-protein", "tau protein", "neurofi", "microtubule", "dynein", "cytoskele",
-  "laminin", "inclusion", "aggrep", "death", "necro", "folding", "folded",
-  "synap", "axon", "dendrit", "senescen", "apopto", "exocyt", "endocyt",
-  "phagocyt", "proteasom", "lysosom", "endoplasmic", "Golgi", "Hsp",
-  "heat shock", "ESCRT", "ubiqui", "heparan", "chondroitin", "sulfotransferase",
-  "glycosaminoglycan", "transcription", "translation", "amyloid",
-  "apolipoprotein", "lipoprotein", "fatty", "cholesterol", "insulin", "pruning",
-  "phosphatidylserine", "complement", "T cell", "B cell", "immun", "inflammat",
-  "stress", "cortisol", "interleukin", "leukocyte", "myeloid", "NF-kappaB",
-  "toll-like", "macrophage", "astrocyte", "oligodendrocyte", "Schwann", "myelin"
+  `Tau & Neurofibrillary Tangle` =
+    "tau-protein | tau protein | neurofi | inclusion | aggrep",
+  `Microtubule & Cytoskeletal` =
+    "microtubule | dynein | cytoskele | laminin",
+  `Death, Stress, & Ageing` =
+    "death | necro | senescen | stress",
+  `Protein Folding` =
+    "folding | folded",
+  `Synapse, Axon, & Dendrite` =
+    "synap | axon | dendrit",
+  `Exocytosis & Endocytosis` =
+    "exocyt | endocyt",
+  `Apoptosis & Autophagy`=
+    "apopto | autophag | phagocyt",
+  `Proteasomal & Lysosomal`=
+    "proteasom | lysosom | endoplasmic | Golgi | ESCRT | ubiqui",
+  `Heat Shock`=
+    "Hsp | heat shock",
+  `Glycosaminoglycan`=
+    "heparan | chondroitin | sulfotransferase | glycosaminoglycan",
+  `Transcription & Translation` =
+    "transcription | translation",
+  `Amyloid & Lipoprotein` =
+    "amyloid | lipoprotein",
+  `Lipid Metabolism`=
+    "fatty | cholesterol | insulin",
+  `Synaptic Pruning` =
+    "pruning | phosphatidylserine | complement",
+  `T Cell, B Cell, & Other Immune Cell`=
+    "T cell | B cell | leukocyte | myeloid | lymphocyte",
+  `Inflammatory Response` =
+    "immun | inflammat | cortisol | interleukin | NF-kappaB | toll-like",
+  `Macrophage & Astrocyte` =
+    "macrophage | astrocyte",
+  `Oligodendrocyte & Myelin` =
+    "oligodendrocyte | Schwann | myelin"
 )
 
 range_gse <- vector("list", length = length(data_sets))
@@ -144,20 +170,22 @@ for (i in seq_along(data_sets)) {
   res_gse[[i]] <- res_gse[[i]][match(rownames(sig), rownames(res_gse[[i]])), ]
   rownames(sig_gse[[i]]) <- res_gse[[i]]$GeneSet
 
-  n_gse[[i]] <- c(
-    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
+  top_gse[[i]] <- sapply(
+    priority_gse,
+    function (pattern) {
+      individual_patterns <- unlist(strsplit(pattern, " \\| "))
+      matches <- sapply(
+        individual_patterns, function(individual_pattern) {
+          grep(
+            paste0(".*", individual_pattern, ".*"),
+            rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ]),
+            value = TRUE
+          )
+        }
+      )
+      unique(unlist(matches))
+    }
   )
-
-  top_gse[[i]] <- sig_gse[[i]][
-    unique(
-      unlist(sapply(priority_gse, FUN = grep, x = rownames(sig_gse[[i]])))
-    ),
-  ]
-  sig <- sig[rownames(sig) %in% rownames(top_gse[[i]]), ]
-  sig <- sig[match(rownames(top_gse[[i]]), rownames(sig)), ]
-  top_gse[[i]] <- top_gse[[i]][
-    c(which(sig[ , 2] == "↑")[1:8], which(sig[ , 2] == "↓")[1:8]),
-  ]
 
 }
 
@@ -188,28 +216,7 @@ for (i in seq_along(data_sets)) {
   sig_deg[[i]] <- do.call(cbind, args = sig_deg[[i]])
 
   res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
-  rownames(sig_deg[[i]]) <- rownames(res_deg[[i]])
-
-  n_deg[[i]] <- c(
-    length(which(sig[ , 2] == "↑")), length(which(sig[ , 2] == "↓"))
-  )
-
-  priority_deg <- top_gse[[i]][
-    unique(unlist(sapply(priority_gse, FUN = grep, x = rownames(top_gse[[i]])))),
-  ]
-  priority_deg <- gene_sets[names(gene_sets) %in% rownames(priority_deg)]
-  priority_deg <- unique(unlist(geneIds(priority_deg)))
-  top_deg[[i]] <- sig_deg[[i]][rownames(sig_deg[[i]]) %in% priority_deg, ]
-  sig <- sig[rownames(sig) %in% rownames(top_deg[[i]]), ]
-  sig <- sig[match(rownames(top_deg[[i]]), rownames(sig)), ]
-  top_deg[[i]] <- top_deg[[i]][
-    c(which(sig[ , 2] == "↑"), which(sig[ , 2] == "↓")),
-  ]
-
   rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
-  rownames(top_deg[[i]]) <- res_deg[[i]][
-    rownames(res_deg[[i]]) %in% rownames(top_deg[[i]]),
-  ]$Gene
 
 }
 
@@ -239,30 +246,35 @@ datatable_download_exp_15 <- function(dt) {
 }
 ```
 
-Laser-capture Microdissection Proteomics - Human AD BA9 - New Data
+Single-cell LCM Proteomics - Pathways
 ===
 
 ```{r}
 idx <- 1
+sub_idx <- 0
 ```
 
 Row {.tabset}
 ---
 
-### Differentially Enriched Pathways
+### Tau & Neurofibrillary Tangle
 
 ```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
 selectizeInput(
-  paste0("gse", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = res_gse[[idx]]$GeneSet,
-  selected = rownames(top_gse[[idx]]),
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
 
 radioButtons(
-  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
 )
 ```
 
@@ -273,13 +285,16 @@ radioButtons(
 renderPlot(
   {
     idx <- 1
+    sub_idx <- 1
+    comb_idx <- 11
 
     sig <- sig_gse[[idx]][
-      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
       sig <- sig[
-        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
 
@@ -290,7 +305,7 @@ renderPlot(
       mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    if (input[[paste0("scaling", idx)]] == "Scaled") {
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
       mat <- t(
         apply(
           mat, MARGIN = 1,
@@ -310,7 +325,7 @@ renderPlot(
         col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -338,7 +353,7 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 1400,
+  width = 1450,
   height = 615,
   res = 96
 )
@@ -347,23 +362,25 @@ renderPlot(
 </div>
 </div>
 
-### Enrichment Stats
+### Microtubule & Cytoskeletal
 
 ```{r}
-datatable_download_exp_15(res_gse[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Differentially Expressed Genes
-
-```{r}
 selectizeInput(
-  paste0("deg", idx),
-  label = "Type to Search Genes:",
-  choices = res_deg[[idx]]$Gene,
-  selected = rownames(top_deg[[idx]]),
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -373,107 +390,47 @@ selectizeInput(
 renderPlot(
   {
     idx <- 1
+    sub_idx <- 2
+    comb_idx <- 12
 
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
     }
 
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
     ]
     if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
-    rownames(mat) <- gene_anno_sub$symbol
 
-    draw(
-      Heatmap(
-        mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        column_title = paste0(
-          data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
-          "(Adj. P < 0.05)"
-        ),
-        cluster_columns = FALSE,
-        cluster_rows = FALSE,
-        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
-        column_gap = unit(1, units = "mm"),
-        rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
-        column_title_gp = gpar(fontsize = 14),
-        row_title_rot = 0,
-        top_annotation = top_anno[[idx]],
-        show_column_names = FALSE,
-        cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
-        },
-        heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
-          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
-          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
         )
-      ),
-      heatmap_legend_side = "top"
-    )
-  },
-  width = 750,
-  height = 700,
-  res = 96
-)
-```
-
-</div>
-<div>
-
-```{r}
-renderPlot(
-  {
-    idx <- 1
-
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
-    ]
-    if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
-    }
-    rownames(mat) <- gene_anno_sub$symbol
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -486,11 +443,14 @@ renderPlot(
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
           grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -498,8 +458,8 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
@@ -507,22 +467,25 @@ renderPlot(
 </div>
 </div>
 
-### Protein Stats
+### Death, Stress, & Ageing
 
 ```{r}
-datatable_download_exp_15(res_deg[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Pathway Genes
-
-```{r}
 selectizeInput(
-  paste0("path_deg", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[1],
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -532,67 +495,67 @@ selectizeInput(
 renderPlot(
   {
     idx <- 1
+    sub_idx <- 3
+    comb_idx <- 13
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- genes[genes %notin% rownames(deg[[idx]])]
-    add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
 
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -600,87 +563,104 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
 
 </div>
+</div>
+
+### Protein Folding
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
 <div>
 
 ```{r}
 renderPlot(
   {
     idx <- 1
+    sub_idx <- 4
+    comb_idx <- 14
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- gene_anno_sub[
-      gene_anno_sub$symbol %notin% rownames(sig_deg[[idx]]),
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -688,8 +668,8 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
@@ -697,30 +677,1505 @@ renderPlot(
 </div>
 </div>
 
-Laser-capture Microdissection Proteomics - Human AD BA9 - Old Data
+### Synapse, Axon, & Dendrite
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 5
+    comb_idx <- 15
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Exocytosis & Endocytosis
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 6
+    comb_idx <- 16
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Apoptosis & Autophagy
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 7
+    comb_idx <- 17
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Proteasomal & Lysosomal
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 8
+    comb_idx <- 18
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Heat Shock
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 9
+    comb_idx <- 19
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Glycosaminoglycan
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 10
+    comb_idx <- 110
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Transcription & Translation
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 11
+    comb_idx <- 111
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Amyloid & Lipoprotein
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 12
+    comb_idx <- 112
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Lipid Metabolism
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 13
+    comb_idx <- 113
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Synaptic Pruning
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 14
+    comb_idx <- 114
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### T Cell, B Cell, & Other Immune Cell
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 15
+    comb_idx <- 115
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Inflammatory Response
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 16
+    comb_idx <- 116
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Macrophage & Astrocyte
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 17
+    comb_idx <- 117
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Oligodendrocyte & Myelin
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 1
+    sub_idx <- 18
+    comb_idx <- 118
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+Pooled LCM Proteomics - Pathways
 ===
 
 ```{r}
 idx <- 2
+sub_idx <- 0
 ```
 
 Row {.tabset}
 ---
 
-### Differentially Enriched Pathways
+### Tau & Neurofibrillary Tangle
 
 ```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
 selectizeInput(
-  paste0("gse", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = res_gse[[idx]]$GeneSet,
-  selected = rownames(top_gse[[idx]]),
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
 
 radioButtons(
-  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
 )
 ```
 
@@ -731,13 +2186,16 @@ radioButtons(
 renderPlot(
   {
     idx <- 2
+    sub_idx <- 1
+    comb_idx <- 21
 
     sig <- sig_gse[[idx]][
-      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
       sig <- sig[
-        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
 
@@ -748,7 +2206,7 @@ renderPlot(
       mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    if (input[[paste0("scaling", idx)]] == "Scaled") {
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
       mat <- t(
         apply(
           mat, MARGIN = 1,
@@ -768,7 +2226,7 @@ renderPlot(
         col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -796,7 +2254,7 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 1400,
+  width = 1450,
   height = 615,
   res = 96
 )
@@ -805,23 +2263,25 @@ renderPlot(
 </div>
 </div>
 
-### Enrichment Stats
+### Microtubule & Cytoskeletal
 
 ```{r}
-datatable_download_exp_15(res_gse[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Differentially Expressed Genes
-
-```{r}
 selectizeInput(
-  paste0("deg", idx),
-  label = "Type to Search Genes:",
-  choices = res_deg[[idx]]$Gene,
-  selected = rownames(top_deg[[idx]]),
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -831,107 +2291,47 @@ selectizeInput(
 renderPlot(
   {
     idx <- 2
+    sub_idx <- 2
+    comb_idx <- 22
 
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
     }
 
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
     ]
     if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
-    rownames(mat) <- gene_anno_sub$symbol
 
-    draw(
-      Heatmap(
-        mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        column_title = paste0(
-          data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
-          "(Adj. P < 0.05)"
-        ),
-        cluster_columns = FALSE,
-        cluster_rows = FALSE,
-        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
-        column_gap = unit(1, units = "mm"),
-        rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
-        column_title_gp = gpar(fontsize = 14),
-        row_title_rot = 0,
-        top_annotation = top_anno[[idx]],
-        show_column_names = FALSE,
-        cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
-        },
-        heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
-          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
-          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
         )
-      ),
-      heatmap_legend_side = "top"
-    )
-  },
-  width = 750,
-  height = 700,
-  res = 96
-)
-```
-
-</div>
-<div>
-
-```{r}
-renderPlot(
-  {
-    idx <- 2
-
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
-    ]
-    if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
-    }
-    rownames(mat) <- gene_anno_sub$symbol
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -944,11 +2344,14 @@ renderPlot(
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
           grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -956,8 +2359,8 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
@@ -965,22 +2368,25 @@ renderPlot(
 </div>
 </div>
 
-### Protein Stats
+### Death, Stress, & Ageing
 
 ```{r}
-datatable_download_exp_15(res_deg[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Pathway Genes
-
-```{r}
 selectizeInput(
-  paste0("path_deg", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[1],
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -990,67 +2396,67 @@ selectizeInput(
 renderPlot(
   {
     idx <- 2
+    sub_idx <- 3
+    comb_idx <- 23
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- genes[genes %notin% rownames(deg[[idx]])]
-    add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
 
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -1058,87 +2464,104 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
 
 </div>
+</div>
+
+### Protein Folding
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
 <div>
 
 ```{r}
 renderPlot(
   {
     idx <- 2
+    sub_idx <- 4
+    comb_idx <- 24
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- gene_anno_sub[
-      gene_anno_sub$symbol %notin% rownames(sig_deg[[idx]]),
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -1146,8 +2569,8 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
@@ -1155,30 +2578,1505 @@ renderPlot(
 </div>
 </div>
 
-Single-cell Transcriptomics - Human AD BA9
+### Synapse, Axon, & Dendrite
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 5
+    comb_idx <- 25
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Exocytosis & Endocytosis
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 6
+    comb_idx <- 26
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Apoptosis & Autophagy
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 7
+    comb_idx <- 27
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Proteasomal & Lysosomal
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 8
+    comb_idx <- 28
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Heat Shock
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 9
+    comb_idx <- 29
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Glycosaminoglycan
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 10
+    comb_idx <- 210
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Transcription & Translation
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 11
+    comb_idx <- 211
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Amyloid & Lipoprotein
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 12
+    comb_idx <- 212
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Lipid Metabolism
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 13
+    comb_idx <- 213
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Synaptic Pruning
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 14
+    comb_idx <- 214
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### T Cell, B Cell, & Other Immune Cell
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 15
+    comb_idx <- 215
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Inflammatory Response
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 16
+    comb_idx <- 216
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Macrophage & Astrocyte
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 17
+    comb_idx <- 217
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Oligodendrocyte & Myelin
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 2
+    sub_idx <- 18
+    comb_idx <- 218
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+Single-cell FACS Transcriptomics - Pathways
 ===
 
 ```{r}
 idx <- 3
+sub_idx <- 0
 ```
 
 Row {.tabset}
 ---
 
-### Differentially Enriched Pathways
+### Tau & Neurofibrillary Tangle
 
 ```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
 selectizeInput(
-  paste0("gse", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = res_gse[[idx]]$GeneSet,
-  selected = rownames(top_gse[[idx]]),
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
 
 radioButtons(
-  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
 )
 ```
 
@@ -1189,13 +4087,16 @@ radioButtons(
 renderPlot(
   {
     idx <- 3
+    sub_idx <- 1
+    comb_idx <- 31
 
     sig <- sig_gse[[idx]][
-      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
       sig <- sig[
-        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
 
@@ -1206,7 +4107,7 @@ renderPlot(
       mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    if (input[[paste0("scaling", idx)]] == "Scaled") {
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
       mat <- t(
         apply(
           mat, MARGIN = 1,
@@ -1226,7 +4127,7 @@ renderPlot(
         col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -1254,7 +4155,7 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 1400,
+  width = 1450,
   height = 615,
   res = 96
 )
@@ -1263,23 +4164,25 @@ renderPlot(
 </div>
 </div>
 
-### Enrichment Stats
+### Microtubule & Cytoskeletal
 
 ```{r}
-datatable_download_exp_15(res_gse[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Differentially Expressed Genes
-
-```{r}
 selectizeInput(
-  paste0("deg", idx),
-  label = "Type to Search Genes:",
-  choices = res_deg[[idx]]$Gene,
-  selected = rownames(top_deg[[idx]]),
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
   multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -1289,107 +4192,47 @@ selectizeInput(
 renderPlot(
   {
     idx <- 3
+    sub_idx <- 2
+    comb_idx <- 32
 
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
     }
 
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
     ]
     if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
-    rownames(mat) <- gene_anno_sub$symbol
 
-    draw(
-      Heatmap(
-        mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        column_title = paste0(
-          data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
-          "(Adj. P < 0.05)"
-        ),
-        cluster_columns = FALSE,
-        cluster_rows = FALSE,
-        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
-        column_gap = unit(1, units = "mm"),
-        rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
-        column_title_gp = gpar(fontsize = 14),
-        row_title_rot = 0,
-        top_annotation = top_anno[[idx]],
-        show_column_names = FALSE,
-        cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
-        },
-        heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
-          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
-          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
         )
-      ),
-      heatmap_legend_side = "top"
-    )
-  },
-  width = 750,
-  height = 700,
-  res = 96
-)
-```
-
-</div>
-<div>
-
-```{r}
-renderPlot(
-  {
-    idx <- 3
-
-    gene_anno_sub <- gene_anno[
-      gene_anno$symbol %in% input[[paste0("deg", idx)]],
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
-    ]
-    if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
-    }
-    rownames(mat) <- gene_anno_sub$symbol
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        col = col,
         column_title = paste0(
           data_sets[idx], "\n",
-          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
           "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
@@ -1397,16 +4240,19 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -1414,8 +4260,8 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
@@ -1423,22 +4269,25 @@ renderPlot(
 </div>
 </div>
 
-### Gene Stats
+### Death, Stress, & Ageing
 
 ```{r}
-datatable_download_exp_15(res_deg[[idx]])
-```
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
 
-### Pathway Genes
-
-```{r}
 selectizeInput(
-  paste0("path_deg", idx),
+  paste0("gse", comb_idx),
   label = "Type to Search Pathways:",
-  choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[2],
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
   width = "100%"
 )
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
 ```
 
 <div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
@@ -1448,67 +4297,67 @@ selectizeInput(
 renderPlot(
   {
     idx <- 3
+    sub_idx <- 3
+    comb_idx <- 33
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- genes[genes %notin% rownames(deg[[idx]])]
-    add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
 
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = data_types[idx], direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -1516,87 +4365,104 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
 
 </div>
+</div>
+
+### Protein Folding
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
 <div>
 
 ```{r}
 renderPlot(
   {
     idx <- 3
+    sub_idx <- 4
+    comb_idx <- 34
 
-    genes <- unlist(
-      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
-    )
-    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
-    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
-    add_anno <- gene_anno_sub[
-      gene_anno_sub$symbol %notin% rownames(sig_deg[[idx]]),
-    ]
-    gene_anno_sub <- gene_anno_sub[
-      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
-    ]
-    sig <- sig_deg[[idx]][
-      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
     ]
     if (nrow(sig) > 1) {
-      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
-    }
-
-    mat <- deg[[idx]][
-      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
-    ]
-    if (nrow(mat) > 1) {
-      mat <- mat[
-        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
       ]
     }
-    if (nrow(mat) > 0) {
-      rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
     }
 
-    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
-    rownames(add) <- add_anno$symbol
-    mat <- rbind(mat, add)
-    sig <- rbind(sig, add)
-    sig[is.na(sig)] <- ""
-
-    mat <- t(
-      apply(
-        mat, MARGIN = 1,
-        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
       )
-    )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
     draw(
       Heatmap(
         mat,
-        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
-        na_col = "darkgrey",
+        col = col,
         column_title = paste0(
-          data_sets[idx], ": ",
-          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
-          input[[paste0("path_deg", idx)]]
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
         ),
         cluster_columns = FALSE,
         cluster_rows = FALSE,
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
-          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title = title, direction = "horizontal",
           title_position = "topcenter", labels_gp = gpar(fontsize = 10),
           grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
         )
@@ -1604,8 +4470,1478 @@ renderPlot(
       heatmap_legend_side = "top"
     )
   },
-  width = 750,
-  height = 700,
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Synapse, Axon, & Dendrite
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 5
+    comb_idx <- 35
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Exocytosis & Endocytosis
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 6
+    comb_idx <- 36
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Apoptosis & Autophagy
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 7
+    comb_idx <- 37
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Proteasomal & Lysosomal
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 8
+    comb_idx <- 38
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Heat Shock
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 9
+    comb_idx <- 39
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Glycosaminoglycan
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 10
+    comb_idx <- 310
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Transcription & Translation
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 11
+    comb_idx <- 311
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Amyloid & Lipoprotein
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 12
+    comb_idx <- 312
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Lipid Metabolism
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 13
+    comb_idx <- 313
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Synaptic Pruning
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 14
+    comb_idx <- 314
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### T Cell, B Cell, & Other Immune Cell
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 15
+    comb_idx <- 315
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Inflammatory Response
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 16
+    comb_idx <- 316
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Macrophage & Astrocyte
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 17
+    comb_idx <- 317
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Oligodendrocyte & Myelin
+
+```{r}
+sub_idx <- sub_idx + 1
+comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+selectizeInput(
+  paste0("gse", comb_idx),
+  label = "Type to Search Pathways:",
+  choices = top_gse[[idx]][[sub_idx]],
+  selected = top_gse[[idx]][[sub_idx]][1:20],
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", comb_idx), label = NULL,
+  c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+    sub_idx <- 18
+    comb_idx <- 318
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", comb_idx)]], ,
+      drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", comb_idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", comb_idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1450,
+  height = 615,
   res = 96
 )
 ```
