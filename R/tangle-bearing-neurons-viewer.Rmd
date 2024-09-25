@@ -35,12 +35,13 @@ library(GSEABase)
 `%notin%` <- Negate(`%in%`)
 
 data_sets <- c(
-  "Laser-capture Microdissection Proteomics - Human AD BA9",
+  "Laser-capture Microdissection Proteomics - Human AD BA9 - New Data",
+  "Laser-capture Microdissection Proteomics - Human AD BA9 - Old Data",
   "Single-cell Transcriptomics - Human AD BA9"
 )
 data_types <- c(
-  "log2 LFQ Intensity", "log2 CPM",
-  "log2 Enrichment Score", "log2 Enrichment Score"
+  "log2 LFQ Intensity", "log2 LFQ Intensity", "log2 CPM",
+  "log2 Enrichment Score", "log2 Enrichment Score", "log2 Enrichment Score"
 )
 
 data_dir <- file.path("..", "data")
@@ -55,7 +56,7 @@ res_deg <- vector("list", length = length(data_sets))
 res_gse <- vector("list", length = length(data_sets))
 
 data_dir <- list.dirs(data_dir)
-data_dir <- data_dir[c(2, 3)]
+data_dir <- data_dir[c(2, 3, 4)]
 for (i in seq_along(data_sets)) {
   meta[[i]] <- readRDS(file.path(data_dir[i], "meta.rds"))
   deg[[i]] <- readRDS(file.path(data_dir[i], "deg.rds"))
@@ -238,7 +239,7 @@ datatable_download_exp_15 <- function(dt) {
 }
 ```
 
-Laser-capture Microdissection Proteomics - Human AD BA9
+Laser-capture Microdissection Proteomics - Human AD BA9 - New Data
 ===
 
 ```{r}
@@ -696,7 +697,7 @@ renderPlot(
 </div>
 </div>
 
-Single-cell Transcriptomics - Human AD BA9
+Laser-capture Microdissection Proteomics - Human AD BA9 - Old Data
 ===
 
 ```{r}
@@ -866,13 +867,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
           title = data_types[idx], direction = "horizontal",
@@ -938,13 +939,13 @@ renderPlot(
         column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = 14),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[idx]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
@@ -964,7 +965,7 @@ renderPlot(
 </div>
 </div>
 
-### Gene Stats
+### Protein Stats
 
 ```{r}
 datatable_download_exp_15(res_deg[[idx]])
@@ -977,7 +978,7 @@ selectizeInput(
   paste0("path_deg", idx),
   label = "Type to Search Pathways:",
   choices = rownames(res_gse[[idx]]),
-  selected = rownames(top_gse[[idx]])[2],
+  selected = rownames(top_gse[[idx]])[1],
   width = "100%"
 )
 ```
@@ -1070,6 +1071,464 @@ renderPlot(
 renderPlot(
   {
     idx <- 2
+
+    genes <- unlist(
+      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
+    )
+    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
+    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+    add_anno <- gene_anno_sub[
+      gene_anno_sub$symbol %notin% rownames(sig_deg[[idx]]),
+    ]
+    gene_anno_sub <- gene_anno_sub[
+      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
+    ]
+    sig <- sig_deg[[idx]][
+      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+    }
+
+    mat <- deg[[idx]][
+      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[
+        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      ]
+    }
+    if (nrow(mat) > 0) {
+      rownames(mat) <- gene_anno_sub$symbol
+    }
+
+    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
+    rownames(add) <- add_anno$symbol
+    mat <- rbind(mat, add)
+    sig <- rbind(sig, add)
+    sig[is.na(sig)] <- ""
+
+    mat <- t(
+      apply(
+        mat, MARGIN = 1,
+        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+      )
+    )
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          data_sets[idx], ": ",
+          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
+          input[[paste0("path_deg", idx)]]
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 10),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+        },
+        heatmap_legend_param = list(
+          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 750,
+  height = 700,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+Single-cell Transcriptomics - Human AD BA9
+===
+
+```{r}
+idx <- 3
+```
+
+Row {.tabset}
+---
+
+### Differentially Enriched Pathways
+
+```{r}
+selectizeInput(
+  paste0("gse", idx),
+  label = "Type to Search Pathways:",
+  choices = res_gse[[idx]]$GeneSet,
+  selected = rownames(top_gse[[idx]]),
+  multiple = TRUE,
+  width = "100%"
+)
+
+radioButtons(
+  paste0("scaling", idx), label = NULL, c("Scaled", "Unscaled"), inline = TRUE
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+
+    sig <- sig_gse[[idx]][
+      rownames(sig_gse[[idx]]) %in% input[[paste0("gse", idx)]], , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[
+        match(input[[paste0("gse", idx)]], rownames(sig)), , drop = FALSE
+      ]
+    }
+
+    mat <- gse[[idx]][
+      rownames(gse[[idx]]) %in% rownames(sig), , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(rownames(sig), rownames(mat)), , drop = FALSE]
+    }
+
+    if (input[[paste0("scaling", idx)]] == "Scaled") {
+      mat <- t(
+        apply(
+          mat, MARGIN = 1,
+          FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        )
+      )
+      col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+      title <- paste0("Scaled ", data_types[idx + 2])
+    } else {
+      col <- colorRamp2(range_gse[[idx]], colors = c("blue", "white", "red"))
+      title <- data_types[idx + 2]
+    }
+
+    draw(
+      Heatmap(
+        mat,
+        col = col,
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_gse[[idx]][1], " upregulated, ", n_gse[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        row_names_max_width = max_text_width(
+          rownames(mat), gp = gpar(fontsize = 14)
+        ),
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = title, direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 1400,
+  height = 615,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Enrichment Stats
+
+```{r}
+datatable_download_exp_15(res_gse[[idx]])
+```
+
+### Differentially Expressed Genes
+
+```{r}
+selectizeInput(
+  paste0("deg", idx),
+  label = "Type to Search Genes:",
+  choices = res_deg[[idx]]$Gene,
+  selected = rownames(top_deg[[idx]]),
+  multiple = TRUE,
+  width = "100%"
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+
+    gene_anno_sub <- gene_anno[
+      gene_anno$symbol %in% input[[paste0("deg", idx)]],
+    ]
+    gene_anno_sub <- gene_anno_sub[
+      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
+    ]
+    sig <- sig_deg[[idx]][
+      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+    }
+
+    mat <- deg[[idx]][
+      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
+    }
+    rownames(mat) <- gene_anno_sub$symbol
+
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 10),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+        },
+        heatmap_legend_param = list(
+          title = data_types[idx], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 750,
+  height = 700,
+  res = 96
+)
+```
+
+</div>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+
+    gene_anno_sub <- gene_anno[
+      gene_anno$symbol %in% input[[paste0("deg", idx)]],
+    ]
+    gene_anno_sub <- gene_anno_sub[
+      match(input[[paste0("deg", idx)]], gene_anno_sub$symbol),
+    ]
+    sig <- sig_deg[[idx]][
+      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+    }
+
+    mat <- deg[[idx]][
+      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE]
+    }
+    rownames(mat) <- gene_anno_sub$symbol
+
+    mat <- t(
+      apply(
+        mat, MARGIN = 1,
+        FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+      )
+    )
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        column_title = paste0(
+          data_sets[idx], "\n",
+          n_deg[[idx]][1], " upregulated, ", n_deg[[idx]][2], " downregulated ",
+          "(Adj. P < 0.05)"
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 10),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+        },
+        heatmap_legend_param = list(
+          title = paste0("Scaled ", data_types[idx]), direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 750,
+  height = 700,
+  res = 96
+)
+```
+
+</div>
+</div>
+
+### Gene Stats
+
+```{r}
+datatable_download_exp_15(res_deg[[idx]])
+```
+
+### Pathway Genes
+
+```{r}
+selectizeInput(
+  paste0("path_deg", idx),
+  label = "Type to Search Pathways:",
+  choices = rownames(res_gse[[idx]]),
+  selected = rownames(top_gse[[idx]])[2],
+  width = "100%"
+)
+```
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly;'>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
+
+    genes <- unlist(
+      geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
+    )
+    gene_anno_sub <- gene_anno[gene_anno$ensembl %in% genes, ]
+    gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+    add_anno <- genes[genes %notin% rownames(deg[[idx]])]
+    add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
+    gene_anno_sub <- gene_anno_sub[
+      gene_anno_sub$symbol %in% rownames(sig_deg[[idx]]),
+    ]
+    sig <- sig_deg[[idx]][
+      rownames(sig_deg[[idx]]) %in% gene_anno_sub$symbol, , drop = FALSE
+    ]
+    if (nrow(sig) > 1) {
+      sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+    }
+
+    mat <- deg[[idx]][
+      rownames(deg[[idx]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+    ]
+    if (nrow(mat) > 1) {
+      mat <- mat[
+        match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+      ]
+    }
+    if (nrow(mat) > 0) {
+      rownames(mat) <- gene_anno_sub$symbol
+    }
+
+    add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[idx]]))
+    rownames(add) <- add_anno$symbol
+    mat <- rbind(mat, add)
+    sig <- rbind(sig, add)
+    sig[is.na(sig)] <- ""
+
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_deg[[idx]], colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          data_sets[idx], ": ",
+          gene_sets[[input[[paste0("path_deg", idx)]]]]@shortDescription, "\n",
+          input[[paste0("path_deg", idx)]]
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[idx]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 10),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[idx]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 7))
+        },
+        heatmap_legend_param = list(
+          title = data_types[idx], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  },
+  width = 750,
+  height = 700,
+  res = 96
+)
+```
+
+</div>
+<div>
+
+```{r}
+renderPlot(
+  {
+    idx <- 3
 
     genes <- unlist(
       geneIds(gene_sets[names(gene_sets) %in% input[[paste0("path_deg", idx)]]])
