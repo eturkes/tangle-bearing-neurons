@@ -792,7 +792,7 @@ shinyApp(
           col = col,
           column_title = paste0(
             data_sets[1], "\n",
-            "Significant ", names(priority_gse)[1], " Pathways ",
+            "Significant ", names(priority_gse)[2], " Pathways ",
             "(Adj. P < 0.05)"
           ),
           cluster_columns = FALSE,
