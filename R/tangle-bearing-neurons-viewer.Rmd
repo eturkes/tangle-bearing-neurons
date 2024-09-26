@@ -139,9 +139,7 @@ priority_gse <- c(
   `Macrophage & Astrocyte` =
     "macrophage | astrocyte",
   `Oligodendrocyte & Myelin` =
-    "oligodendrocyte | Schwann | myelin",
-  `Developmental`=
-    "development | differentiation | morphogenesis"
+    "oligodendrocyte | Schwann | myelin"
 )
 
 if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
