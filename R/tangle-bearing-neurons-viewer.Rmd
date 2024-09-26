@@ -725,15 +725,24 @@ shinyApp(
       multiple = TRUE,
       width = "100%"
     ),
-    radioButtons(
-      paste0("scaling", comb_idx), label = NULL,
-      c("Scaled", "Unscaled"), inline = TRUE
+    fluidRow(
+      column(
+        width = 3,
+        radioButtons(
+          paste0("scaling", comb_idx), label = NULL,
+          c("Scaled", "Unscaled"), inline = TRUE
+        )
+      ),
+      column(
+        width = 1,
+        actionButton(paste0("init", comb_idx), label = "Initialise"),
+        style = 'padding-left: 120px;'
+      ),
     ),
     InteractiveComplexHeatmapOutput(
       heatmap_id = paste0("ht", comb_idx),
       title1 = c(
-        "Click row to see Proteins. Drag bottom-right corner to resize.
-        Resizing also fixes legend position."
+        "Click row to see Proteins. Drag bottom-right corner to resize."
       ),
       title3 = c(
         "Arrows indicate significance at Adj. P < 0.05.
@@ -748,6 +757,7 @@ shinyApp(
     observeEvent({
       input[[paste0("gse", 12)]]
       input[[paste0("scaling", 12)]]
+      input[[paste0("init", 12)]]
     }, {
 
       sig <- sig_gse[[1]][
