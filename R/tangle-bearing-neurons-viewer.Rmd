@@ -31,10 +31,12 @@ library(InteractiveComplexHeatmap)
 library(circlize)
 library(GSEABase)
 
+`%notin%` <- Negate(`%in%`)
+
 data_sets <- c(
-  "Laser-capture Microdissection Proteomics - Human AD BA9 - New Data",
-  "Laser-capture Microdissection Proteomics - Human AD BA9 - Old Data",
-  "Single-cell Transcriptomics - Human AD BA9"
+  "LCM Mass Spec - Human AD BA9 - Single-cell",
+  "LCM Mass Spec - Human AD BA9 - Pooled-cells",
+  "FACS-sorted ssRNAseq - Human AD BA9"
 )
 data_types <- c(
   "log2 LFQ Intensity", "log2 LFQ Intensity", "log2 CPM",
@@ -267,7 +269,7 @@ if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
 }
 ```
 
-Single-cell LCM Proteomics - Pathways
+Laser-capture Microdissection Mass Spec - Human AD BA9 - Single-cell
 ===
 
 ```{r}
@@ -278,11 +280,12 @@ sub_idx <- 0
 Row {.tabset}
 ---
 
-```{r results='asis'}
+```{r results = "asis"}
 cat(
   paste0(
     "### ", names(priority_gse)[sub_idx + 1],
-    " (", n_gse[[idx]][[sub_idx + 1]], "%)"
+    " (", n_gse[[idx]][[sub_idx + 1]], "%",
+    " Of Tested Pathways Significant)"
   )
 )
 ```
@@ -290,6 +293,154 @@ cat(
 ```{r}
 sub_idx <- sub_idx + 1
 comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+click_11_unscaled <- function(df, output) {
+  if (is.null(df)) {
+    df$row_label <- top_gse[[1]][[1]][1]
+  }
+
+  features <- unlist(geneIds(gene_sets[names(gene_sets) %in% df$row_label]))
+  gene_anno_sub <- gene_anno[gene_anno$ensembl %in% features, ]
+  gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+  add_anno <- features[features %notin% rownames(deg[[1]])]
+  add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
+  gene_anno_sub <- gene_anno_sub[
+    gene_anno_sub$symbol %in% rownames(sig_deg[[1]]),
+  ]
+  sig <- sig_deg[[1]][
+    rownames(sig_deg[[1]]) %in% gene_anno_sub$symbol, , drop = FALSE
+  ]
+  if (nrow(sig) > 1) {
+    sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+  }
+
+  mat <- deg[[1]][
+    rownames(deg[[1]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+  ]
+  if (nrow(mat) > 1) {
+    mat <- mat[
+      match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+    ]
+  }
+  if (nrow(mat) > 0) {
+    rownames(mat) <- gene_anno_sub$symbol
+  }
+
+  add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[1]]))
+  rownames(add) <- add_anno$symbol
+  mat <- rbind(mat, add)
+  sig <- rbind(sig, add)
+  sig[is.na(sig)] <- ""
+
+  output$heatmap <- renderPlot({
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_deg[[1]], colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          gene_sets[[df$row_label]]@shortDescription, "\n", df$row_label
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[1]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = data_types[1], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  }, res = 96)
+}
+
+click_11_scaled <- function(df, output) {
+  if (is.null(df)) {
+    df$row_label <- top_gse[[1]][[1]][1]
+  }
+
+  features <- unlist(geneIds(gene_sets[names(gene_sets) %in% df$row_label]))
+  gene_anno_sub <- gene_anno[gene_anno$ensembl %in% features, ]
+  gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+  add_anno <- features[features %notin% rownames(deg[[1]])]
+  add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
+  gene_anno_sub <- gene_anno_sub[
+    gene_anno_sub$symbol %in% rownames(sig_deg[[1]]),
+  ]
+  sig <- sig_deg[[1]][
+    rownames(sig_deg[[1]]) %in% gene_anno_sub$symbol, , drop = FALSE
+  ]
+  if (nrow(sig) > 1) {
+    sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+  }
+
+  mat <- deg[[1]][
+    rownames(deg[[1]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+  ]
+  if (nrow(mat) > 1) {
+    mat <- mat[
+      match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+    ]
+  }
+  if (nrow(mat) > 0) {
+    rownames(mat) <- gene_anno_sub$symbol
+  }
+
+  add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[1]]))
+  rownames(add) <- add_anno$symbol
+  mat <- rbind(mat, add)
+  sig <- rbind(sig, add)
+  sig[is.na(sig)] <- ""
+
+  mat <- t(
+    apply(
+      mat, MARGIN = 1,
+      FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+    )
+  )
+  output$heatmap <- renderPlot({
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          gene_sets[[df$row_label]]@shortDescription, "\n", df$row_label
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[1]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = paste0("Scaled ", data_types[1]), direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  }, res = 96)
+}
 
 shinyApp(
 
@@ -307,9 +458,14 @@ shinyApp(
       c("Scaled", "Unscaled"), inline = TRUE
     ),
     InteractiveComplexHeatmapOutput(
-      heatmap_id = paste0("ht", comb_idx), response = "click",
-      title1 = "Click Row to See Proteins", title2 = NULL, title3 = NULL,
-      width1 = 1200, height1 = 600, compact = TRUE
+      heatmap_id = paste0("ht", comb_idx),
+      title1 = "Click Row to See Proteins",
+      title3 = c(
+        "Arrows Indicate Significance at Adj. P < 0.05.
+        Grey Cells Indicate Lowly or Undetected Proteins"
+      ),
+      width1 = 1200, height1 = 600, response = "click",
+      output_ui = plotOutput("heatmap", width = 600, height = 610)
     )
   ),
   
@@ -341,10 +497,10 @@ shinyApp(
           )
         )
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
-        title <- paste0("Scaled ", data_types[1 + 2])
+        title <- paste0("Scaled ", data_types[1 + 3])
       } else {
         col <- colorRamp2(range_gse[[1]], colors = c("blue", "white", "red"))
-        title <- data_types[1 + 2]
+        title <- data_types[1 + 3]
       }
 
       ht <- draw(
@@ -353,7 +509,7 @@ shinyApp(
           col = col,
           column_title = paste0(
             data_sets[1], "\n",
-            "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+            "Significant ", names(priority_gse)[1], " Pathways ",
             "(Adj. P < 0.05)"
           ),
           cluster_columns = FALSE,
@@ -380,15 +536,24 @@ shinyApp(
         ),
         heatmap_legend_side = "top"
       )
-      makeInteractiveComplexHeatmap(
-        input, output, session, ht, res = 96, heatmap_id = paste0("ht", 11)
-      )
+
+      if (input[[paste0("scaling", 11)]] == "Scaled") {
+        makeInteractiveComplexHeatmap(
+          input, output, session, ht, res = 96,
+          heatmap_id = paste0("ht", 11), click_action = click_11_scaled
+        )
+      } else {
+        makeInteractiveComplexHeatmap(
+          input, output, session, ht, res = 96,
+          heatmap_id = paste0("ht", 11), click_action = click_11_unscaled
+        )
+      }
     })
   },
 )
 ```
 
-```{r results='asis'}
+```{r results = "asis"}
 cat(
   paste0(
     "### ", names(priority_gse)[sub_idx + 1],
@@ -400,6 +565,154 @@ cat(
 ```{r}
 sub_idx <- sub_idx + 1
 comb_idx <- as.numeric(paste0(idx, sub_idx))
+
+click_12_unscaled <- function(df, output) {
+  if (is.null(df)) {
+    df$row_label <- top_gse[[1]][[2]][1]
+  }
+
+  features <- unlist(geneIds(gene_sets[names(gene_sets) %in% df$row_label]))
+  gene_anno_sub <- gene_anno[gene_anno$ensembl %in% features, ]
+  gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+  add_anno <- features[features %notin% rownames(deg[[1]])]
+  add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
+  gene_anno_sub <- gene_anno_sub[
+    gene_anno_sub$symbol %in% rownames(sig_deg[[1]]),
+  ]
+  sig <- sig_deg[[1]][
+    rownames(sig_deg[[1]]) %in% gene_anno_sub$symbol, , drop = FALSE
+  ]
+  if (nrow(sig) > 1) {
+    sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+  }
+
+  mat <- deg[[1]][
+    rownames(deg[[1]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+  ]
+  if (nrow(mat) > 1) {
+    mat <- mat[
+      match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+    ]
+  }
+  if (nrow(mat) > 0) {
+    rownames(mat) <- gene_anno_sub$symbol
+  }
+
+  add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[1]]))
+  rownames(add) <- add_anno$symbol
+  mat <- rbind(mat, add)
+  sig <- rbind(sig, add)
+  sig[is.na(sig)] <- ""
+
+  output$heatmap <- renderPlot({
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(range_deg[[1]], colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          gene_sets[[df$row_label]]@shortDescription, "\n", df$row_label
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[1]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = data_types[1], direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  }, res = 96)
+}
+
+click_12_scaled <- function(df, output) {
+  if (is.null(df)) {
+    df$row_label <- top_gse[[1]][[2]][1]
+  }
+
+  features <- unlist(geneIds(gene_sets[names(gene_sets) %in% df$row_label]))
+  gene_anno_sub <- gene_anno[gene_anno$ensembl %in% features, ]
+  gene_anno_sub <- gene_anno_sub[order(gene_anno_sub$symbol), ]
+  add_anno <- features[features %notin% rownames(deg[[1]])]
+  add_anno <- gene_anno_sub[gene_anno_sub$ensembl %in% add_anno, ]
+  gene_anno_sub <- gene_anno_sub[
+    gene_anno_sub$symbol %in% rownames(sig_deg[[1]]),
+  ]
+  sig <- sig_deg[[1]][
+    rownames(sig_deg[[1]]) %in% gene_anno_sub$symbol, , drop = FALSE
+  ]
+  if (nrow(sig) > 1) {
+    sig <- sig[match(gene_anno_sub$symbol, rownames(sig)), , drop = FALSE]
+  }
+
+  mat <- deg[[1]][
+    rownames(deg[[1]]) %in% gene_anno_sub$ensembl, , drop = FALSE
+  ]
+  if (nrow(mat) > 1) {
+    mat <- mat[
+      match(gene_anno_sub$ensembl, rownames(mat)), , drop = FALSE
+    ]
+  }
+  if (nrow(mat) > 0) {
+    rownames(mat) <- gene_anno_sub$symbol
+  }
+
+  add <- matrix(NA, nrow = nrow(add_anno), ncol = ncol(deg[[1]]))
+  rownames(add) <- add_anno$symbol
+  mat <- rbind(mat, add)
+  sig <- rbind(sig, add)
+  sig[is.na(sig)] <- ""
+
+  mat <- t(
+    apply(
+      mat, MARGIN = 1,
+      FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+    )
+  )
+  output$heatmap <- renderPlot({
+    draw(
+      Heatmap(
+        mat,
+        col = colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red")),
+        na_col = "darkgrey",
+        column_title = paste0(
+          gene_sets[[df$row_label]]@shortDescription, "\n", df$row_label
+        ),
+        cluster_columns = FALSE,
+        cluster_rows = FALSE,
+        column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
+        column_gap = unit(1, units = "mm"),
+        rect_gp = gpar(col = "black", lwd = 0.25),
+        row_names_gp = gpar(fontsize = 14),
+        column_title_gp = gpar(fontsize = 14),
+        row_title_rot = 0,
+        top_annotation = top_anno[[1]],
+        show_column_names = FALSE,
+        cell_fun = function(j, i, x, y, width, height, fill) {
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+        },
+        heatmap_legend_param = list(
+          title = paste0("Scaled ", data_types[1]), direction = "horizontal",
+          title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+          grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+        )
+      ),
+      heatmap_legend_side = "top"
+    )
+  }, res = 96)
+}
 
 shinyApp(
 
@@ -417,9 +730,14 @@ shinyApp(
       c("Scaled", "Unscaled"), inline = TRUE
     ),
     InteractiveComplexHeatmapOutput(
-      heatmap_id = paste0("ht", comb_idx), response = "click",
-      title1 = "Click Row to See Proteins", title2 = NULL, title3 = NULL,
-      width1 = 1200, height1 = 600, compact = TRUE
+      heatmap_id = paste0("ht", comb_idx),
+      title1 = "Click Row to See Proteins",
+      title3 = c(
+        "Arrows Indicate Significance at Adj. P < 0.05.
+        Grey Cells Indicate Lowly or Undetected Proteins"
+      ),
+      width1 = 1200, height1 = 600, response = "click",
+      output_ui = plotOutput("heatmap", width = 600, height = 610)
     )
   ),
   
@@ -451,10 +769,10 @@ shinyApp(
           )
         )
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
-        title <- paste0("Scaled ", data_types[1 + 2])
+        title <- paste0("Scaled ", data_types[1 + 3])
       } else {
         col <- colorRamp2(range_gse[[1]], colors = c("blue", "white", "red"))
-        title <- data_types[1 + 2]
+        title <- data_types[1 + 3]
       }
 
       ht <- draw(
@@ -463,7 +781,7 @@ shinyApp(
           col = col,
           column_title = paste0(
             data_sets[1], "\n",
-            "Significant ", names(priority_gse)[sub_idx], " Pathways ",
+            "Significant ", names(priority_gse)[1], " Pathways ",
             "(Adj. P < 0.05)"
           ),
           cluster_columns = FALSE,
@@ -490,9 +808,18 @@ shinyApp(
         ),
         heatmap_legend_side = "top"
       )
-      makeInteractiveComplexHeatmap(
-        input, output, session, ht, res = 96, heatmap_id = paste0("ht", 12)
-      )
+
+      if (input[[paste0("scaling", 12)]] == "Scaled") {
+        makeInteractiveComplexHeatmap(
+          input, output, session, ht, res = 96,
+          heatmap_id = paste0("ht", 12), click_action = click_12_scaled
+        )
+      } else {
+        makeInteractiveComplexHeatmap(
+          input, output, session, ht, res = 96,
+          heatmap_id = paste0("ht", 12), click_action = click_12_unscaled
+        )
+      }
     })
   },
 )
