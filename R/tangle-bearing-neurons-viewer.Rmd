@@ -459,10 +459,10 @@ shinyApp(
     ),
     InteractiveComplexHeatmapOutput(
       heatmap_id = paste0("ht", comb_idx),
-      title1 = "Click Row to See Proteins",
+      title1 = "Click row to See proteins. Drag bottom-right corner to resize.",
       title3 = c(
-        "Arrows Indicate Significance at Adj. P < 0.05.
-        Grey Cells Indicate Lowly or Undetected Proteins"
+        "Arrows indicate significance at Adj. P < 0.05.
+        Grey cells indicate lowly or undetected proteins."
       ),
       width1 = 1200, height1 = 600, response = "click",
       output_ui = plotOutput("heatmap", width = 600, height = 610)
@@ -731,10 +731,13 @@ shinyApp(
     ),
     InteractiveComplexHeatmapOutput(
       heatmap_id = paste0("ht", comb_idx),
-      title1 = "Click Row to See Proteins",
+      title1 = c(
+        "Click row to see Proteins. Drag bottom-right corner to resize.
+        Resizing also fixes legend position."
+      ),
       title3 = c(
-        "Arrows Indicate Significance at Adj. P < 0.05.
-        Grey Cells Indicate Lowly or Undetected Proteins"
+        "Arrows indicate significance at Adj. P < 0.05.
+        Grey cells indicate lowly or undetected proteins."
       ),
       width1 = 1200, height1 = 600, response = "click",
       output_ui = plotOutput("heatmap", width = 600, height = 610)
