@@ -32,6 +32,8 @@ library(GSEABase)
 
 `%notin%` <- Negate(`%in%`)
 
+pdf(NULL)
+
 data_sets <- c(
   "LCM Mass Spec - Human AD BA9 - Single-cell",
   "LCM Mass Spec - Human AD BA9 - Pooled-cells",
