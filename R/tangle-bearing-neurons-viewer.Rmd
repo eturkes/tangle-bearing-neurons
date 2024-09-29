@@ -345,13 +345,13 @@ click_11_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -422,13 +422,13 @@ click_11_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -473,8 +473,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -527,7 +527,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -536,7 +536,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -628,13 +628,13 @@ click_12_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -705,13 +705,13 @@ click_12_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -758,8 +758,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -812,7 +812,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -821,7 +821,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -913,13 +913,13 @@ click_13_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -990,13 +990,13 @@ click_13_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -1043,8 +1043,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -1097,7 +1097,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -1106,7 +1106,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -1198,13 +1198,13 @@ click_14_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -1275,13 +1275,13 @@ click_14_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -1328,8 +1328,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -1382,7 +1382,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -1391,7 +1391,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -1483,13 +1483,13 @@ click_15_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -1560,13 +1560,13 @@ click_15_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -1613,8 +1613,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -1667,7 +1667,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -1676,7 +1676,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -1768,13 +1768,13 @@ click_16_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -1845,13 +1845,13 @@ click_16_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -1898,8 +1898,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -1952,7 +1952,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -1961,7 +1961,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2053,13 +2053,13 @@ click_17_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -2130,13 +2130,13 @@ click_17_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -2183,8 +2183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -2237,7 +2237,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -2246,7 +2246,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2338,13 +2338,13 @@ click_18_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -2415,13 +2415,13 @@ click_18_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -2468,8 +2468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -2522,7 +2522,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -2531,7 +2531,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2623,13 +2623,13 @@ click_19_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -2700,13 +2700,13 @@ click_19_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -2753,8 +2753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -2807,7 +2807,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -2816,7 +2816,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2908,13 +2908,13 @@ click_110_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -2985,13 +2985,13 @@ click_110_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -3038,8 +3038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -3092,7 +3092,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -3101,7 +3101,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3193,13 +3193,13 @@ click_111_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -3270,13 +3270,13 @@ click_111_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -3323,8 +3323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -3377,7 +3377,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -3386,7 +3386,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3478,13 +3478,13 @@ click_112_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -3555,13 +3555,13 @@ click_112_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -3608,8 +3608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -3662,7 +3662,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -3671,7 +3671,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3763,13 +3763,13 @@ click_113_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -3840,13 +3840,13 @@ click_113_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -3893,8 +3893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -3947,7 +3947,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -3956,7 +3956,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4048,13 +4048,13 @@ click_114_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -4125,13 +4125,13 @@ click_114_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -4178,8 +4178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -4232,7 +4232,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -4241,7 +4241,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4333,13 +4333,13 @@ click_115_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -4410,13 +4410,13 @@ click_115_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -4463,8 +4463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -4517,7 +4517,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -4526,7 +4526,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4618,13 +4618,13 @@ click_116_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -4695,13 +4695,13 @@ click_116_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -4748,8 +4748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -4802,7 +4802,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -4811,7 +4811,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4903,13 +4903,13 @@ click_117_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[1], direction = "horizontal",
@@ -4980,13 +4980,13 @@ click_117_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[1]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[1]), direction = "horizontal",
@@ -5033,8 +5033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -5087,7 +5087,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[1]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[1]],
@@ -5096,7 +5096,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5200,13 +5200,13 @@ click_21_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -5277,13 +5277,13 @@ click_21_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -5328,8 +5328,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -5382,7 +5382,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -5391,7 +5391,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5483,13 +5483,13 @@ click_22_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -5560,13 +5560,13 @@ click_22_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -5613,8 +5613,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -5667,7 +5667,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -5676,7 +5676,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5768,13 +5768,13 @@ click_23_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -5845,13 +5845,13 @@ click_23_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -5898,8 +5898,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -5952,7 +5952,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -5961,7 +5961,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6053,13 +6053,13 @@ click_24_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -6130,13 +6130,13 @@ click_24_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -6183,8 +6183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -6237,7 +6237,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -6246,7 +6246,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6338,13 +6338,13 @@ click_25_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -6415,13 +6415,13 @@ click_25_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -6468,8 +6468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -6522,7 +6522,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -6531,7 +6531,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6623,13 +6623,13 @@ click_26_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -6700,13 +6700,13 @@ click_26_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -6753,8 +6753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -6807,7 +6807,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -6816,7 +6816,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6908,13 +6908,13 @@ click_27_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -6985,13 +6985,13 @@ click_27_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -7038,8 +7038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -7092,7 +7092,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -7101,7 +7101,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7193,13 +7193,13 @@ click_28_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -7270,13 +7270,13 @@ click_28_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -7323,8 +7323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -7377,7 +7377,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -7386,7 +7386,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7478,13 +7478,13 @@ click_29_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -7555,13 +7555,13 @@ click_29_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -7608,8 +7608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -7662,7 +7662,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -7671,7 +7671,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7763,13 +7763,13 @@ click_210_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -7840,13 +7840,13 @@ click_210_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -7893,8 +7893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -7947,7 +7947,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -7956,7 +7956,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8048,13 +8048,13 @@ click_211_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -8125,13 +8125,13 @@ click_211_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -8178,8 +8178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -8232,7 +8232,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -8241,7 +8241,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8333,13 +8333,13 @@ click_212_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -8410,13 +8410,13 @@ click_212_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -8463,8 +8463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -8517,7 +8517,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -8526,7 +8526,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8618,13 +8618,13 @@ click_213_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -8695,13 +8695,13 @@ click_213_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -8748,8 +8748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -8802,7 +8802,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -8811,7 +8811,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8903,13 +8903,13 @@ click_214_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -8980,13 +8980,13 @@ click_214_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -9033,8 +9033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -9087,7 +9087,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -9096,7 +9096,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -9188,13 +9188,13 @@ click_215_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -9265,13 +9265,13 @@ click_215_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -9318,8 +9318,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -9372,7 +9372,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -9381,7 +9381,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -9473,13 +9473,13 @@ click_216_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -9550,13 +9550,13 @@ click_216_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -9603,8 +9603,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -9657,7 +9657,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -9666,7 +9666,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -9758,13 +9758,13 @@ click_217_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -9835,13 +9835,13 @@ click_217_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -9888,8 +9888,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -9942,7 +9942,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
@@ -9951,7 +9951,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -10055,13 +10055,13 @@ click_31_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -10132,13 +10132,13 @@ click_31_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -10183,8 +10183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -10237,7 +10237,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -10246,7 +10246,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -10338,13 +10338,13 @@ click_32_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -10415,13 +10415,13 @@ click_32_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -10468,8 +10468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -10522,7 +10522,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -10531,7 +10531,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -10623,13 +10623,13 @@ click_33_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -10700,13 +10700,13 @@ click_33_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -10753,8 +10753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -10807,7 +10807,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -10816,7 +10816,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -10908,13 +10908,13 @@ click_34_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -10985,13 +10985,13 @@ click_34_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -11038,8 +11038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -11092,7 +11092,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -11101,7 +11101,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -11193,13 +11193,13 @@ click_35_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -11270,13 +11270,13 @@ click_35_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -11323,8 +11323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -11377,7 +11377,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -11386,7 +11386,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -11478,13 +11478,13 @@ click_36_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -11555,13 +11555,13 @@ click_36_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -11608,8 +11608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -11662,7 +11662,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -11671,7 +11671,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -11763,13 +11763,13 @@ click_37_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -11840,13 +11840,13 @@ click_37_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -11893,8 +11893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -11947,7 +11947,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -11956,7 +11956,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -12048,13 +12048,13 @@ click_38_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -12125,13 +12125,13 @@ click_38_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -12178,8 +12178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -12232,7 +12232,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -12241,7 +12241,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -12333,13 +12333,13 @@ click_39_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -12410,13 +12410,13 @@ click_39_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -12463,8 +12463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -12517,7 +12517,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -12526,7 +12526,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -12618,13 +12618,13 @@ click_310_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -12695,13 +12695,13 @@ click_310_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -12748,8 +12748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -12802,7 +12802,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -12811,7 +12811,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -12903,13 +12903,13 @@ click_311_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -12980,13 +12980,13 @@ click_311_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -13033,8 +13033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -13087,7 +13087,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -13096,7 +13096,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -13188,13 +13188,13 @@ click_312_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -13265,13 +13265,13 @@ click_312_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -13318,8 +13318,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -13372,7 +13372,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -13381,7 +13381,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -13473,13 +13473,13 @@ click_313_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -13550,13 +13550,13 @@ click_313_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -13603,8 +13603,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -13657,7 +13657,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -13666,7 +13666,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -13758,13 +13758,13 @@ click_314_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -13835,13 +13835,13 @@ click_314_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -13888,8 +13888,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -13942,7 +13942,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -13951,7 +13951,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -14043,13 +14043,13 @@ click_315_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -14120,13 +14120,13 @@ click_315_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -14173,8 +14173,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -14227,7 +14227,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -14236,7 +14236,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -14328,13 +14328,13 @@ click_316_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -14405,13 +14405,13 @@ click_316_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -14458,8 +14458,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -14512,7 +14512,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -14521,7 +14521,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -14613,13 +14613,13 @@ click_317_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -14690,13 +14690,13 @@ click_317_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 14),
+        row_names_gp = gpar(fontsize = 10),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -14743,8 +14743,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1200, height1 = 600, response = "click",
-      output_ui = plotOutput("heatmap", width = 600, height = 610)
+      width1 = 1150, height1 = 425, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 480)
     )
   ),
   
@@ -14797,7 +14797,7 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 14),
+          row_names_gp = gpar(fontsize = 13),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
@@ -14806,7 +14806,7 @@ shinyApp(
             rownames(mat), gp = gpar(fontsize = 14)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 12))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
