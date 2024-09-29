@@ -473,8 +473,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -758,8 +758,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -1043,8 +1043,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -1328,8 +1328,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -1613,8 +1613,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -1898,8 +1898,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -2183,8 +2183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -2468,8 +2468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -2753,8 +2753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -3038,8 +3038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -3323,8 +3323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -3608,8 +3608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -3893,8 +3893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -4178,8 +4178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -4463,8 +4463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -4748,8 +4748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -5033,8 +5033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -5328,8 +5328,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -5613,8 +5613,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -5898,8 +5898,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -6183,8 +6183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -6468,8 +6468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -6753,8 +6753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -7038,8 +7038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -7323,8 +7323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -7608,8 +7608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -7893,8 +7893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -8178,8 +8178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -8463,8 +8463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -8748,8 +8748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -9033,8 +9033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -9318,8 +9318,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -9603,8 +9603,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -9888,8 +9888,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -10183,8 +10183,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -10468,8 +10468,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -10753,8 +10753,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -11038,8 +11038,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -11323,8 +11323,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -11608,8 +11608,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -11893,8 +11893,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -12178,8 +12178,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -12463,8 +12463,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -12748,8 +12748,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -13033,8 +13033,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -13318,8 +13318,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -13603,8 +13603,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -13888,8 +13888,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -14173,8 +14173,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -14458,8 +14458,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
@@ -14743,8 +14743,8 @@ shinyApp(
         "Arrows indicate significance at Adj. P < 0.05.
         Grey cells indicate lowly or undetected proteins."
       ),
-      width1 = 1150, height1 = 425, response = "click",
-      output_ui = plotOutput("heatmap", width = 675, height = 480)
+      width1 = 1150, height1 = 492, response = "click",
+      output_ui = plotOutput("heatmap", width = 675, height = 500)
     )
   ),
   
