@@ -126,7 +126,7 @@ priority_gse <- c(
   `Glycosaminoglycan`=
     "heparan | chondroitin | sulfotransferase | glycosaminoglycan",
   `Transcription & Translation` =
-    "transcription | translation",
+    "transcription | translation | dna | dbp | rna | rbp",
   `Amyloid & Lipoprotein` =
     "amyloid | lipoprotein",
   `Lipid Metabolism`=
