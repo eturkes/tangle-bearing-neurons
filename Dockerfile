@@ -23,10 +23,16 @@ LABEL org.opencontainers.image.authors="Emir Turkes emir.turkes@eturkes.com"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         zlib1g-dev \
+        libglpk40 \
     && Rscript -e "install.packages('flexdashboard')" \
         -e "install.packages('stringr')" \
         -e "install.packages('conflicted')" \
         -e "install.packages('DT')" \
+        -e "install.packages('reshape2')" \
+        -e "install.packages('dplyr')" \
+        -e "install.packages('igraph')" \
+        -e "install.packages('qgraph')" \
+        -e "install.packages('visNetwork')" \
         -e "install.packages('BiocManager')" \
         -e "install.packages('remotes')" \
         -e "BiocManager::install('GSEABase')" \

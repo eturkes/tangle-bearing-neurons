@@ -29,6 +29,11 @@ library(scales)
 library(InteractiveComplexHeatmap)
 library(circlize)
 library(GSEABase)
+library(reshape2)
+library(dplyr)
+library(igraph)
+library(qgraph)
+library(visNetwork)
 
 `%notin%` <- Negate(`%in%`)
 
@@ -10543,6 +10548,544 @@ shinyApp(
     })
   },
 )
+```
+
+Network Analysis
+===
+
+Row {.tabset}
+---
+
+### LCM Mass Spec - UP
+
+```{r}
+i <- 2
+
+de_gse <- rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ])
+up_gse <- rownames(res_gse[[i]][res_gse[[i]]$Coef > 0, ])
+de_deg <- rownames(res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ])
+up_deg <- rownames(res_deg[[i]][res_deg[[i]]$Coef > 0, ])
+
+net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+names(net_data)[1] <- "ensembl"
+names(net_data)[2] <- "gene_set"
+
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+net_data$gse_direction <- ifelse(
+  net_data$gene_set %in% up_gse, yes = "up", no = "down"
+)
+net_data$gene_DE <- ifelse(
+  net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+)
+net_data$gene_direction <- ifelse(
+  net_data$ensembl %in% up_deg, yes = "up", no = "down"
+)
+
+remove <- which(net_data$gse_direction != net_data$gene_direction)
+net_data <- net_data[-remove, ]
+net_data <- net_data[net_data$gene_DE == "yes", ]
+
+net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
+net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
+
+hub_mat <- as.data.frame.matrix(table(net_data_up[ , c(3, 2)]))
+hub_mat <- hub_mat == 1
+hub_mat <- hub_mat %*% t(hub_mat)
+diag(hub_mat) <- 0
+graph <- graph_from_adjacency_matrix(hub_mat, mode = "upper", weighted = TRUE)
+
+net_data_table <- table(net_data_up$symbol)
+gene_sets_table <- table(unlist(geneIds(gene_sets)))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% names(gene_sets_table), ]
+gene_anno_sub <- gene_anno_sub[
+  match(names(gene_sets_table), gene_anno_sub$ensembl),
+]
+names(gene_sets_table) <- gene_anno_sub$symbol
+gene_sets_table <- gene_sets_table[
+  names(gene_sets_table) %in% names(net_data_table)
+]
+gene_sets_table <- gene_sets_table[
+  match(names(net_data_table), names(gene_sets_table))
+]
+
+gene_sets_table <- gene_sets_table[gene_sets_table >= 1]
+net_data_table_sub <- net_data_table[
+  names(net_data_table) %in% names(gene_sets_table)
+]
+net_data_table_sub <- (net_data_table_sub / gene_sets_table) *
+  net_data_table_sub
+keep <- names(net_data_table_sub)[net_data_table_sub >= 1.2]
+
+net_data_sub <- net_data_up[net_data_up$symbol %in% keep, ]
+net_data_up <- net_data_up[net_data_up$gene_set %in% net_data_sub$gene_set, ]
+remove <- V(graph)$name %notin% net_data_up$symbol
+graph <- delete.vertices(graph, v = remove)
+
+edges <- get.edgelist(graph, names = FALSE)
+layout <- qgraph.layout.fruchtermanreingold(
+  edges, vcount = vcount(graph), weights = E(graph)$weight,
+  area = vcount(graph), repulse.rad = vcount(graph) / 4
+)
+vis_up2 <- toVisNetworkData(graph)
+
+net_data_up_nodup <- net_data_up[-which(duplicated(net_data_up$symbol)), ]
+net_data_up_nodup <- net_data_up_nodup[
+  net_data_up_nodup$symbol %in% vis_up2$nodes$id,
+]
+net_data_up_nodup <- net_data_up_nodup[
+  match(vis_up2$nodes$id, net_data_up_nodup$symbol),
+]
+vis_up2$nodes$shape <- ifelse(
+  net_data_up_nodup$symbol %in% keep, yes = "circle", no = "box"
+)
+
+net_data_table_sub <- net_data_table_sub[
+  names(net_data_table_sub) %in% vis_up2$nodes$id
+]
+vis_up2$nodes$size <- (net_data_table_sub + 5) ^ 2
+vis_up2$edges$width <- vis_up2$edges$weight ^ 1.5
+
+net_res <- res_deg[[i]][res_deg[[i]]$Gene %in% vis_up2$nodes$id, ]
+net_res <- net_res[match(vis_up2$nodes$id, net_res$Gene), ]
+col <- colorRampPalette(c("gray25", "red"))
+col <- col(100)[
+  as.numeric(
+    cut(rescale(log10(1 / net_res$P.value.adj), to = c(0, 1)), breaks = 100)
+  )
+]
+vis_up2$nodes$color.border <- col
+vis_up2$nodes$color.highlight <- col
+
+f <- pmax((max(nchar(vis_up2$nodes$id)) - nchar(vis_up2$nodes$id)) / 2, 0)
+vis_up2$nodes$label <- sprintf(
+  "%-*s%s%*s", f, "", vis_up2$nodes$id, ceiling(f), ""
+)
+vis_up2$nodes$font.size <- vis_up2$nodes$size
+
+title <- vector(length = length(vis_up2$nodes$id))
+for (j in seq_along(title)) {
+  net_data_sub <- net_data_up[net_data_up$symbol == vis_up2$nodes$id[j], ]
+  title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+}
+vis_up2$nodes$title <- title
+
+vis_up2 <- visNetwork(vis_up2$nodes, vis_up2$edges, background = "black")
+vis_up2 <- visPhysics(vis_up2, stabilization = FALSE)
+vis_up2 <- visEdges(
+  vis_up2, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+)
+vis_up2 <- visIgraphLayout(vis_up2, "layout.norm", layoutMatrix = layout)
+vis_up2 <- visOptions(
+  vis_up2,
+  highlightNearest = list(enabled = TRUE, degree = 1, labelOnly = FALSE),
+  nodesIdSelection = TRUE
+)
+vis_up2 <- visNodes(
+  vis_up2, color = list(background = "rgba(0, 0, 0, 0)"),
+  font = list(color = "white")
+)
+
+renderVisNetwork({vis_up2})
+```
+
+### LCM Mass Spec - DOWN
+
+```{r}
+i <- 2
+
+de_gse <- rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ])
+up_gse <- rownames(res_gse[[i]][res_gse[[i]]$Coef > 0, ])
+de_deg <- rownames(res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ])
+up_deg <- rownames(res_deg[[i]][res_deg[[i]]$Coef > 0, ])
+
+net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+names(net_data)[1] <- "ensembl"
+names(net_data)[2] <- "gene_set"
+
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+net_data$gse_direction <- ifelse(
+  net_data$gene_set %in% up_gse, yes = "up", no = "down"
+)
+net_data$gene_DE <- ifelse(
+  net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+)
+net_data$gene_direction <- ifelse(
+  net_data$ensembl %in% up_deg, yes = "up", no = "down"
+)
+
+remove <- which(net_data$gse_direction != net_data$gene_direction)
+net_data <- net_data[-remove, ]
+net_data <- net_data[net_data$gene_DE == "yes", ]
+
+net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
+net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
+
+hub_mat <- as.data.frame.matrix(table(net_data_dn[ , c(3, 2)]))
+hub_mat <- hub_mat == 1
+hub_mat <- hub_mat %*% t(hub_mat)
+diag(hub_mat) <- 0
+graph <- graph_from_adjacency_matrix(hub_mat, mode = "upper", weighted = TRUE)
+
+net_data_table <- table(net_data_dn$symbol)
+gene_sets_table <- table(unlist(geneIds(gene_sets)))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% names(gene_sets_table), ]
+gene_anno_sub <- gene_anno_sub[
+  match(names(gene_sets_table), gene_anno_sub$ensembl),
+]
+names(gene_sets_table) <- gene_anno_sub$symbol
+gene_sets_table <- gene_sets_table[
+  names(gene_sets_table) %in% names(net_data_table)
+]
+gene_sets_table <- gene_sets_table[
+  match(names(net_data_table), names(gene_sets_table))
+]
+
+gene_sets_table <- gene_sets_table[gene_sets_table >= 1]
+net_data_table_sub <- net_data_table[
+  names(net_data_table) %in% names(gene_sets_table)
+]
+net_data_table_sub <- (net_data_table_sub / gene_sets_table) *
+  net_data_table_sub
+keep <- names(net_data_table_sub)[net_data_table_sub >= 1]
+
+net_data_sub <- net_data_dn[net_data_dn$symbol %in% keep, ]
+net_data_dn <- net_data_dn[net_data_dn$gene_set %in% net_data_sub$gene_set, ]
+remove <- V(graph)$name %notin% net_data_dn$symbol
+graph <- delete.vertices(graph, v = remove)
+
+edges <- get.edgelist(graph, names = FALSE)
+layout <- qgraph.layout.fruchtermanreingold(
+  edges, vcount = vcount(graph), weights = E(graph)$weight,
+  area = vcount(graph), repulse.rad = vcount(graph) / 4
+)
+vis_dn2 <- toVisNetworkData(graph)
+
+net_data_dn_nodup <- net_data_dn[-which(duplicated(net_data_dn$symbol)), ]
+net_data_dn_nodup <- net_data_dn_nodup[
+  net_data_dn_nodup$symbol %in% vis_dn2$nodes$id,
+]
+net_data_dn_nodup <- net_data_dn_nodup[
+  match(vis_dn2$nodes$id, net_data_dn_nodup$symbol),
+]
+vis_dn2$nodes$shape <- ifelse(
+  net_data_dn_nodup$symbol %in% keep, yes = "circle", no = "box"
+)
+
+net_data_table_sub <- net_data_table_sub[
+  names(net_data_table_sub) %in% vis_dn2$nodes$id
+]
+vis_dn2$nodes$size <- (net_data_table_sub + 5) ^ 2
+vis_dn2$edges$width <- vis_dn2$edges$weight ^ 1.5
+
+net_res <- res_deg[[i]][res_deg[[i]]$Gene %in% vis_dn2$nodes$id, ]
+net_res <- net_res[match(vis_dn2$nodes$id, net_res$Gene), ]
+col <- colorRampPalette(c("gray25", "blue"))
+col <- col(100)[
+  as.numeric(
+    cut(rescale(log10(1 / net_res$P.value.adj), to = c(0, 1)), breaks = 100)
+  )
+]
+vis_dn2$nodes$color.border <- col
+vis_dn2$nodes$color.highlight <- col
+
+f <- pmax((max(nchar(vis_dn2$nodes$id)) - nchar(vis_dn2$nodes$id)) / 2, 0)
+vis_dn2$nodes$label <- sprintf(
+  "%-*s%s%*s", f, "", vis_dn2$nodes$id, ceiling(f), ""
+)
+vis_dn2$nodes$font.size <- vis_dn2$nodes$size
+
+title <- vector(length = length(vis_dn2$nodes$id))
+for (j in seq_along(title)) {
+  net_data_sub <- net_data_dn[net_data_dn$symbol == vis_dn2$nodes$id[j], ]
+  title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+}
+vis_dn2$nodes$title <- title
+
+vis_dn2 <- visNetwork(vis_dn2$nodes, vis_dn2$edges, background = "black")
+vis_dn2 <- visPhysics(vis_dn2, stabilization = FALSE)
+vis_dn2 <- visEdges(
+  vis_dn2, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+)
+vis_dn2 <- visIgraphLayout(vis_dn2, "layout.norm", layoutMatrix = layout)
+vis_dn2 <- visOptions(
+  vis_dn2,
+  highlightNearest = list(enabled = TRUE, degree = 1, labelOnly = FALSE),
+  nodesIdSelection = TRUE
+)
+vis_dn2 <- visNodes(
+  vis_dn2, color = list(background = "rgba(0, 0, 0, 0)"),
+  font = list(color = "white")
+)
+
+renderVisNetwork({vis_dn2})
+```
+
+### FACS ssRNAseq - UP
+
+```{r}
+i <- 3
+
+de_gse <- rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ])
+up_gse <- rownames(res_gse[[i]][res_gse[[i]]$Coef > 0, ])
+de_deg <- rownames(res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ])
+up_deg <- rownames(res_deg[[i]][res_deg[[i]]$Coef > 0, ])
+
+net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+names(net_data)[1] <- "ensembl"
+names(net_data)[2] <- "gene_set"
+
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+net_data$gse_direction <- ifelse(
+  net_data$gene_set %in% up_gse, yes = "up", no = "down"
+)
+net_data$gene_DE <- ifelse(
+  net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+)
+net_data$gene_direction <- ifelse(
+  net_data$ensembl %in% up_deg, yes = "up", no = "down"
+)
+
+remove <- which(net_data$gse_direction != net_data$gene_direction)
+net_data <- net_data[-remove, ]
+net_data <- net_data[net_data$gene_DE == "yes", ]
+
+net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
+net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
+
+hub_mat <- as.data.frame.matrix(table(net_data_up[ , c(3, 2)]))
+hub_mat <- hub_mat == 1
+hub_mat <- hub_mat %*% t(hub_mat)
+diag(hub_mat) <- 0
+graph <- graph_from_adjacency_matrix(hub_mat, mode = "upper", weighted = TRUE)
+
+net_data_table <- table(net_data_up$symbol)
+gene_sets_table <- table(unlist(geneIds(gene_sets)))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% names(gene_sets_table), ]
+gene_anno_sub <- gene_anno_sub[
+  match(names(gene_sets_table), gene_anno_sub$ensembl),
+]
+names(gene_sets_table) <- gene_anno_sub$symbol
+gene_sets_table <- gene_sets_table[
+  names(gene_sets_table) %in% names(net_data_table)
+]
+gene_sets_table <- gene_sets_table[
+  match(names(net_data_table), names(gene_sets_table))
+]
+
+gene_sets_table <- gene_sets_table[gene_sets_table >= 1]
+net_data_table_sub <- net_data_table[
+  names(net_data_table) %in% names(gene_sets_table)
+]
+net_data_table_sub <- (net_data_table_sub / gene_sets_table) *
+  net_data_table_sub
+keep <- names(net_data_table_sub)[net_data_table_sub >= 3]
+
+net_data_sub <- net_data_up[net_data_up$symbol %in% keep, ]
+net_data_up <- net_data_up[net_data_up$gene_set %in% net_data_sub$gene_set, ]
+remove <- V(graph)$name %notin% net_data_up$symbol
+graph <- delete.vertices(graph, v = remove)
+
+edges <- get.edgelist(graph, names = FALSE)
+layout <- qgraph.layout.fruchtermanreingold(
+  edges, vcount = vcount(graph), weights = E(graph)$weight,
+  area = vcount(graph), repulse.rad = vcount(graph) / 5
+)
+vis_up3 <- toVisNetworkData(graph)
+
+net_data_up_nodup <- net_data_up[-which(duplicated(net_data_up$symbol)), ]
+net_data_up_nodup <- net_data_up_nodup[
+  net_data_up_nodup$symbol %in% vis_up3$nodes$id,
+]
+net_data_up_nodup <- net_data_up_nodup[
+  match(vis_up3$nodes$id, net_data_up_nodup$symbol),
+]
+vis_up3$nodes$shape <- ifelse(
+  net_data_up_nodup$symbol %in% keep, yes = "circle", no = "box"
+)
+
+net_data_table_sub <- net_data_table_sub[
+  names(net_data_table_sub) %in% vis_up3$nodes$id
+]
+vis_up3$nodes$size <- (net_data_table_sub + 5) ^ 2
+vis_up3$edges$width <- vis_up3$edges$weight ^ 1.5
+
+net_res <- res_deg[[i]][res_deg[[i]]$Gene %in% vis_up3$nodes$id, ]
+net_res <- net_res[match(vis_up3$nodes$id, net_res$Gene), ]
+col <- colorRampPalette(c("gray25", "red"))
+col <- col(100)[
+  as.numeric(
+    cut(rescale(log10(1 / net_res$P.value.adj), to = c(0, 1)), breaks = 100)
+  )
+]
+vis_up3$nodes$color.border <- col
+vis_up3$nodes$color.highlight <- col
+
+f <- pmax((max(nchar(vis_up3$nodes$id)) - nchar(vis_up3$nodes$id)) / 2, 0)
+vis_up3$nodes$label <- sprintf(
+  "%-*s%s%*s", f, "", vis_up3$nodes$id, ceiling(f), ""
+)
+vis_up3$nodes$font.size <- vis_up3$nodes$size
+
+title <- vector(length = length(vis_up3$nodes$id))
+for (j in seq_along(title)) {
+  net_data_sub <- net_data_up[net_data_up$symbol == vis_up3$nodes$id[j], ]
+  title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+}
+vis_up3$nodes$title <- title
+
+vis_up3 <- visNetwork(vis_up3$nodes, vis_up3$edges, background = "black")
+vis_up3 <- visPhysics(vis_up3, stabilization = FALSE)
+vis_up3 <- visEdges(
+  vis_up3, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+)
+vis_up3 <- visIgraphLayout(vis_up3, "layout.norm", layoutMatrix = layout)
+vis_up3 <- visOptions(
+  vis_up3,
+  highlightNearest = list(enabled = TRUE, degree = 1, labelOnly = FALSE),
+  nodesIdSelection = TRUE
+)
+vis_up3 <- visNodes(
+  vis_up3, color = list(background = "rgba(0, 0, 0, 0)"),
+  font = list(color = "white")
+)
+
+renderVisNetwork({vis_up3})
+```
+
+### FACS ssRNAseq - DOWN
+
+```{r}
+i <- 3
+
+de_gse <- rownames(res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ])
+up_gse <- rownames(res_gse[[i]][res_gse[[i]]$Coef > 0, ])
+de_deg <- rownames(res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ])
+up_deg <- rownames(res_deg[[i]][res_deg[[i]]$Coef > 0, ])
+
+net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+names(net_data)[1] <- "ensembl"
+names(net_data)[2] <- "gene_set"
+
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+net_data$gse_direction <- ifelse(
+  net_data$gene_set %in% up_gse, yes = "up", no = "down"
+)
+net_data$gene_DE <- ifelse(
+  net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+)
+net_data$gene_direction <- ifelse(
+  net_data$ensembl %in% up_deg, yes = "up", no = "down"
+)
+
+remove <- which(net_data$gse_direction != net_data$gene_direction)
+net_data <- net_data[-remove, ]
+net_data <- net_data[net_data$gene_DE == "yes", ]
+
+net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
+net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
+
+hub_mat <- as.data.frame.matrix(table(net_data_dn[ , c(3, 2)]))
+hub_mat <- hub_mat == 1
+hub_mat <- hub_mat %*% t(hub_mat)
+diag(hub_mat) <- 0
+graph <- graph_from_adjacency_matrix(hub_mat, mode = "upper", weighted = TRUE)
+
+net_data_table <- table(net_data_dn$symbol)
+gene_sets_table <- table(unlist(geneIds(gene_sets)))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% names(gene_sets_table), ]
+gene_anno_sub <- gene_anno_sub[
+  match(names(gene_sets_table), gene_anno_sub$ensembl),
+]
+names(gene_sets_table) <- gene_anno_sub$symbol
+gene_sets_table <- gene_sets_table[
+  names(gene_sets_table) %in% names(net_data_table)
+]
+gene_sets_table <- gene_sets_table[
+  match(names(net_data_table), names(gene_sets_table))
+]
+
+gene_sets_table <- gene_sets_table[gene_sets_table >= 1]
+net_data_table_sub <- net_data_table[
+  names(net_data_table) %in% names(gene_sets_table)
+]
+net_data_table_sub <- (net_data_table_sub / gene_sets_table) *
+  net_data_table_sub
+keep <- names(net_data_table_sub)[net_data_table_sub >= 1.2]
+
+net_data_sub <- net_data_dn[net_data_dn$symbol %in% keep, ]
+net_data_dn <- net_data_dn[net_data_dn$gene_set %in% net_data_sub$gene_set, ]
+remove <- V(graph)$name %notin% net_data_dn$symbol
+graph <- delete.vertices(graph, v = remove)
+
+edges <- get.edgelist(graph, names = FALSE)
+layout <- qgraph.layout.fruchtermanreingold(
+  edges, vcount = vcount(graph), weights = E(graph)$weight,
+  area = vcount(graph), repulse.rad = vcount(graph) / 5
+)
+vis_dn3 <- toVisNetworkData(graph)
+
+net_data_dn_nodup <- net_data_dn[-which(duplicated(net_data_dn$symbol)), ]
+net_data_dn_nodup <- net_data_dn_nodup[
+  net_data_dn_nodup$symbol %in% vis_dn3$nodes$id,
+]
+net_data_dn_nodup <- net_data_dn_nodup[
+  match(vis_dn3$nodes$id, net_data_dn_nodup$symbol),
+]
+vis_dn3$nodes$shape <- ifelse(
+  net_data_dn_nodup$symbol %in% keep, yes = "circle", no = "box"
+)
+
+net_data_table_sub <- net_data_table_sub[
+  names(net_data_table_sub) %in% vis_dn3$nodes$id
+]
+vis_dn3$nodes$size <- (net_data_table_sub + 5) ^ 2
+vis_dn3$edges$width <- vis_dn3$edges$weight ^ 1.5
+
+net_res <- res_deg[[i]][res_deg[[i]]$Gene %in% vis_dn3$nodes$id, ]
+net_res <- net_res[match(vis_dn3$nodes$id, net_res$Gene), ]
+col <- colorRampPalette(c("gray25", "blue"))
+col <- col(100)[
+  as.numeric(
+    cut(rescale(log10(1 / net_res$P.value.adj), to = c(0, 1)), breaks = 100)
+  )
+]
+vis_dn3$nodes$color.border <- col
+vis_dn3$nodes$color.highlight <- col
+
+f <- pmax((max(nchar(vis_dn3$nodes$id)) - nchar(vis_dn3$nodes$id)) / 2, 0)
+vis_dn3$nodes$label <- sprintf(
+  "%-*s%s%*s", f, "", vis_dn3$nodes$id, ceiling(f), ""
+)
+vis_dn3$nodes$font.size <- vis_dn3$nodes$size
+
+title <- vector(length = length(vis_dn3$nodes$id))
+for (j in seq_along(title)) {
+  net_data_sub <- net_data_dn[net_data_dn$symbol == vis_dn3$nodes$id[j], ]
+  title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+}
+vis_dn3$nodes$title <- title
+
+vis_dn3 <- visNetwork(vis_dn3$nodes, vis_dn3$edges, background = "black")
+vis_dn3 <- visPhysics(vis_dn3, stabilization = FALSE)
+vis_dn3 <- visEdges(
+  vis_dn3, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+)
+vis_dn3 <- visIgraphLayout(vis_dn3, "layout.norm", layoutMatrix = layout)
+vis_dn3 <- visOptions(
+  vis_dn3,
+  highlightNearest = list(enabled = TRUE, degree = 1, labelOnly = FALSE),
+  nodesIdSelection = TRUE
+)
+vis_dn3 <- visNodes(
+  vis_dn3, color = list(background = "rgba(0, 0, 0, 0)"),
+  font = list(color = "white")
+)
+
+renderVisNetwork({vis_dn3})
 ```
 
 ```{r, include = FALSE}
