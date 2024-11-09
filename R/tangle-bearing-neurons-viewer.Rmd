@@ -11340,7 +11340,7 @@ rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
   meta, n_deg, n_gse, net_data, net_data_dn, net_data_dn_nodup, net_data_sub,
   net_data_up, net_data_up_nodup, net_res, p_adj, range_deg, range_gse, res_deg,
-  res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up
+  res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up, clust
 )
 gc()
 ```
