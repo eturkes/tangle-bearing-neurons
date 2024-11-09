@@ -476,7 +476,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -759,7 +759,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -1044,7 +1044,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -1329,7 +1329,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -1614,7 +1614,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -1899,7 +1899,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -2184,7 +2184,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -2469,7 +2469,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -2754,7 +2754,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -3039,7 +3039,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -3324,7 +3324,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -3609,7 +3609,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -3894,7 +3894,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -4179,7 +4179,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -4464,7 +4464,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -4749,7 +4749,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -5034,7 +5034,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -5314,7 +5314,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -5611,7 +5611,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -5894,7 +5894,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -6179,7 +6179,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -6464,7 +6464,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -6749,7 +6749,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -7034,7 +7034,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -7319,7 +7319,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -7604,7 +7604,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -7889,7 +7889,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -8174,7 +8174,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -8459,7 +8459,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -8744,7 +8744,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -9029,7 +9029,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -9314,7 +9314,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -9599,7 +9599,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -9884,7 +9884,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -10169,7 +10169,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
@@ -10449,7 +10449,7 @@ shinyApp(
       column(
         width = 1,
         actionButton(paste0("init", comb_idx), label = "Initialise"),
-        style = 'padding-left: 120px;'
+        style = "padding-left: 120px;"
       ),
     ),
     InteractiveComplexHeatmapOutput(
