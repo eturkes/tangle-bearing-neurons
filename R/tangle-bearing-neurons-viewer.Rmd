@@ -11335,12 +11335,459 @@ shinyApp(
 )
 ```
 
+### Shared - UP
+
+```{r}
+shinyApp(
+
+  ui = fluidPage(
+
+    fluidRow(
+      column(
+        width = 3,
+        sliderInput(
+          paste0("conn_up", 23),
+          label = "Connectivity:",
+          min = 0,
+          max = 5,
+          value = 1,
+          step = 0.1
+        ),
+      ),
+      column(
+        width = 1,
+        actionButton(paste0("init_up", 23), label = "Initialise"),
+        style = "padding-top: 35px;"
+      )
+    ),
+
+    visNetworkOutput(paste0("vis_up", 23), height = "660px")
+),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("conn_up", 23)]]
+      input[[paste0("init_up", 23)]]
+    }, {
+
+      de_gse <- rownames(res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[2]][res_gse[[2]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[2]][res_deg[[2]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[2]][res_deg[[2]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- 2
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data2 <- net_data
+
+      de_gse <- rownames(res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[3]][res_gse[[3]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[3]][res_deg[[3]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[3]][res_deg[[3]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- 3
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data3 <- net_data
+
+      net_data <- rbind(net_data2, net_data3)
+
+      net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
+      hub_mat <- as.data.frame.matrix(table(net_data_up[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+
+      net_data_table <- table(net_data_up$symbol)
+      gene_sets_table <- table(unlist(geneIds(gene_sets)))
+      gene_anno_sub <- gene_anno[
+        gene_anno$ensembl %in% names(gene_sets_table),
+      ]
+      gene_anno_sub <- gene_anno_sub[
+        match(names(gene_sets_table), gene_anno_sub$ensembl),
+      ]
+      names(gene_sets_table) <- gene_anno_sub$symbol
+      gene_sets_table <- gene_sets_table[
+        names(gene_sets_table) %in% names(net_data_table)
+      ]
+      gene_sets_table <- gene_sets_table[
+        match(names(net_data_table), names(gene_sets_table))
+      ]
+
+      net_data_table <- (net_data_table / gene_sets_table) * net_data_table
+
+      remove <- net_data_table[
+        net_data_table < input[[paste0("conn_up", 23)]]
+      ]
+      if (length(remove) > 0) {
+        remove <- which(net_data_up$symbol %in% names(remove))
+        net_data_up <- net_data_up[-remove, ]
+        remove <- V(graph)$name %notin% net_data_up$symbol
+        graph <- delete.vertices(graph, v = remove)
+      }
+
+      if (length(names(V(graph))) < 0) {
+        return
+      }
+
+      graph <- subgraph(graph, which(degree(graph) > 0))
+
+      clust <- cluster_edge_betweenness(graph)
+      keep <- c()
+      for (membership in seq_along(unique(clust$membership))) {
+        sub <- clust$names[which(clust$membership == membership)]
+        sub <- net_data_table[names(net_data_table) %in% sub]
+        keep <- c(keep, names(sub[which.max(sub)]))
+      }
+      keep_idx <- which(V(graph)$name %in% keep)
+
+      keep2 <- unique(unlist(neighborhood(graph, order = 1, nodes = keep_idx)))
+      keep2 <- unique(c(keep_idx, keep2))
+      graph <- induced_subgraph(graph, vids = keep2)
+
+      edges <- get.edgelist(graph, names = FALSE)
+      layout <- qgraph.layout.fruchtermanreingold(
+        edges, vcount = vcount(graph), weights = E(graph)$weight,
+        area = vcount(graph), repulse.rad = vcount(graph) / 4
+      )
+      vis_up <- toVisNetworkData(graph)
+
+      net_data_up_nodup <- net_data_up[-which(duplicated(net_data_up$symbol)), ]
+      net_data_up_nodup <- net_data_up_nodup[
+        net_data_up_nodup$symbol %in% vis_up$nodes$id,
+      ]
+      net_data_up_nodup <- net_data_up_nodup[
+        match(vis_up$nodes$id, net_data_up_nodup$symbol),
+      ]
+      vis_up$nodes$shape <- ifelse(
+        net_data_up_nodup$symbol %in% keep, yes = "circle", no = "box"
+      )
+
+      net_data_table <- net_data_table[
+        names(net_data_table) %in% vis_up$nodes$id
+      ]
+      vis_up$nodes$size <- (net_data_table + 5) ^ 1.8
+      vis_up$edges$width <- (vis_up$edges$weight * 2) ^ 1.5
+
+      if (length(names(V(graph))) > 0) {
+        col <- case_when(
+          names(V(graph)) %in% net_data2$symbol &
+            names(V(graph)) %in% net_data3$symbol ~ "green",
+          names(V(graph)) %in% net_data2$symbol ~ "yellow",
+          names(V(graph)) %in% net_data3$symbol ~ "orange"
+        )
+        vis_up$nodes$color.border <- col
+        vis_up$nodes$color.highlight <- col
+
+        f <- pmax((max(nchar(vis_up$nodes$id)) - nchar(vis_up$nodes$id)) / 2, 0)
+        vis_up$nodes$label <- sprintf(
+          "%-*s%s%*s", f, "", vis_up$nodes$id, ceiling(f), ""
+        )
+        vis_up$nodes$font.size <- vis_up$nodes$size
+
+        title <- vector(length = length(vis_up$nodes$id))
+        for (j in seq_along(title)) {
+          net_data_sub <- net_data_up[
+            net_data_up$symbol == vis_up$nodes$id[j],
+          ]
+          title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+        }
+        vis_up$nodes$title <- title
+
+        vis_up <- visNetwork(vis_up$nodes, vis_up$edges, background = "black")
+        vis_up <- visPhysics(vis_up, stabilization = FALSE)
+        vis_up <- visEdges(
+          vis_up, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+        )
+        vis_up <- visIgraphLayout(vis_up, "layout.norm", layoutMatrix = layout)
+        vis_up <- visOptions(
+          vis_up,
+          highlightNearest = list(
+            enabled = TRUE, degree = 1, labelOnly = FALSE
+          ),
+          nodesIdSelection = TRUE
+        )
+        vis_up <- visNodes(
+          vis_up, color = list(background = "rgba(0, 0, 0, 0)"),
+          font = list(color = "white")
+        )
+      }
+
+      output$vis_up23 <- renderVisNetwork({vis_up})
+    })
+  }
+)
+```
+
+### Shared - DOWN
+
+```{r}
+shinyApp(
+
+  ui = fluidPage(
+
+    fluidRow(
+      column(
+        width = 3,
+        sliderInput(
+          paste0("conn_dn", 23),
+          label = "Connectivity:",
+          min = 0,
+          max = 5,
+          value = 1,
+          step = 0.1
+        ),
+      ),
+      column(
+        width = 1,
+        actionButton(paste0("init_dn", 23), label = "Initialise"),
+        style = "padding-top: 35px;"
+      )
+    ),
+
+    visNetworkOutput(paste0("vis_dn", 23), height = "660px")
+),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("conn_dn", 23)]]
+      input[[paste0("init_dn", 23)]]
+    }, {
+
+      de_gse <- rownames(res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[2]][res_gse[[2]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[2]][res_deg[[2]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[2]][res_deg[[2]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- 2
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data2 <- net_data
+
+      de_gse <- rownames(res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[3]][res_gse[[3]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[3]][res_deg[[3]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[3]][res_deg[[3]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- 3
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data3 <- net_data
+
+      net_data <- rbind(net_data2, net_data3)
+
+      net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
+      hub_mat <- as.data.frame.matrix(table(net_data_dn[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+
+      net_data_table <- table(net_data_dn$symbol)
+      gene_sets_table <- table(unlist(geneIds(gene_sets)))
+      gene_anno_sub <- gene_anno[
+        gene_anno$ensembl %in% names(gene_sets_table),
+      ]
+      gene_anno_sub <- gene_anno_sub[
+        match(names(gene_sets_table), gene_anno_sub$ensembl),
+      ]
+      names(gene_sets_table) <- gene_anno_sub$symbol
+      gene_sets_table <- gene_sets_table[
+        names(gene_sets_table) %in% names(net_data_table)
+      ]
+      gene_sets_table <- gene_sets_table[
+        match(names(net_data_table), names(gene_sets_table))
+      ]
+
+      net_data_table <- (net_data_table / gene_sets_table) * net_data_table
+
+      remove <- net_data_table[
+        net_data_table < input[[paste0("conn_dn", 23)]]
+      ]
+      if (length(remove) > 0) {
+        remove <- which(net_data_dn$symbol %in% names(remove))
+        net_data_dn <- net_data_dn[-remove, ]
+        remove <- V(graph)$name %notin% net_data_dn$symbol
+        graph <- delete.vertices(graph, v = remove)
+      }
+
+      if (length(names(V(graph))) < 0) {
+        return
+      }
+
+      graph <- subgraph(graph, which(degree(graph) > 0))
+
+      clust <- cluster_edge_betweenness(graph)
+      keep <- c()
+      for (membership in seq_along(unique(clust$membership))) {
+        sub <- clust$names[which(clust$membership == membership)]
+        sub <- net_data_table[names(net_data_table) %in% sub]
+        keep <- c(keep, names(sub[which.max(sub)]))
+      }
+      keep_idx <- which(V(graph)$name %in% keep)
+
+      keep2 <- unique(unlist(neighborhood(graph, order = 1, nodes = keep_idx)))
+      keep2 <- unique(c(keep_idx, keep2))
+      graph <- induced_subgraph(graph, vids = keep2)
+
+      edges <- get.edgelist(graph, names = FALSE)
+      layout <- qgraph.layout.fruchtermanreingold(
+        edges, vcount = vcount(graph), weights = E(graph)$weight,
+        area = vcount(graph), repulse.rad = vcount(graph) / 4
+      )
+      vis_dn <- toVisNetworkData(graph)
+
+      net_data_dn_nodup <- net_data_dn[-which(duplicated(net_data_dn$symbol)), ]
+      net_data_dn_nodup <- net_data_dn_nodup[
+        net_data_dn_nodup$symbol %in% vis_dn$nodes$id,
+      ]
+      net_data_dn_nodup <- net_data_dn_nodup[
+        match(vis_dn$nodes$id, net_data_dn_nodup$symbol),
+      ]
+      vis_dn$nodes$shape <- ifelse(
+        net_data_dn_nodup$symbol %in% keep, yes = "circle", no = "box"
+      )
+
+      net_data_table <- net_data_table[
+        names(net_data_table) %in% vis_dn$nodes$id
+      ]
+      vis_dn$nodes$size <- (net_data_table + 5) ^ 1.8
+      vis_dn$edges$width <- (vis_dn$edges$weight * 2) ^ 1.5
+
+      if (length(names(V(graph))) > 0) {
+        col <- case_when(
+          names(V(graph)) %in% net_data2$symbol &
+            names(V(graph)) %in% net_data3$symbol ~ "green",
+          names(V(graph)) %in% net_data2$symbol ~ "yellow",
+          names(V(graph)) %in% net_data3$symbol ~ "orange"
+        )
+        vis_dn$nodes$color.border <- col
+        vis_dn$nodes$color.highlight <- col
+
+        f <- pmax((max(nchar(vis_dn$nodes$id)) - nchar(vis_dn$nodes$id)) / 2, 0)
+        vis_dn$nodes$label <- sprintf(
+          "%-*s%s%*s", f, "", vis_dn$nodes$id, ceiling(f), ""
+        )
+        vis_dn$nodes$font.size <- vis_dn$nodes$size
+
+        title <- vector(length = length(vis_dn$nodes$id))
+        for (j in seq_along(title)) {
+          net_data_sub <- net_data_dn[
+            net_data_dn$symbol == vis_dn$nodes$id[j],
+          ]
+          title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+        }
+        vis_dn$nodes$title <- title
+
+        vis_dn <- visNetwork(vis_dn$nodes, vis_dn$edges, background = "black")
+        vis_dn <- visPhysics(vis_dn, stabilization = FALSE)
+        vis_dn <- visEdges(
+          vis_dn, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+        )
+        vis_dn <- visIgraphLayout(vis_dn, "layout.norm", layoutMatrix = layout)
+        vis_dn <- visOptions(
+          vis_dn,
+          highlightNearest = list(
+            enabled = TRUE, degree = 1, labelOnly = FALSE
+          ),
+          nodesIdSelection = TRUE
+        )
+        vis_dn <- visNodes(
+          vis_dn, color = list(background = "rgba(0, 0, 0, 0)"),
+          font = list(color = "white")
+        )
+      }
+
+      output$vis_dn23 <- renderVisNetwork({vis_dn})
+    })
+  }
+)
+```
+
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
   meta, n_deg, n_gse, net_data, net_data_dn, net_data_dn_nodup, net_data_sub,
   net_data_up, net_data_up_nodup, net_res, p_adj, range_deg, range_gse, res_deg,
-  res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up, clust
+  res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up, clust,
+  net_data2, net_data3
 )
 gc()
 ```
