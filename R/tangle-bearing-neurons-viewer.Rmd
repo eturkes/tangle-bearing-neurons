@@ -10566,7 +10566,6 @@ Row {.tabset}
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -10585,9 +10584,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_up", 2), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
@@ -10761,7 +10759,6 @@ shinyApp(
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -10780,9 +10777,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_dn", 2), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
@@ -10955,7 +10951,6 @@ shinyApp(
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -10974,9 +10969,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_up", 3), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
@@ -11150,7 +11144,6 @@ shinyApp(
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -11169,9 +11162,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_dn", 3), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
@@ -11344,7 +11336,6 @@ shinyApp(
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -11371,9 +11362,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_up", 23), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
@@ -11583,7 +11573,6 @@ shinyApp(
 shinyApp(
 
   ui = fluidPage(
-
     fluidRow(
       column(
         width = 2,
@@ -11610,9 +11599,8 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-
     visNetworkOutput(paste0("vis_dn", 23), height = "660px")
-),
+  ),
 
   server = function (input, output, session) {
     observeEvent({
