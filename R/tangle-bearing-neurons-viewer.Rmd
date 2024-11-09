@@ -25,7 +25,7 @@ runtime: shiny
 #    Emir Turkes can be contacted at emir.turkes@eturkes.com
 
 library(conflicted)
-conflicts_prefer(igraph::degree)
+conflicts_prefer(igraph::degree, base::intersect)
 library(scales)
 library(InteractiveComplexHeatmap)
 library(circlize)
@@ -266,6 +266,9 @@ if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
 
     res_deg[[i]] <- res_deg[[i]][match(rownames(sig), rownames(res_deg[[i]])), ]
     rownames(sig_deg[[i]]) <- res_deg[[i]]$Gene
+
+    top_deg[[i]] <- res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ]$Gene
+    n_deg[[i]] <- length(top_deg[[i]])
 
   }
   saveRDS(range_gse, file = file.path(cache_dir, "range_gse.rds"))
@@ -11813,13 +11816,267 @@ shinyApp(
 )
 ```
 
+Gene/Protein Analysis
+===
+
+Row {.tabset}
+---
+
+### Search Genes/Proteins
+
+```{r, include = FALSE}
+dev.off()
+dev.off()
+```
+
+```{r}
+shinyApp(
+
+  ui = fluidPage(
+    selectizeInput(
+      paste0("deg", "_deg"),
+      label = "Type to Search Genes/Proteins:",
+      choices = unique(c(top_deg[[2]], top_deg[[3]])),
+      selected = intersect(top_deg[[2]], top_deg[[3]])[1:25],
+      multiple = TRUE,
+      width = "100%"
+    ),
+    fluidRow(
+      column(
+        width = 2,
+        radioButtons(
+          paste0("scaling", "_deg"), label = NULL,
+          c("Scaled", "Unscaled"), inline = TRUE
+        )
+      ),
+      column(
+        width = 1,
+        actionButton(paste0("init", "_deg"), label = "Initialise"),
+        style = "padding-left: 550px;"
+      ),
+    ),
+    fluidPage(
+      div(
+        style = "display:flex;",
+        plotOutput("heatmap2", height = "660px"),
+        plotOutput("heatmap3", height = "660px")
+      )
+    )
+  ),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("deg", "_deg")]]
+      input[[paste0("scaling", "_deg")]]
+      input[[paste0("init", "_deg")]]
+    }, {
+
+      features2 <- input[[paste0("deg", "_deg")]]
+      sig2 <- sig_deg[[2]][
+        rownames(sig_deg[[2]]) %in% input[[paste0("deg", "_deg")]], ,
+        drop = FALSE
+      ]
+      features2 <- features2[features2 %in% rownames(sig2)]
+      if (nrow(sig2) > 1) {
+        sig2 <- sig2[match(features2, rownames(sig2)), , drop = FALSE]
+      }
+
+      gene_anno_sub2 <- gene_anno[gene_anno$symbol %in% features2, ]
+      gene_anno_sub2 <- gene_anno_sub2[
+        match(features2, gene_anno_sub2$symbol),
+      ]
+
+      mat2 <- deg[[2]][
+        rownames(deg[[2]]) %in% gene_anno_sub2$ensembl, , drop = FALSE
+      ]
+      if (nrow(mat2) > 1) {
+        mat2 <- mat2[
+          match(gene_anno_sub2$ensembl, rownames(mat2)), , drop = FALSE
+        ]
+      }
+      rownames(mat2) <- gene_anno_sub2$symbol
+
+      gene_anno_sub2 <- gene_anno[gene_anno$ensembl %in% rownames(deg[[2]]), ]
+      add_anno2 <- input[[paste0("deg", "_deg")]][
+        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub2$symbol
+      ]
+      add2 <- matrix(NA, nrow = length(add_anno2), ncol = ncol(deg[[2]]))
+      rownames(add2) <- add_anno2
+      mat2 <- rbind(mat2, add2)
+      sig2 <- rbind(sig2, add2)
+      sig2[is.na(sig2)] <- ""
+      mat2 <- mat2[match(input[[paste0("deg", "_deg")]], rownames(mat2)), ]
+      sig2 <- sig2[match(input[[paste0("deg", "_deg")]], rownames(sig2)), ]
+
+      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+        mat2 <- t(
+          apply(
+            mat2,
+            MARGIN = 1,
+            FUN = function (x) {
+              (
+                (
+                  2 * (x - min(x, na.rm = TRUE)) /
+                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                ) - 1
+              )
+            }
+          )
+        )
+        col2 <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+        title2 <- paste0("Scaled ", data_types[2])
+      } else {
+        col2 <- colorRamp2(range_deg[[2]], colors = c("blue", "white", "red"))
+        title2 <- data_types[2]
+      }
+
+      output$heatmap2 <- renderPlot({
+        draw(
+          Heatmap(
+            mat2,
+            col = col2,
+            na_col = "darkgrey",
+            column_title = paste0(
+              data_sets[2], "\n",
+              "Significant Proteins (Adj. P < 0.05)"
+            ),
+            cluster_columns = FALSE,
+            cluster_rows = FALSE,
+            column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
+            column_gap = unit(1, units = "mm"),
+            rect_gp = gpar(col = "black", lwd = 0.25),
+            row_names_gp = gpar(fontsize = 13),
+            column_title_gp = gpar(fontsize = 14),
+            row_title_rot = 0,
+            top_annotation = top_anno[[2]],
+            show_column_names = FALSE,
+            cell_fun = function(j, i, x, y, width, height, fill) {
+              grid.text(sig2[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            },
+            heatmap_legend_param = list(
+              title = title2, direction = "horizontal",
+              title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+              grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+            )
+          ),
+          heatmap_legend_side = "top"
+        )
+      }, res = 96)
+
+      features3 <- input[[paste0("deg", "_deg")]]
+      sig3 <- sig_deg[[3]][
+        rownames(sig_deg[[3]]) %in% input[[paste0("deg", "_deg")]], ,
+        drop = FALSE
+      ]
+      features3 <- features3[features3 %in% rownames(sig3)]
+      if (nrow(sig3) > 1) {
+        sig3 <- sig3[match(features3, rownames(sig3)), , drop = FALSE]
+      }
+
+      gene_anno_sub3 <- gene_anno[
+        gene_anno$symbol %in% features3,
+      ]
+      gene_anno_sub3 <- gene_anno_sub3[
+        match(features3, gene_anno_sub3$symbol),
+      ]
+
+      mat3 <- deg[[3]][
+        rownames(deg[[3]]) %in% gene_anno_sub3$ensembl, , drop = FALSE
+      ]
+      if (nrow(mat3) > 1) {
+        mat3 <- mat3[
+          match(gene_anno_sub3$ensembl, rownames(mat3)), , drop = FALSE
+        ]
+      }
+      rownames(mat3) <- gene_anno_sub3$symbol
+
+      gene_anno_sub3 <- gene_anno[
+        gene_anno$symbol %in% input[[paste0("deg", "_deg")]],
+      ]
+      gene_anno_sub3 <- gene_anno_sub3[
+        match(input[[paste0("deg", "_deg")]], gene_anno_sub3$symbol),
+      ]
+
+      gene_anno_sub3 <- gene_anno[gene_anno$ensembl %in% rownames(deg[[3]]), ]
+      add_anno3 <- input[[paste0("deg", "_deg")]][
+        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub3$symbol
+      ]
+      add3 <- matrix(NA, nrow = length(add_anno3), ncol = ncol(deg[[3]]))
+      rownames(add3) <- add_anno3
+      mat3 <- rbind(mat3, add3)
+      sig3 <- rbind(sig3, add3)
+      sig3[is.na(sig3)] <- ""
+      mat3 <- mat3[match(input[[paste0("deg", "_deg")]], rownames(mat3)), ]
+      sig3 <- sig3[match(input[[paste0("deg", "_deg")]], rownames(sig3)), ]
+
+      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+        mat3 <- t(
+          apply(
+            mat3,
+            MARGIN = 1,
+            FUN = function (x) {
+              (
+                (
+                  2 * (x - min(x, na.rm = TRUE)) /
+                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                ) - 1
+              )
+            }
+          )
+        )
+        col3 <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+        title3 <- paste0("Scaled ", data_types[3])
+      } else {
+        col3 <- colorRamp2(range_deg[[3]], colors = c("blue", "white", "red"))
+        title3 <- data_types[3]
+      }
+
+      output$heatmap3 <- renderPlot({
+        draw(
+          Heatmap(
+            mat3,
+            col = col3,
+            na_col = "darkgrey",
+            column_title = paste0(
+              data_sets[3], "\n",
+              "Significant Genes (Adj. P < 0.05)"
+            ),
+            cluster_columns = FALSE,
+            cluster_rows = FALSE,
+            column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
+            column_gap = unit(1, units = "mm"),
+            rect_gp = gpar(col = "black", lwd = 0.25),
+            row_names_gp = gpar(fontsize = 13),
+            column_title_gp = gpar(fontsize = 14),
+            row_title_rot = 0,
+            top_annotation = top_anno[[3]],
+            show_column_names = FALSE,
+            cell_fun = function(j, i, x, y, width, height, fill) {
+              grid.text(sig3[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            },
+            heatmap_legend_param = list(
+              title = title3, direction = "horizontal",
+              title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+              grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+            )
+          ),
+          heatmap_legend_side = "top"
+        )
+      }, res = 96)
+
+    })
+  }
+)
+```
+
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
   meta, n_deg, n_gse, net_data, net_data_dn, net_data_dn_nodup, net_data_sub,
   net_data_up, net_data_up_nodup, net_res, p_adj, range_deg, range_gse, res_deg,
   res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up, clust,
-  net_data2, net_data3
+  net_data2, net_data3, mat, mat2, mat3, sig, sig2, sig3, add, add2, add3,
+  add_anno, add_anno2, add_anno3, gene_anno_sub2, gene_anno_sub3
 )
 gc()
 ```
