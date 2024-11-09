@@ -11344,7 +11344,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_up", 23),
           label = "Connectivity:",
@@ -11358,6 +11358,14 @@ shinyApp(
         width = 1,
         actionButton(paste0("init_up", 23), label = "Initialise"),
         style = "padding-top: 35px;"
+      ),
+      column(
+        width = 2,
+        radioButtons(
+          paste0("shared_dn", 23), label = NULL,
+          c("All", "Shared Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
       )
     ),
 
@@ -11368,6 +11376,7 @@ shinyApp(
     observeEvent({
       input[[paste0("conn_up", 23)]]
       input[[paste0("init_up", 23)]]
+      input[[paste0("shared_up", 23)]]
     }, {
 
       de_gse <- rownames(res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ])
@@ -11427,6 +11436,13 @@ shinyApp(
       net_data3 <- net_data
 
       net_data <- rbind(net_data2, net_data3)
+
+      if (input[[paste0("shared_up", 23)]] == "Shared Only") {
+        net_data <- net_data[
+          net_data$ensembl %in% net_data2$ensembl &
+            net_data$ensembl %in% net_data3$ensembl,
+        ]
+      }
 
       net_data_up <- net_data[which(net_data$gse_direction == "up"), ]
       hub_mat <- as.data.frame.matrix(table(net_data_up[ , c(3, 2)]))
@@ -11567,7 +11583,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_dn", 23),
           label = "Connectivity:",
@@ -11581,6 +11597,14 @@ shinyApp(
         width = 1,
         actionButton(paste0("init_dn", 23), label = "Initialise"),
         style = "padding-top: 35px;"
+      ),
+      column(
+        width = 2,
+        radioButtons(
+          paste0("shared_dn", 23), label = NULL,
+          c("All", "Shared Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
       )
     ),
 
@@ -11591,6 +11615,7 @@ shinyApp(
     observeEvent({
       input[[paste0("conn_dn", 23)]]
       input[[paste0("init_dn", 23)]]
+      input[[paste0("shared_dn", 23)]]
     }, {
 
       de_gse <- rownames(res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ])
@@ -11650,6 +11675,13 @@ shinyApp(
       net_data3 <- net_data
 
       net_data <- rbind(net_data2, net_data3)
+
+      if (input[[paste0("shared_dn", 23)]] == "Shared Only") {
+        net_data <- net_data[
+          net_data$ensembl %in% net_data2$ensembl &
+            net_data$ensembl %in% net_data3$ensembl,
+        ]
+      }
 
       net_data_dn <- net_data[which(net_data$gse_direction == "down"), ]
       hub_mat <- as.data.frame.matrix(table(net_data_dn[ , c(3, 2)]))
