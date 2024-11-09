@@ -11365,7 +11365,7 @@ shinyApp(
       column(
         width = 2,
         radioButtons(
-          paste0("shared_dn", 23), label = NULL,
+          paste0("shared_up", 23), label = NULL,
           c("All", "Shared Only"), inline = TRUE
         ),
         style = "padding-top: 35px;"
