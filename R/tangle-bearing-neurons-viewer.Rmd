@@ -10566,7 +10566,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_up", 2),
           label = "Connectivity:",
@@ -10761,7 +10761,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_dn", 2),
           label = "Connectivity:",
@@ -10955,7 +10955,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_up", 3),
           label = "Connectivity:",
@@ -11150,7 +11150,7 @@ shinyApp(
 
     fluidRow(
       column(
-        width = 3,
+        width = 2,
         sliderInput(
           paste0("conn_dn", 3),
           label = "Connectivity:",
