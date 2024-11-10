@@ -11774,28 +11774,28 @@ shinyApp(
 )
 ```
 
-Gene/Protein Analysis
+Search Genes / Proteins
 ===
-
-Row {.tabset}
----
-
-### Search Genes/Proteins
 
 ```{r, include = FALSE}
 dev.off()
 dev.off()
 ```
 
+Row {.tabset}
+---
+
+### LCM Mass Spec
+
 ```{r}
 shinyApp(
 
   ui = fluidPage(
     selectizeInput(
-      paste0("deg", "_deg"),
-      label = "Type to Search Genes/Proteins:",
-      choices = unique(c(top_deg[[2]], top_deg[[3]])),
-      selected = intersect(top_deg[[2]], top_deg[[3]])[1:25],
+      paste0("deg", "_deg2"),
+      label = "Type to Search Proteins:",
+      choices = res_deg[[2]]$Gene,
+      selected = top_deg[[2]][1:10],
       multiple = TRUE,
       width = "100%"
     ),
@@ -11803,7 +11803,7 @@ shinyApp(
       column(
         width = 2,
         radioButtons(
-          paste0("scaling", "_deg"), label = NULL,
+          paste0("scaling", "_deg2"), label = NULL,
           c("Scaled", "Unscaled"), inline = TRUE
         )
       )
@@ -11812,20 +11812,20 @@ shinyApp(
       div(
         style = "display:flex;",
         plotOutput("heatmap2", height = "660px"),
-        plotOutput("heatmap3", height = "660px")
+        sankeyNetworkOutput("sankey2", height = "690px")
       )
     )
   ),
 
   server = function (input, output, session) {
     observeEvent({
-      input[[paste0("deg", "_deg")]]
-      input[[paste0("scaling", "_deg")]]
+      input[[paste0("deg", "_deg2")]]
+      input[[paste0("scaling", "_deg2")]]
     }, {
 
-      features2 <- input[[paste0("deg", "_deg")]]
+      features2 <- input[[paste0("deg", "_deg2")]]
       sig2 <- sig_deg[[2]][
-        rownames(sig_deg[[2]]) %in% input[[paste0("deg", "_deg")]], ,
+        rownames(sig_deg[[2]]) %in% input[[paste0("deg", "_deg2")]], ,
         drop = FALSE
       ]
       features2 <- features2[features2 %in% rownames(sig2)]
@@ -11849,18 +11849,18 @@ shinyApp(
       rownames(mat2) <- gene_anno_sub2$symbol
 
       gene_anno_sub2 <- gene_anno[gene_anno$ensembl %in% rownames(deg[[2]]), ]
-      add_anno2 <- input[[paste0("deg", "_deg")]][
-        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub2$symbol
+      add_anno2 <- input[[paste0("deg", "_deg2")]][
+        input[[paste0("deg", "_deg2")]] %notin% gene_anno_sub2$symbol
       ]
       add2 <- matrix(NA, nrow = length(add_anno2), ncol = ncol(deg[[2]]))
       rownames(add2) <- add_anno2
       mat2 <- rbind(mat2, add2)
       sig2 <- rbind(sig2, add2)
       sig2[is.na(sig2)] <- ""
-      mat2 <- mat2[match(input[[paste0("deg", "_deg")]], rownames(mat2)), ]
-      sig2 <- sig2[match(input[[paste0("deg", "_deg")]], rownames(sig2)), ]
+      mat2 <- mat2[match(input[[paste0("deg", "_deg2")]], rownames(mat2)), ]
+      sig2 <- sig2[match(input[[paste0("deg", "_deg2")]], rownames(sig2)), ]
 
-      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+      if (input[[paste0("scaling", "_deg2")]] == "Scaled") {
         mat2 <- t(
           apply(
             mat2,
@@ -11890,7 +11890,7 @@ shinyApp(
             na_col = "darkgrey",
             column_title = paste0(
               data_sets[2], "\n",
-              "Significant Proteins (Adj. P < 0.05)"
+              "Significant Genes (Adj. P < 0.05)"
             ),
             cluster_columns = FALSE,
             cluster_rows = FALSE,
@@ -11915,9 +11915,118 @@ shinyApp(
         )
       }, res = 96)
 
-      features3 <- input[[paste0("deg", "_deg")]]
+    })
+
+    output$sankey2 <- renderSankeyNetwork({
+
+      links_list2 <- vector(
+        "list", length = length(input[[paste0("deg", "_deg2")]])
+      )
+      for (i in seq_along(input[[paste0("deg", "_deg2")]])) {
+        gse_sub2 <- res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ]
+        deg_sub2 <- res_deg[[2]][
+          res_deg[[2]]$Gene %in% input[[paste0("deg", "_deg2")]][i],
+        ]$Coef
+        if (deg_sub2 > 0) {
+          gse_sub2 <- gse_sub2[gse_sub2$Coef > 0, ]
+        } else {
+          gse_sub2 <- gse_sub2[gse_sub2$Coef < 0, ]
+        }
+        gene_ids2 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub2$GeneSet]
+        gene_ids2 <- gene_ids2[order(names(gene_ids2))]
+
+        links_orig2 <- data.frame(
+          source = rep(names(gene_ids2), times = lengths(gene_ids2)),
+          target = gene_ids2 %>% map_dfr(as_tibble)
+        )
+        links2 <- links_orig2
+        links_orig2[] <- map[unlist(links_orig2)]
+        links2$value <- links_orig2$value
+        colnames(links2) <- c("source", "target")
+        links2 <- links2[
+          links2$target %in% input[[paste0("deg", "_deg2")]][i],
+        ]
+        links2$value <- rep(1, times = nrow(links2))
+        links_list2[[i]] <- links2
+      }
+      links_comb2 <- do.call(rbind, args = links_list2)
+
+      nodes2 <- data.frame(
+        name = c(
+          as.character(links_comb2$source), as.character(links_comb2$target)
+        ) %>% unique()
+      )
+      links_comb2$IDsource <- match(links_comb2$source, nodes2$name) - 1
+      links_comb2$IDtarget <- match(links_comb2$target, nodes2$name) - 1
+
+      if (nrow(nodes2) > 0) {
+        select_length2 <- length(
+          which(input[[paste0("deg", "_deg2")]] %in% nodes2$name)
+        )
+        nodes2$group <- c(
+          rep("target", times = nrow(nodes2) - select_length2),
+          nodes2$name[(nrow(nodes2) - (select_length2 - 1)):nrow(nodes2)]
+        )
+        colour2 <- c(hue_pal()(select_length2), "#D3D3D3")
+        colour2 <- paste0(
+          'd3.scaleOrdinal().range(["', paste(colour2, collapse = '", "'), '"])'
+        )
+
+        sankeyNetwork(
+          Links = links_comb2, Nodes = nodes2, Source = "IDsource",
+          Target = "IDtarget", Value = "value", NodeID = "name",
+          sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
+          LinkGroup = "target", colourScale = colour2,
+          margin = list(right = -400, left = -400, top = 100)
+        )
+      }
+    })
+
+  }
+)
+```
+
+### FACS ssRNAseq
+
+```{r}
+shinyApp(
+
+  ui = fluidPage(
+    selectizeInput(
+      paste0("deg", "_deg3"),
+      label = "Type to Search Genes:",
+      choices = res_deg[[3]]$Gene,
+      selected = top_deg[[3]][1:10],
+      multiple = TRUE,
+      width = "100%"
+    ),
+    fluidRow(
+      column(
+        width = 2,
+        radioButtons(
+          paste0("scaling", "_deg3"), label = NULL,
+          c("Scaled", "Unscaled"), inline = TRUE
+        )
+      )
+    ),
+    fluidPage(
+      div(
+        style = "display:flex;",
+        plotOutput("heatmap3", height = "660px"),
+        sankeyNetworkOutput("sankey3", height = "690px")
+      )
+    )
+  ),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("deg", "_deg3")]]
+      input[[paste0("scaling", "_deg3")]]
+    }, {
+
+      features3 <- input[[paste0("deg", "_deg3")]]
       sig3 <- sig_deg[[3]][
-        rownames(sig_deg[[3]]) %in% input[[paste0("deg", "_deg")]], ,
+        rownames(sig_deg[[3]]) %in% input[[paste0("deg", "_deg3")]], ,
         drop = FALSE
       ]
       features3 <- features3[features3 %in% rownames(sig3)]
@@ -11925,9 +12034,7 @@ shinyApp(
         sig3 <- sig3[match(features3, rownames(sig3)), , drop = FALSE]
       }
 
-      gene_anno_sub3 <- gene_anno[
-        gene_anno$symbol %in% features3,
-      ]
+      gene_anno_sub3 <- gene_anno[gene_anno$symbol %in% features3, ]
       gene_anno_sub3 <- gene_anno_sub3[
         match(features3, gene_anno_sub3$symbol),
       ]
@@ -11942,26 +12049,19 @@ shinyApp(
       }
       rownames(mat3) <- gene_anno_sub3$symbol
 
-      gene_anno_sub3 <- gene_anno[
-        gene_anno$symbol %in% input[[paste0("deg", "_deg")]],
-      ]
-      gene_anno_sub3 <- gene_anno_sub3[
-        match(input[[paste0("deg", "_deg")]], gene_anno_sub3$symbol),
-      ]
-
       gene_anno_sub3 <- gene_anno[gene_anno$ensembl %in% rownames(deg[[3]]), ]
-      add_anno3 <- input[[paste0("deg", "_deg")]][
-        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub3$symbol
+      add_anno3 <- input[[paste0("deg", "_deg3")]][
+        input[[paste0("deg", "_deg3")]] %notin% gene_anno_sub3$symbol
       ]
       add3 <- matrix(NA, nrow = length(add_anno3), ncol = ncol(deg[[3]]))
       rownames(add3) <- add_anno3
       mat3 <- rbind(mat3, add3)
       sig3 <- rbind(sig3, add3)
       sig3[is.na(sig3)] <- ""
-      mat3 <- mat3[match(input[[paste0("deg", "_deg")]], rownames(mat3)), ]
-      sig3 <- sig3[match(input[[paste0("deg", "_deg")]], rownames(sig3)), ]
+      mat3 <- mat3[match(input[[paste0("deg", "_deg3")]], rownames(mat3)), ]
+      sig3 <- sig3[match(input[[paste0("deg", "_deg3")]], rownames(sig3)), ]
 
-      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+      if (input[[paste0("scaling", "_deg3")]] == "Scaled") {
         mat3 <- t(
           apply(
             mat3,
@@ -11991,7 +12091,7 @@ shinyApp(
             na_col = "darkgrey",
             column_title = paste0(
               data_sets[3], "\n",
-              "Significant Genes (Adj. P < 0.05)"
+              "Significant Proteins (Adj. P < 0.05)"
             ),
             cluster_columns = FALSE,
             cluster_rows = FALSE,
@@ -12017,165 +12117,312 @@ shinyApp(
       }, res = 96)
 
     })
+
+    output$sankey3 <- renderSankeyNetwork({
+
+      links_list3 <- vector(
+        "list", length = length(input[[paste0("deg", "_deg3")]])
+      )
+      for (i in seq_along(input[[paste0("deg", "_deg3")]])) {
+        gse_sub3 <- res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ]
+        deg_sub3 <- res_deg[[3]][
+          res_deg[[3]]$Gene %in% input[[paste0("deg", "_deg3")]][i],
+        ]$Coef
+        if (deg_sub3 > 0) {
+          gse_sub3 <- gse_sub3[gse_sub3$Coef > 0, ]
+        } else {
+          gse_sub3 <- gse_sub3[gse_sub3$Coef < 0, ]
+        }
+        gene_ids3 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub3$GeneSet]
+        gene_ids3 <- gene_ids3[order(names(gene_ids3))]
+
+        links_orig3 <- data.frame(
+          source = rep(names(gene_ids3), times = lengths(gene_ids3)),
+          target = gene_ids3 %>% map_dfr(as_tibble)
+        )
+        links3 <- links_orig3
+        links_orig3[] <- map[unlist(links_orig3)]
+        links3$value <- links_orig3$value
+        colnames(links3) <- c("source", "target")
+        links3 <- links3[
+          links3$target %in% input[[paste0("deg", "_deg3")]][i],
+        ]
+        links3$value <- rep(1, times = nrow(links3))
+        links_list3[[i]] <- links3
+      }
+      links_comb3 <- do.call(rbind, args = links_list3)
+
+      nodes3 <- data.frame(
+        name = c(
+          as.character(links_comb3$source), as.character(links_comb3$target)
+        ) %>% unique()
+      )
+      links_comb3$IDsource <- match(links_comb3$source, nodes3$name) - 1
+      links_comb3$IDtarget <- match(links_comb3$target, nodes3$name) - 1
+
+      if (nrow(nodes3) > 0) {
+        select_length3 <- length(
+          which(input[[paste0("deg", "_deg3")]] %in% nodes3$name)
+        )
+        nodes3$group <- c(
+          rep("target", times = nrow(nodes3) - select_length3),
+          nodes3$name[(nrow(nodes3) - (select_length3 - 1)):nrow(nodes3)]
+        )
+        colour3 <- c(hue_pal()(select_length3), "#D3D3D3")
+        colour3 <- paste0(
+          'd3.scaleOrdinal().range(["', paste(colour3, collapse = '", "'), '"])'
+        )
+
+        sankeyNetwork(
+          Links = links_comb3, Nodes = nodes3, Source = "IDsource",
+          Target = "IDtarget", Value = "value", NodeID = "name",
+          sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
+          LinkGroup = "target", colourScale = colour3,
+          margin = list(right = -400, left = -400, top = 100)
+        )
+      }
+    })
+
   }
 )
 ```
 
-### Gene Set Connectivity - LCM Mass Spec
+### Both
 
 ```{r}
-selectizeInput(
-  paste0("deg", "_conn2"),
-  label = "Type to Search Genes/Proteins:",
-  choices = top_deg[[2]],
-  selected = top_deg[[2]][1:5],
-  multiple = TRUE,
-  width = "100%"
+shinyApp(
+
+  ui = fluidPage(
+    selectizeInput(
+      paste0("deg", "_deg"),
+      label = "Type to Search Genes/Proteins:",
+      choices = unique(c(top_deg[[2]], top_deg[[3]])),
+      selected = intersect(top_deg[[2]], top_deg[[3]])[1:25],
+      multiple = TRUE,
+      width = "100%"
+    ),
+    fluidRow(
+      column(
+        width = 2,
+        radioButtons(
+          paste0("scaling", "_deg"), label = NULL,
+          c("Scaled", "Unscaled"), inline = TRUE
+        )
+      )
+    ),
+    fluidPage(
+      div(
+        style = "display:flex;",
+        plotOutput("heatmap2c", height = "660px"),
+        plotOutput("heatmap3c", height = "660px")
+      )
+    )
+  ),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("deg", "_deg")]]
+      input[[paste0("scaling", "_deg")]]
+    }, {
+
+      features2c <- input[[paste0("deg", "_deg")]]
+      sig2c <- sig_deg[[2]][
+        rownames(sig_deg[[2]]) %in% input[[paste0("deg", "_deg")]], ,
+        drop = FALSE
+      ]
+      features2c <- features2c[features2c %in% rownames(sig2c)]
+      if (nrow(sig2c) > 1) {
+        sig2c <- sig2c[match(features2c, rownames(sig2c)), , drop = FALSE]
+      }
+
+      gene_anno_sub2c <- gene_anno[gene_anno$symbol %in% features2c, ]
+      gene_anno_sub2c <- gene_anno_sub2c[
+        match(features2c, gene_anno_sub2c$symbol),
+      ]
+
+      mat2c <- deg[[2]][
+        rownames(deg[[2]]) %in% gene_anno_sub2c$ensembl, , drop = FALSE
+      ]
+      if (nrow(mat2c) > 1) {
+        mat2c <- mat2c[
+          match(gene_anno_sub2c$ensembl, rownames(mat2c)), , drop = FALSE
+        ]
+      }
+      rownames(mat2c) <- gene_anno_sub2c$symbol
+
+      gene_anno_sub2c <- gene_anno[gene_anno$ensembl %in% rownames(deg[[2]]), ]
+      add_anno2c <- input[[paste0("deg", "_deg")]][
+        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub2c$symbol
+      ]
+      add2c <- matrix(NA, nrow = length(add_anno2c), ncol = ncol(deg[[2]]))
+      rownames(add2c) <- add_anno2c
+      mat2c <- rbind(mat2c, add2c)
+      sig2c <- rbind(sig2c, add2c)
+      sig2c[is.na(sig2c)] <- ""
+      mat2c <- mat2c[match(input[[paste0("deg", "_deg")]], rownames(mat2c)), ]
+      sig2c <- sig2c[match(input[[paste0("deg", "_deg")]], rownames(sig2c)), ]
+
+      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+        mat2c <- t(
+          apply(
+            mat2c,
+            MARGIN = 1,
+            FUN = function (x) {
+              (
+                (
+                  2 * (x - min(x, na.rm = TRUE)) /
+                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                ) - 1
+              )
+            }
+          )
+        )
+        col2c <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+        title2c <- paste0("Scaled ", data_types[2])
+      } else {
+        col2c <- colorRamp2(range_deg[[2]], colors = c("blue", "white", "red"))
+        title2c <- data_types[2]
+      }
+
+      output$heatmap2c <- renderPlot({
+        draw(
+          Heatmap(
+            mat2c,
+            col = col2c,
+            na_col = "darkgrey",
+            column_title = paste0(
+              data_sets[2], "\n",
+              "Significant Proteins (Adj. P < 0.05)"
+            ),
+            cluster_columns = FALSE,
+            cluster_rows = FALSE,
+            column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
+            column_gap = unit(1, units = "mm"),
+            rect_gp = gpar(col = "black", lwd = 0.25),
+            row_names_gp = gpar(fontsize = 13),
+            column_title_gp = gpar(fontsize = 14),
+            row_title_rot = 0,
+            top_annotation = top_anno[[2]],
+            show_column_names = FALSE,
+            cell_fun = function(j, i, x, y, width, height, fill) {
+              grid.text(sig2c[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            },
+            heatmap_legend_param = list(
+              title = title2c, direction = "horizontal",
+              title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+              grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+            )
+          ),
+          heatmap_legend_side = "top"
+        )
+      }, res = 96)
+
+      features3c <- input[[paste0("deg", "_deg")]]
+      sig3c <- sig_deg[[3]][
+        rownames(sig_deg[[3]]) %in% input[[paste0("deg", "_deg")]], ,
+        drop = FALSE
+      ]
+      features3c <- features3c[features3c %in% rownames(sig3c)]
+      if (nrow(sig3c) > 1) {
+        sig3c <- sig3c[match(features3c, rownames(sig3c)), , drop = FALSE]
+      }
+
+      gene_anno_sub3c <- gene_anno[
+        gene_anno$symbol %in% features3c,
+      ]
+      gene_anno_sub3c <- gene_anno_sub3c[
+        match(features3c, gene_anno_sub3c$symbol),
+      ]
+
+      mat3c <- deg[[3]][
+        rownames(deg[[3]]) %in% gene_anno_sub3c$ensembl, , drop = FALSE
+      ]
+      if (nrow(mat3c) > 1) {
+        mat3c <- mat3c[
+          match(gene_anno_sub3c$ensembl, rownames(mat3c)), , drop = FALSE
+        ]
+      }
+      rownames(mat3c) <- gene_anno_sub3c$symbol
+
+      gene_anno_sub3c <- gene_anno[
+        gene_anno$symbol %in% input[[paste0("deg", "_deg")]],
+      ]
+      gene_anno_sub3c <- gene_anno_sub3c[
+        match(input[[paste0("deg", "_deg")]], gene_anno_sub3c$symbol),
+      ]
+
+      gene_anno_sub3c <- gene_anno[gene_anno$ensembl %in% rownames(deg[[3]]), ]
+      add_anno3c <- input[[paste0("deg", "_deg")]][
+        input[[paste0("deg", "_deg")]] %notin% gene_anno_sub3c$symbol
+      ]
+      add3c <- matrix(NA, nrow = length(add_anno3c), ncol = ncol(deg[[3]]))
+      rownames(add3c) <- add_anno3c
+      mat3c <- rbind(mat3c, add3c)
+      sig3c <- rbind(sig3c, add3c)
+      sig3c[is.na(sig3c)] <- ""
+      mat3c <- mat3c[match(input[[paste0("deg", "_deg")]], rownames(mat3c)), ]
+      sig3c <- sig3c[match(input[[paste0("deg", "_deg")]], rownames(sig3c)), ]
+
+      if (input[[paste0("scaling", "_deg")]] == "Scaled") {
+        mat3c <- t(
+          apply(
+            mat3c,
+            MARGIN = 1,
+            FUN = function (x) {
+              (
+                (
+                  2 * (x - min(x, na.rm = TRUE)) /
+                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                ) - 1
+              )
+            }
+          )
+        )
+        col3c <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
+        title3c <- paste0("Scaled ", data_types[3])
+      } else {
+        col3c <- colorRamp2(range_deg[[3]], colors = c("blue", "white", "red"))
+        title3c <- data_types[3]
+      }
+
+      output$heatmap3c <- renderPlot({
+        draw(
+          Heatmap(
+            mat3c,
+            col = col3c,
+            na_col = "darkgrey",
+            column_title = paste0(
+              data_sets[3], "\n",
+              "Significant Genes (Adj. P < 0.05)"
+            ),
+            cluster_columns = FALSE,
+            cluster_rows = FALSE,
+            column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
+            column_gap = unit(1, units = "mm"),
+            rect_gp = gpar(col = "black", lwd = 0.25),
+            row_names_gp = gpar(fontsize = 13),
+            column_title_gp = gpar(fontsize = 14),
+            row_title_rot = 0,
+            top_annotation = top_anno[[3]],
+            show_column_names = FALSE,
+            cell_fun = function(j, i, x, y, width, height, fill) {
+              grid.text(sig3c[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            },
+            heatmap_legend_param = list(
+              title = title3c, direction = "horizontal",
+              title_position = "topcenter", labels_gp = gpar(fontsize = 10),
+              grid_height = unit(3, "mm"), title_gp = gpar(fontsize = 12)
+            )
+          ),
+          heatmap_legend_side = "top"
+        )
+      }, res = 96)
+
+    })
+  }
 )
-
-renderSankeyNetwork({
-
-  links_list2 <- vector(
-    "list", length = length(input[[paste0("deg", "_conn2")]])
-  )
-  for (i in seq_along(input[[paste0("deg", "_conn2")]])) {
-    gse_sub2 <- res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ]
-    deg_sub2 <- res_deg[[2]][
-      res_deg[[2]]$Gene %in% input[[paste0("deg", "_conn2")]][i],
-    ]$Coef
-    if (deg_sub2 > 0) {
-      gse_sub2 <- gse_sub2[gse_sub2$Coef > 0, ]
-    } else {
-      gse_sub2 <- gse_sub2[gse_sub2$Coef < 0, ]
-    }
-    gene_ids2 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub2$GeneSet]
-    gene_ids2 <- gene_ids2[order(names(gene_ids2))]
-
-    links_orig2 <- data.frame(
-      source = rep(names(gene_ids2), times = lengths(gene_ids2)),
-      target = gene_ids2 %>% map_dfr(as_tibble)
-    )
-    links2 <- links_orig2
-    links_orig2[] <- map[unlist(links_orig2)]
-    links2$value <- links_orig2$value
-    colnames(links2) <- c("source", "target")
-    links2 <- links2[
-      links2$target %in% input[[paste0("deg", "_conn2")]][i],
-    ]
-    links2$value <- rep(1, times = nrow(links2))
-    links_list2[[i]] <- links2
-  }
-  links_comb2 <- do.call(rbind, args = links_list2)
-
-  nodes2 <- data.frame(
-    name = c(
-      as.character(links_comb2$source), as.character(links_comb2$target)
-    ) %>% unique()
-  )
-  links_comb2$IDsource <- match(links_comb2$source, nodes2$name) - 1
-  links_comb2$IDtarget <- match(links_comb2$target, nodes2$name) - 1
-
-  if (nrow(nodes2) > 0) {
-    select_length2 <- length(
-      which(input[[paste0("deg", "_conn2")]] %in% nodes2$name)
-    )
-    nodes2$group <- c(
-      rep("target", times = nrow(nodes2) - select_length2),
-      nodes2$name[(nrow(nodes2) - (select_length2 - 1)):nrow(nodes2)]
-    )
-    colour2 <- c(hue_pal()(select_length2), "#D3D3D3")
-    colour2 <- paste0(
-      'd3.scaleOrdinal().range(["', paste(colour2, collapse = '", "'), '"])'
-    )
-
-    sankeyNetwork(
-      Links = links_comb2, Nodes = nodes2, Source = "IDsource",
-      Target = "IDtarget", Value = "value", NodeID = "name",
-      sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
-      LinkGroup = "target", colourScale = colour2, margin = list(bottom = 100)
-    )
-  }
-
-})
 ```
 
-### Gene Set Connectivity - FACS ssRNAseq
-
-```{r}
-selectizeInput(
-  paste0("deg", "_conn3"),
-  label = "Type to Search Genes/Proteins:",
-  choices = top_deg[[3]],
-  selected = top_deg[[3]][1:5],
-  multiple = TRUE,
-  width = "100%"
-)
-
-renderSankeyNetwork({
-
-  links_list3 <- vector(
-    "list", length = length(input[[paste0("deg", "_conn3")]])
-  )
-  for (i in seq_along(input[[paste0("deg", "_conn3")]])) {
-    gse_sub3 <- res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ]
-    deg_sub3 <- res_deg[[3]][
-      res_deg[[3]]$Gene %in% input[[paste0("deg", "_conn3")]][i],
-    ]$Coef
-    if (deg_sub3 > 0) {
-      gse_sub3 <- gse_sub3[gse_sub3$Coef > 0, ]
-    } else {
-      gse_sub3 <- gse_sub3[gse_sub3$Coef < 0, ]
-    }
-    gene_ids3 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub3$GeneSet]
-    gene_ids3 <- gene_ids3[order(names(gene_ids3))]
-
-    links_orig3 <- data.frame(
-      source = rep(names(gene_ids3), times = lengths(gene_ids3)),
-      target = gene_ids3 %>% map_dfr(as_tibble)
-    )
-    links3 <- links_orig3
-    links_orig3[] <- map[unlist(links_orig3)]
-    links3$value <- links_orig3$value
-    colnames(links3) <- c("source", "target")
-    links3 <- links3[
-      links3$target %in% input[[paste0("deg", "_conn3")]][i],
-    ]
-    links3$value <- rep(1, times = nrow(links3))
-    links_list3[[i]] <- links3
-  }
-  links_comb3 <- do.call(rbind, args = links_list3)
-
-  nodes3 <- data.frame(
-    name = c(
-      as.character(links_comb3$source), as.character(links_comb3$target)
-    ) %>% unique()
-  )
-  links_comb3$IDsource <- match(links_comb3$source, nodes3$name) - 1
-  links_comb3$IDtarget <- match(links_comb3$target, nodes3$name) - 1
-
-  if (nrow(nodes3) > 0) {
-    select_length3 <- length(
-      which(input[[paste0("deg", "_conn3")]] %in% nodes3$name)
-    )
-    nodes3$group <- c(
-      rep("target", times = nrow(nodes3) - select_length3),
-      nodes3$name[(nrow(nodes3) - (select_length3 - 1)):nrow(nodes3)]
-    )
-    colour3 <- c(hue_pal()(select_length3), "#D3D3D3")
-    colour3 <- paste0(
-      'd3.scaleOrdinal().range(["', paste(colour3, collapse = '", "'), '"])'
-    )
-
-    sankeyNetwork(
-      Links = links_comb3, Nodes = nodes3, Source = "IDsource",
-      Target = "IDtarget", Value = "value", NodeID = "name",
-      sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
-      LinkGroup = "target", colourScale = colour3, margin = list(bottom = 100)
-    )
-  }
-
-})
-```
 
 ```{r, include = FALSE}
 rm(
@@ -12187,7 +12434,11 @@ rm(
   add_anno, add_anno2, add_anno3, gene_anno_sub2, gene_anno_sub3, gse_sub2,
   gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
-  deg_sub3
+  deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
+  gene_anno_sub2c, gene_anno_sub3c, gse_sub2c, gene_ids2c, links2c,
+  links_orig2c, links_comb2c, links_list2c, nodes2c, gse_sub3c, gene_ids3c,
+  links3c, links_orig3c, links_comb3c, links_list3c, nodes3c, deg_sub2c,
+  deg_sub3c
 )
 gc()
 ```
