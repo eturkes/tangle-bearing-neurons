@@ -35,6 +35,8 @@ library(dplyr)
 library(igraph)
 library(qgraph)
 library(visNetwork)
+library(purrr)
+library(networkD3)
 
 `%notin%` <- Negate(`%in%`)
 
@@ -58,6 +60,7 @@ if (!dir.exists(cache_dir)) {
 
 gene_sets <- readRDS(file.path(data_dir, "gene_sets.rds"))
 gene_anno <- readRDS(file.path(data_dir, "gene_anno.rds"))
+map <- setNames(gene_anno$symbol, gene_anno$ensembl)
 
 meta <- vector("list", length = length(data_sets))
 deg <- vector("list", length = length(data_sets))
@@ -12057,6 +12060,162 @@ shinyApp(
 )
 ```
 
+### Gene Set Connectivity - LCM Mass Spec
+
+```{r}
+selectizeInput(
+  paste0("deg", "_conn2"),
+  label = "Type to Search Genes/Proteins:",
+  choices = top_deg[[2]],
+  selected = top_deg[[2]][1:5],
+  multiple = TRUE,
+  width = "100%"
+)
+
+renderSankeyNetwork({
+
+  links_list2 <- vector(
+    "list", length = length(input[[paste0("deg", "_conn2")]])
+  )
+  for (i in seq_along(input[[paste0("deg", "_conn2")]])) {
+    gse_sub2 <- res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ]
+    deg_sub2 <- res_deg[[2]][
+      res_deg[[2]]$Gene %in% input[[paste0("deg", "_conn2")]][i],
+    ]$Coef
+    if (deg_sub2 > 0) {
+      gse_sub2 <- gse_sub2[gse_sub2$Coef > 0, ]
+    } else {
+      gse_sub2 <- gse_sub2[gse_sub2$Coef < 0, ]
+    }
+    gene_ids2 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub2$GeneSet]
+    gene_ids2 <- gene_ids2[order(names(gene_ids2))]
+
+    links_orig2 <- data.frame(
+      source = rep(names(gene_ids2), times = lengths(gene_ids2)),
+      target = gene_ids2 %>% map_dfr(as_tibble)
+    )
+    links2 <- links_orig2
+    links_orig2[] <- map[unlist(links_orig2)]
+    links2$value <- links_orig2$value
+    colnames(links2) <- c("source", "target")
+    links2 <- links2[
+      links2$target %in% input[[paste0("deg", "_conn2")]][i],
+    ]
+    links2$value <- rep(1, times = nrow(links2))
+    links_list2[[i]] <- links2
+  }
+  links_comb2 <- do.call(rbind, args = links_list2)
+
+  nodes2 <- data.frame(
+    name = c(
+      as.character(links_comb2$source), as.character(links_comb2$target)
+    ) %>% unique()
+  )
+  links_comb2$IDsource <- match(links_comb2$source, nodes2$name) - 1
+  links_comb2$IDtarget <- match(links_comb2$target, nodes2$name) - 1
+
+  if (nrow(nodes2) > 0) {
+    select_length2 <- length(
+      which(input[[paste0("deg", "_conn2")]] %in% nodes2$name)
+    )
+    nodes2$group <- c(
+      rep("target", times = nrow(nodes2) - select_length2),
+      nodes2$name[(nrow(nodes2) - (select_length2 - 1)):nrow(nodes2)]
+    )
+    colour2 <- c(hue_pal()(select_length2), "#D3D3D3")
+    colour2 <- paste0(
+      'd3.scaleOrdinal().range(["', paste(colour2, collapse = '", "'), '"])'
+    )
+
+    sankeyNetwork(
+      Links = links_comb2, Nodes = nodes2, Source = "IDsource",
+      Target = "IDtarget", Value = "value", NodeID = "name",
+      sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
+      LinkGroup = "target", colourScale = colour2, margin = list(bottom = 100)
+    )
+  }
+
+})
+```
+
+### Gene Set Connectivity - FACS ssRNAseq
+
+```{r}
+selectizeInput(
+  paste0("deg", "_conn3"),
+  label = "Type to Search Genes/Proteins:",
+  choices = top_deg[[3]],
+  selected = top_deg[[3]][1:5],
+  multiple = TRUE,
+  width = "100%"
+)
+
+renderSankeyNetwork({
+
+  links_list3 <- vector(
+    "list", length = length(input[[paste0("deg", "_conn3")]])
+  )
+  for (i in seq_along(input[[paste0("deg", "_conn3")]])) {
+    gse_sub3 <- res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ]
+    deg_sub3 <- res_deg[[3]][
+      res_deg[[3]]$Gene %in% input[[paste0("deg", "_conn3")]][i],
+    ]$Coef
+    if (deg_sub3 > 0) {
+      gse_sub3 <- gse_sub3[gse_sub3$Coef > 0, ]
+    } else {
+      gse_sub3 <- gse_sub3[gse_sub3$Coef < 0, ]
+    }
+    gene_ids3 <- geneIds(gene_sets)[names(gene_sets) %in% gse_sub3$GeneSet]
+    gene_ids3 <- gene_ids3[order(names(gene_ids3))]
+
+    links_orig3 <- data.frame(
+      source = rep(names(gene_ids3), times = lengths(gene_ids3)),
+      target = gene_ids3 %>% map_dfr(as_tibble)
+    )
+    links3 <- links_orig3
+    links_orig3[] <- map[unlist(links_orig3)]
+    links3$value <- links_orig3$value
+    colnames(links3) <- c("source", "target")
+    links3 <- links3[
+      links3$target %in% input[[paste0("deg", "_conn3")]][i],
+    ]
+    links3$value <- rep(1, times = nrow(links3))
+    links_list3[[i]] <- links3
+  }
+  links_comb3 <- do.call(rbind, args = links_list3)
+
+  nodes3 <- data.frame(
+    name = c(
+      as.character(links_comb3$source), as.character(links_comb3$target)
+    ) %>% unique()
+  )
+  links_comb3$IDsource <- match(links_comb3$source, nodes3$name) - 1
+  links_comb3$IDtarget <- match(links_comb3$target, nodes3$name) - 1
+
+  if (nrow(nodes3) > 0) {
+    select_length3 <- length(
+      which(input[[paste0("deg", "_conn3")]] %in% nodes3$name)
+    )
+    nodes3$group <- c(
+      rep("target", times = nrow(nodes3) - select_length3),
+      nodes3$name[(nrow(nodes3) - (select_length3 - 1)):nrow(nodes3)]
+    )
+    colour3 <- c(hue_pal()(select_length3), "#D3D3D3")
+    colour3 <- paste0(
+      'd3.scaleOrdinal().range(["', paste(colour3, collapse = '", "'), '"])'
+    )
+
+    sankeyNetwork(
+      Links = links_comb3, Nodes = nodes3, Source = "IDsource",
+      Target = "IDtarget", Value = "value", NodeID = "name",
+      sinksRight = FALSE, fontSize = 20, NodeGroup = "group",
+      LinkGroup = "target", colourScale = colour3, margin = list(bottom = 100)
+    )
+  }
+
+})
+```
+
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
@@ -12064,7 +12223,10 @@ rm(
   net_data_up, net_data_up_nodup, net_res, p_adj, range_deg, range_gse, res_deg,
   res_gse, sig_deg, sig_gse, top_anno, top_deg, top_gse, vis_dn, vis_up, clust,
   net_data2, net_data3, mat, mat2, mat3, sig, sig2, sig3, add, add2, add3,
-  add_anno, add_anno2, add_anno3, gene_anno_sub2, gene_anno_sub3
+  add_anno, add_anno2, add_anno3, gene_anno_sub2, gene_anno_sub3, gse_sub2,
+  gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
+  gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
+  deg_sub3
 )
 gc()
 ```

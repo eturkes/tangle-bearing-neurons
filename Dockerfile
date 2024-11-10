@@ -33,6 +33,8 @@ RUN apt-get update \
         -e "install.packages('igraph')" \
         -e "install.packages('qgraph')" \
         -e "install.packages('visNetwork')" \
+        -e "install.packages('purrr')" \
+        -e "install.packages('networkD3')" \
         -e "install.packages('BiocManager')" \
         -e "install.packages('remotes')" \
         -e "BiocManager::install('GSEABase')" \
