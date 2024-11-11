@@ -25,7 +25,7 @@ runtime: shiny
 #    Emir Turkes can be contacted at emir.turkes@eturkes.com
 
 library(conflicted)
-conflicts_prefer(igraph::degree, base::intersect)
+conflicts_prefer(igraph::degree, base::intersect, DT::JS)
 library(scales)
 library(InteractiveComplexHeatmap)
 library(circlize)
@@ -37,8 +37,34 @@ library(qgraph)
 library(visNetwork)
 library(purrr)
 library(networkD3)
+library(DT)
 
 `%notin%` <- Negate(`%in%`)
+
+datatable_download_exp_15 <- function(dt) {
+  datatable(
+    dt,
+    options = list(
+      pageLength = 15,
+      scrollX = TRUE,
+      dom = "Blfrtip",
+      buttons = list(
+        "copy", "print",
+        list(
+          extend = "collection", buttons = c("csv", "excel", "pdf"),
+          text = "Download"
+        )
+      ),
+      rowCallback = JS(
+        "function(row, data) {",
+        "for (i = 1; i < data.length; i++) {",
+        "if (data[i]>=1000 | data[i]<1000) {",
+        "$('td:eq('+i+')', row).html(data[i].toExponential(2));}}}"
+      )
+    ),
+    extensions = "Buttons"
+  )
+}
 
 data_sets <- c(
   "LCM Mass Spec - Human AD BA9 - Single-cell",
@@ -65,6 +91,7 @@ deg <- vector("list", length = length(data_sets))
 gse <- vector("list", length = length(data_sets))
 res_deg <- vector("list", length = length(data_sets))
 res_gse <- vector("list", length = length(data_sets))
+res_gse_fmt <- vector("list", length = length(data_sets))
 
 data_dir <- list.dirs(data_dir)
 data_dir <- data_dir[c(2, 3, 4)]
@@ -74,6 +101,18 @@ for (i in seq_along(data_sets)) {
   gse[[i]] <- readRDS(file.path(data_dir[i], "gse.rds"))
   res_deg[[i]] <- readRDS(file.path(data_dir[i], "res_deg.rds"))
   res_gse[[i]] <- readRDS(file.path(data_dir[i], "res_gse.rds"))
+
+  res_gse_fmt[[i]] <- res_gse[[i]]
+  gene_sets_sub <- gene_sets[names(gene_sets) %in% rownames(res_gse_fmt[[i]])]
+  gene_sets_sub <- gene_sets_sub[
+    match(rownames(res_gse_fmt[[i]]), names(gene_sets_sub))
+  ]
+  id <- c()
+  for (j in seq_along(gene_sets_sub)) {
+    id <- c(id, gene_sets[[j]]@shortDescription)
+  }
+  rownames(res_gse_fmt[[i]]) <- id
+  res_gse_fmt[[i]] <- res_gse_fmt[[i]][ , c(6, 1:5)]
 }
 
 top_anno <- vector("list", length = length(data_sets))
@@ -12983,6 +13022,60 @@ shinyApp(
 )
 ```
 
+Data Tables
+===
+
+Row {.tabset}
+---
+
+### LCM Mass Spec Proteins - UP
+
+```{r}
+datatable_download_exp_15(res_deg[[2]][res_deg[[2]]$Coef > 0, ])
+```
+
+### LCM Mass Spec Proteins - DOWN
+
+```{r}
+datatable_download_exp_15(res_deg[[2]][res_deg[[2]]$Coef < 0, ])
+```
+
+### FACS ssRNAseq Genes - UP
+
+```{r}
+datatable_download_exp_15(res_deg[[3]][res_deg[[3]]$Coef > 0, ])
+```
+
+### FACS ssRNAseq Genes - DOWN
+
+```{r}
+datatable_download_exp_15(res_deg[[3]][res_deg[[3]]$Coef < 0, ])
+```
+
+### LCM Mass Spec Gene Sets - UP
+
+```{r}
+datatable_download_exp_15(res_gse_fmt[[2]][res_gse_fmt[[2]]$Coef > 0, ])
+```
+
+### LCM Mass Spec Gene Sets - DOWN
+
+```{r}
+datatable_download_exp_15(res_gse_fmt[[2]][res_gse_fmt[[2]]$Coef < 0, ])
+```
+
+### FACS ssRNAseq Gene Sets - UP
+
+```{r}
+datatable_download_exp_15(res_gse_fmt[[3]][res_gse_fmt[[3]]$Coef > 0, ])
+```
+
+### FACS ssRNAseq Gene Sets - DOWN
+
+```{r}
+datatable_download_exp_15(res_gse_fmt[[3]][res_gse_fmt[[3]]$Coef < 0, ])
+```
+
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
@@ -12994,7 +13087,7 @@ rm(
   gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
   deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
-  gene_anno_sub2c, gene_anno_sub3c
+  gene_anno_sub2c, gene_anno_sub3c, gene_sets_sub, res_gse_fmt
 )
 gc()
 ```
