@@ -12990,7 +12990,6 @@ shinyApp(
 )
 ```
 
-
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, graph, gse, hub_mat, layout,
