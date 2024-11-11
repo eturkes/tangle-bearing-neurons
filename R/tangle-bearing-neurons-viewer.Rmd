@@ -40,8 +40,6 @@ library(networkD3)
 
 `%notin%` <- Negate(`%in%`)
 
-pdf(NULL)
-
 data_sets <- c(
   "LCM Mass Spec - Human AD BA9 - Single-cell",
   "LCM Mass Spectrometry - Human AD BA9",
@@ -12343,11 +12341,6 @@ shinyApp(
 
 Search Genes / Proteins
 ===
-
-```{r, include = FALSE}
-dev.off()
-dev.off()
-```
 
 Row {.tabset}
 ---
