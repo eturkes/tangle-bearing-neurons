@@ -12747,7 +12747,7 @@ shinyApp(
 )
 ```
 
-### Both
+### Both Datasets
 
 ```{r}
 shinyApp(
