@@ -12994,10 +12994,7 @@ rm(
   gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
   deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
-  gene_anno_sub2c, gene_anno_sub3c, gse_sub2c, gene_ids2c, links2c,
-  links_orig2c, links_comb2c, links_list2c, nodes2c, gse_sub3c, gene_ids3c,
-  links3c, links_orig3c, links_comb3c, links_list3c, nodes3c, deg_sub2c,
-  deg_sub3c
+  gene_anno_sub2c, gene_anno_sub3c
 )
 gc()
 ```
