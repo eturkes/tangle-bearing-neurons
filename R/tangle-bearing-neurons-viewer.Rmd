@@ -11223,7 +11223,7 @@ shinyApp(
       net_data$gene_direction <- ifelse(
         net_data$ensembl %in% up_deg, yes = "up", no = "down"
       )
-      net_data$dataset <- 2
+      net_data$dataset <- "LCM Mass Spec"
 
       remove <- which(net_data$gse_direction != net_data$gene_direction)
       net_data <- net_data[-remove, ]
@@ -11251,7 +11251,7 @@ shinyApp(
       net_data$gene_direction <- ifelse(
         net_data$ensembl %in% up_deg, yes = "up", no = "down"
       )
-      net_data$dataset <- 3
+      net_data$dataset <- "FACS ssRNAseq"
 
       remove <- which(net_data$gse_direction != net_data$gene_direction)
       net_data <- net_data[-remove, ]
@@ -11369,7 +11369,10 @@ shinyApp(
           net_data_sub <- net_data_up[
             net_data_up$symbol == vis_up$nodes$id[j],
           ]
-          title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+          title[j] <- paste0(
+            net_data_sub$gene_set, " - ",
+            net_data_sub$dataset, collapse = "<br>"
+          )
         }
         vis_up$nodes$title <- title
 
@@ -11454,7 +11457,7 @@ shinyApp(
       net_data$gene_direction <- ifelse(
         net_data$ensembl %in% up_deg, yes = "up", no = "down"
       )
-      net_data$dataset <- 2
+      net_data$dataset <- "LCM Mass Spec"
 
       remove <- which(net_data$gse_direction != net_data$gene_direction)
       net_data <- net_data[-remove, ]
@@ -11482,7 +11485,7 @@ shinyApp(
       net_data$gene_direction <- ifelse(
         net_data$ensembl %in% up_deg, yes = "up", no = "down"
       )
-      net_data$dataset <- 3
+      net_data$dataset <- "FACS ssRNAseq"
 
       remove <- which(net_data$gse_direction != net_data$gene_direction)
       net_data <- net_data[-remove, ]
@@ -11600,7 +11603,10 @@ shinyApp(
           net_data_sub <- net_data_dn[
             net_data_dn$symbol == vis_dn$nodes$id[j],
           ]
-          title[j] <- paste(net_data_sub$gene_set, collapse = "<br>")
+          title[j] <- paste0(
+            net_data_sub$gene_set, " - ",
+            net_data_sub$dataset, collapse = "<br>"
+          )
         }
         vis_dn$nodes$title <- title
 
