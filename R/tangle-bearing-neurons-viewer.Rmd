@@ -11393,6 +11393,11 @@ shinyApp(
           vis_up, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
         )
+        vis_up <- visInteraction(
+          vis_up,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
+        )
       }
 
       output$vis_up23 <- renderVisNetwork({vis_up})
@@ -11627,6 +11632,11 @@ shinyApp(
           vis_dn, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
         )
+        vis_dn <- visInteraction(
+          vis_dn,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
+        )
       }
 
       output$vis_dn23 <- renderVisNetwork({vis_dn})
@@ -11814,6 +11824,11 @@ shinyApp(
           vis_up, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
         )
+        vis_up <- visInteraction(
+          vis_up,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
+        )
       }
 
       output$vis_up2 <- renderVisNetwork({vis_up})
@@ -12000,6 +12015,11 @@ shinyApp(
         vis_dn <- visNodes(
           vis_dn, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
+        )
+        vis_dn <- visInteraction(
+          vis_dn,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
         )
       }
 
@@ -12189,6 +12209,11 @@ shinyApp(
           vis_up, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
         )
+        vis_up <- visInteraction(
+          vis_up,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
+        )
       }
 
       output$vis_up3 <- renderVisNetwork({vis_up})
@@ -12375,6 +12400,11 @@ shinyApp(
         vis_dn <- visNodes(
           vis_dn, color = list(background = "rgba(0, 0, 0, 0)"),
           font = list(color = "white")
+        )
+        vis_dn <- visInteraction(
+          vis_dn,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"
         )
       }
 
