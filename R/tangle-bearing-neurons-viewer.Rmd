@@ -337,13 +337,10 @@ priority_gse <- c(
 )
 ```
 
-Network Analysis
-===
-
-Row {.tabset}
+Column
 ---
 
-### UP
+### Upregulated in Tangle-bearing Neurons
 
 ```{r}
 shinyApp(
@@ -351,7 +348,7 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(
-        width = 2,
+        width = 3,
         sliderInput(
           paste0("conn_up", 23),
           label = "Stringency:",
@@ -362,7 +359,7 @@ shinyApp(
         ),
       ),
       column(
-        width = 2,
+        width = 3,
         radioButtons(
           paste0("shared_up", 23), label = NULL,
           c("All", "Shared Only"), inline = TRUE
@@ -370,7 +367,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_up", 23), height = "660px", width = "50%")
+    visNetworkOutput(paste0("vis_up", 23), height = "660px")
   ),
 
   server = function (input, output, session) {
@@ -893,7 +890,10 @@ shinyApp(
 )
 ```
 
-### DOWN
+Column
+---
+
+### Downregulated in Tangle-bearing Neurons
 
 ```{r}
 shinyApp(
@@ -901,7 +901,7 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(
-        width = 2,
+        width = 3,
         sliderInput(
           paste0("conn_dn", 23),
           label = "Stringency:",
@@ -912,7 +912,7 @@ shinyApp(
         ),
       ),
       column(
-        width = 2,
+        width = 3,
         radioButtons(
           paste0("shared_dn", 23), label = NULL,
           c("All", "Shared Only"), inline = TRUE
@@ -920,7 +920,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_dn", 23), height = "660px", width = "50%")
+    visNetworkOutput(paste0("vis_dn", 23), height = "660px")
   ),
 
   server = function (input, output, session) {
