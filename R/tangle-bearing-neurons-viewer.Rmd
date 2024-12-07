@@ -370,7 +370,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_up", 23), height = "660px")
+    visNetworkOutput(paste0("vis_up", 23), height = "660px", width = "50%")
   ),
 
   server = function (input, output, session) {
@@ -860,6 +860,31 @@ shinyApp(
           tooltipStyle =
             "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);opacity: 0.9;"
         )
+        lnodes <- data.frame(
+          label = c(
+            "Upregulated\nGenes/Proteins\n\n\nLegend",
+            "Differentially\nExpressed",
+            "Network\nHub",
+            "LCM\nMass Spec",
+            "FACS\nssRNAseq",
+            "Both\nDatasets"
+          ),
+          color.background = c(
+            "black", "black", "black", "black", "black", "black"
+          ),
+          color.border = c(
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
+            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
+          ),
+          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
+          font.color = "white",
+          font.size = c(15, 12, 12, 12, 12, 12)
+        )
+        vis <- visLegend(
+          vis, addNodes = lnodes, position = "right",
+          useGroups = FALSE, stepY = 60, zoom = FALSE
+        )
       }
 
       output$vis_up23 <- renderVisNetwork({vis})
@@ -895,7 +920,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_dn", 23), height = "660px")
+    visNetworkOutput(paste0("vis_dn", 23), height = "660px", width = "50%")
   ),
 
   server = function (input, output, session) {
@@ -1384,6 +1409,31 @@ shinyApp(
           vis,
           tooltipStyle =
             "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);opacity: 0.9;"
+        )
+        lnodes <- data.frame(
+          label = c(
+            "Downregulated\nGenes/Proteins\n\n\nLegend",
+            "Differentially\nExpressed",
+            "Network\nHub",
+            "LCM\nMass Spec",
+            "FACS\nssRNAseq",
+            "Both\nDatasets"
+          ),
+          color.background = c(
+            "black", "black", "black", "black", "black", "black"
+          ),
+          color.border = c(
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
+            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
+          ),
+          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
+          font.color = "white",
+          font.size = c(15, 12, 12, 12, 12, 12)
+        )
+        vis <- visLegend(
+          vis, addNodes = lnodes, position = "right",
+          useGroups = FALSE, stepY = 60, zoom = FALSE
         )
       }
 
