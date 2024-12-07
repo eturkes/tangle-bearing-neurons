@@ -1101,11 +1101,6 @@ shinyApp(
           (max(net_data_table3_scaled) - min(net_data_table3_scaled))
       )
 
-      keep2 <- net_data_table2_scaled[
-        net_data_table2_scaled >= input[[paste0("conn_dn", 23)]]
-      ]
-      net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
-
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
       hub_mat <- hub_mat %*% t(hub_mat)
