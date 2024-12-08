@@ -165,52 +165,30 @@ for (i in seq_along(res_gse)) {
 priority_gse <- vector("list", length = 3)
 priority_gse[[1]] <- NULL
 priority_gse[[2]] <- list(
-  `APP Associated` =
-    "APP",
-  `STXBP1 Associated` =
-    "STXBP1",
-  `GOT2 Associated` =
-    "GOT2",
-  `GNAS Associated` =
-    "GNAS",
-  `SQSTM1 Associated` =
-    "SQSTM1",
-  `WASF1 Associated` =
-    "WASF1",
-  `CNTNAP1 Associated` =
-    "CNTNAP1",
-  `PDXK Associated`=
-    "PDXK",
-  `NEFM Associated`=
-    "NEFM",
-  `SNAP91 Associated`=
-    "SNAP91",
-  `HSP90AA1 Associated` =
-    "HSP90AA1",
-  `VPS35 Associated` =
-    "VPS35"
+  `APP Associated` = "APP",
+  `STXBP1 Associated` = "STXBP1",
+  `GOT2 Associated` = "GOT2",
+  `GNAS Associated` = "GNAS",
+  `SQSTM1 Associated` = "SQSTM1",
+  `WASF1 Associated` = "WASF1",
+  `CNTNAP1 Associated` = "CNTNAP1",
+  `PDXK Associated`= "PDXK",
+  `NEFM Associated`= "NEFM",
+  `SNAP91 Associated`= "SNAP91",
+  `HSP90AA1 Associated` = "HSP90AA1",
+  `VPS35 Associated` = "VPS35"
 )
 priority_gse[[3]] <- list(
-  `APP Associated` =
-    "APP",
-  `GOT2 Associated` =
-    "GOT2",
-  `SQSTM1 Associated` =
-    "SQSTM1",
-  `WASF1 Associated` =
-    "WASF1",
-  `CNTNAP1 Associated` =
-    "CNTNAP1",
-  `ATF4 Associated`=
-    "ATF4",
-  `NEFM Associated`=
-    "NEFM",
-  `SNAP91 Associated`=
-    "SNAP91",
-  `HSP90AA1 Associated` =
-    "HSP90AA1",
-  `VPS35 Associated` =
-    "VPS35"
+  `APP Associated` = "APP",
+  `GOT2 Associated` = "GOT2",
+  `SQSTM1 Associated` = "SQSTM1",
+  `WASF1 Associated` = "WASF1",
+  `CNTNAP1 Associated` = "CNTNAP1",
+  `ATF4 Associated`= "ATF4",
+  `NEFM Associated`= "NEFM",
+  `SNAP91 Associated`= "SNAP91",
+  `HSP90AA1 Associated` = "HSP90AA1",
+  `VPS35 Associated` = "VPS35"
 )
 
 for (i in seq_along(priority_gse)) {
