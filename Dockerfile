@@ -35,9 +35,12 @@ RUN apt-get update \
         -e "install.packages('visNetwork')" \
         -e "install.packages('purrr')" \
         -e "install.packages('networkD3')" \
+        -e "install.packages('tidyr')" \
+        -e "install.packages('plotly')" \
         -e "install.packages('BiocManager')" \
         -e "install.packages('remotes')" \
         -e "BiocManager::install('GSEABase')" \
+        -e "BiocManager::install('scuttle')" \
         -e "remotes::install_github('eturkes/InteractiveComplexHeatmap')" \
     && apt-get clean \
     && rm -Rf /var/lib/apt/lists/ \

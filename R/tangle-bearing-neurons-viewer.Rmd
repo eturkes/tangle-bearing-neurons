@@ -25,7 +25,7 @@ runtime: shiny
 #    Emir Turkes can be contacted at emir.turkes@eturkes.com
 
 library(conflicted)
-conflicts_prefer(igraph::degree, base::intersect, DT::JS)
+conflicts_prefer(igraph::degree, base::intersect, DT::JS, graphics::layout)
 library(scales)
 library(InteractiveComplexHeatmap)
 library(circlize)
@@ -38,6 +38,10 @@ library(visNetwork)
 library(purrr)
 library(networkD3)
 library(DT)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+library(scuttle)
 
 `%notin%` <- Negate(`%in%`)
 
@@ -162,6 +166,16 @@ for (i in seq_along(res_gse)) {
   res_gse[[i]]$P.value.adj <- p_adj[[i + length(data_sets)]]
 }
 
+hubs <- vector("list", length = length(data_sets))
+hubs[[2]] <- c(
+  "APP", "STXBP1", "GOT2", "GNAS", "SQSTM1", "WASF1", "CNTNAP1", "PDXK", "NEFM",
+  "SNAP91", "HSP90AA1", "VPS35"
+)
+hubs[[3]] <- c(
+  "APP", "GOT2", "SQSTM1", "WASF1", "CNTNAP1", "ATF4", "NEFM",
+  "SNAP91", "HSP90AA1", "VPS35"
+)
+
 priority_gse <- vector("list", length = 3)
 priority_gse[[1]] <- NULL
 priority_gse[[2]] <- list(
@@ -211,12 +225,14 @@ if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
   range_deg <- readRDS(file.path(cache_dir, "range_deg.rds"))
   sig_deg <- readRDS(file.path(cache_dir, "sig_deg.rds"))
   top_deg <- readRDS(file.path(cache_dir, "top_deg.rds"))
+  pseudobulk_deg <- readRDS(file.path(cache_dir, "pseudobulk_deg.rds"))
 } else {
 
   range_gse <- vector("list", length = length(data_sets))
   sig_gse <- vector("list", length = length(data_sets))
   top_gse <- vector("list", length = length(data_sets))
   n_gse <- vector("list", length = length(data_sets))
+  pseudobulk_deg <- vector("list", length = length(data_sets))
 
   for (i in seq_along(data_sets)) {
 
@@ -303,6 +319,12 @@ if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
     top_deg[[i]] <- res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ]$Gene
     n_deg[[i]] <- length(top_deg[[i]])
 
+    pseudobulk_deg[[i]] <- SingleCellExperiment(list(logcounts = deg[[i]]))
+    pseudobulk_deg[[i]] <- aggregateAcrossCells(
+      pseudobulk_deg[[i]], meta[[i]]$tau,
+      use_exprs_values = "logcounts", statistics = "mean"
+    )
+
   }
   saveRDS(range_gse, file = file.path(cache_dir, "range_gse.rds"))
   saveRDS(sig_gse, file = file.path(cache_dir, "sig_gse.rds"))
@@ -310,6 +332,7 @@ if (file.exists(file.path(cache_dir, "range_gse.rds"))) {
   saveRDS(range_deg, file = file.path(cache_dir, "range_deg.rds"))
   saveRDS(sig_deg, file = file.path(cache_dir, "sig_deg.rds"))
   saveRDS(top_deg, file = file.path(cache_dir, "top_deg.rds"))
+  saveRDS(pseudobulk_deg, file = file.path(cache_dir, "pseudobulk_deg.rds"))
 }
 
 priority_gse[[1]] <- c(
@@ -8725,6 +8748,65 @@ shinyApp(
 )
 ```
 
+Gene / Protein Scatter Plots
+===
+
+Column
+---
+
+### LCM Mass Spec
+
+```{r}
+df <- as.data.frame(logcounts(pseudobulk_deg[[2]]))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% rownames(df), ]
+gene_anno_sub <- gene_anno_sub[match(rownames(df), gene_anno_sub$ensembl), ]
+rownames(df) <- gene_anno_sub$symbol
+df <- cbind(rownames(df), df)
+colnames(df)[1] <- "Protein"
+df <- melt(df, id.vars = "Protein")
+df <- pivot_wider(df, names_from = variable, values_from = value)
+df$`Network Hub` <- ifelse(df$Protein %in% hubs[[2]], yes = "Yes", "No")
+
+ggplotly(
+  ggplot(df, aes(CTRL, NFT, label = Protein)) +
+    geom_point(aes(color = `Network Hub`)) +
+    geom_abline(intercept = 0, slope = 1) +
+    xlab(paste(data_types[[2]], "in CTRL Neurons", sep = " ")) +
+    ylab(paste(data_types[[2]], "in NFT Neurons", sep = " ")) +
+    ggtitle(paste("LCM Mass Spec -", nrow(deg[[2]]), "Proteins", sep = " ")) +
+    theme_light() +
+    theme(plot.title = element_text(hjust = 0.5))
+)
+```
+
+Column
+---
+
+### FACS ssRNAseq
+
+```{r}
+df <- as.data.frame(logcounts(pseudobulk_deg[[3]]))
+gene_anno_sub <- gene_anno[gene_anno$ensembl %in% rownames(df), ]
+gene_anno_sub <- gene_anno_sub[match(rownames(df), gene_anno_sub$ensembl), ]
+rownames(df) <- gene_anno_sub$symbol
+df <- cbind(rownames(df), df)
+colnames(df)[1] <- "Gene"
+df <- melt(df, id.vars = "Gene")
+df <- pivot_wider(df, names_from = variable, values_from = value)
+df$`Network Hub` <- ifelse(df$Gene %in% hubs[[3]], yes = "Yes", "No")
+
+ggplotly(
+  ggplot(df, aes(CTRL, NFT, label = Gene)) +
+    geom_point(aes(color = `Network Hub`)) +
+    geom_abline(intercept = 0, slope = 1) +
+    xlab(paste(data_types[[3]], "in CTRL Neurons", sep = " ")) +
+    ylab(paste(data_types[[3]], "in NFT Neurons", sep = " ")) +
+    ggtitle(paste("FACS ssRNAseq -", nrow(deg[[3]]), "Genes", sep = " ")) +
+    theme_light() +
+    theme(plot.title = element_text(hjust = 0.5))
+)
+```
+
 Search Genes / Proteins
 ===
 
@@ -9434,7 +9516,7 @@ rm(
   gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
   deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
-  gene_anno_sub2c, gene_anno_sub3c
+  gene_anno_sub2c, gene_anno_sub3c, df, hubs, pseudobulk_deg
 )
 gc()
 ```
