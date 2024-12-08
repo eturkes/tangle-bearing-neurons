@@ -1427,7 +1427,7 @@ shinyApp(
 )
 ```
 
-Laser-capture Microdissection Mass Spectrometry - Human AD BA9
+Pathways - LCM Mass Spec
 ===
 
 ```{r}
@@ -5356,7 +5356,7 @@ shinyApp(
 )
 ```
 
-FACS-sorted Single-soma RNAseq - Human AD BA9
+Pathways - FACS ssRNAseq
 ===
 
 ```{r}
