@@ -66,6 +66,10 @@ datatable_download_exp_15 <- function(dt) {
   )
 }
 
+scale_range <- function(x, from = c(1, 45), to = c(8, 16)) {
+  to[1] + (from[2] - x) * diff(to) / diff(from)
+}
+
 map_range <- function (x) {
   ifelse(
     x <= 0.3, yes = 1, no = ifelse(x >= 0.7, yes = 4, no = round(1 + x * 3))
@@ -1516,13 +1520,13 @@ click_21_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -1593,13 +1597,13 @@ click_21_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -1698,16 +1702,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -1794,13 +1798,13 @@ click_22_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -1871,13 +1875,13 @@ click_22_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -1978,16 +1982,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2074,13 +2078,13 @@ click_23_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -2151,13 +2155,13 @@ click_23_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -2258,16 +2262,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2354,13 +2358,13 @@ click_24_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -2431,13 +2435,13 @@ click_24_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -2538,16 +2542,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2634,13 +2638,13 @@ click_25_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -2711,13 +2715,13 @@ click_25_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -2818,16 +2822,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -2914,13 +2918,13 @@ click_26_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -2991,13 +2995,13 @@ click_26_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -3098,16 +3102,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3194,13 +3198,13 @@ click_27_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -3271,13 +3275,13 @@ click_27_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -3378,16 +3382,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3474,13 +3478,13 @@ click_28_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -3551,13 +3555,13 @@ click_28_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -3658,16 +3662,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -3754,13 +3758,13 @@ click_29_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -3831,13 +3835,13 @@ click_29_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -3938,16 +3942,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4034,13 +4038,13 @@ click_210_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -4111,13 +4115,13 @@ click_210_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -4218,16 +4222,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4314,13 +4318,13 @@ click_211_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -4391,13 +4395,13 @@ click_211_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -4498,16 +4502,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4594,13 +4598,13 @@ click_212_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -4671,13 +4675,13 @@ click_212_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -4778,16 +4782,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -4874,13 +4878,13 @@ click_213_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -4951,13 +4955,13 @@ click_213_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -5058,16 +5062,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5154,13 +5158,13 @@ click_214_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[2], direction = "horizontal",
@@ -5231,13 +5235,13 @@ click_214_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[2]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[2]), direction = "horizontal",
@@ -5338,16 +5342,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[2]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[2]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5445,13 +5449,13 @@ click_31_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -5522,13 +5526,13 @@ click_31_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -5627,16 +5631,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -5723,13 +5727,13 @@ click_32_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -5800,13 +5804,13 @@ click_32_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -5907,16 +5911,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6003,13 +6007,13 @@ click_33_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -6080,13 +6084,13 @@ click_33_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -6187,16 +6191,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6283,13 +6287,13 @@ click_34_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -6360,13 +6364,13 @@ click_34_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -6467,16 +6471,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6563,13 +6567,13 @@ click_35_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -6640,13 +6644,13 @@ click_35_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -6747,16 +6751,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -6843,13 +6847,13 @@ click_36_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -6920,13 +6924,13 @@ click_36_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -7027,16 +7031,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7123,13 +7127,13 @@ click_37_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -7200,13 +7204,13 @@ click_37_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -7307,16 +7311,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7403,13 +7407,13 @@ click_38_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -7480,13 +7484,13 @@ click_38_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -7587,16 +7591,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7683,13 +7687,13 @@ click_39_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -7760,13 +7764,13 @@ click_39_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -7867,16 +7871,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -7963,13 +7967,13 @@ click_310_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -8040,13 +8044,13 @@ click_310_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -8147,16 +8151,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8243,13 +8247,13 @@ click_311_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -8320,13 +8324,13 @@ click_311_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -8427,16 +8431,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
@@ -8523,13 +8527,13 @@ click_312_unscaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = data_types[3], direction = "horizontal",
@@ -8600,13 +8604,13 @@ click_312_scaled <- function(df, output) {
         column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
         column_gap = unit(1, units = "mm"),
         rect_gp = gpar(col = "black", lwd = 0.25),
-        row_names_gp = gpar(fontsize = 10),
+        row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
         column_title_gp = gpar(fontsize = 14),
         row_title_rot = 0,
         top_annotation = top_anno[[3]],
         show_column_names = FALSE,
         cell_fun = function(j, i, x, y, width, height, fill) {
-          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 8))
+          grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
         },
         heatmap_legend_param = list(
           title = paste0("Scaled ", data_types[3]), direction = "horizontal",
@@ -8707,16 +8711,16 @@ shinyApp(
           column_split = rep(seq(2), each = nrow(meta[[3]]) / 2),
           column_gap = unit(1, units = "mm"),
           rect_gp = gpar(col = "black", lwd = 0.25),
-          row_names_gp = gpar(fontsize = 13),
+          row_names_gp = gpar(fontsize = scale_range(nrow(mat))),
           column_title_gp = gpar(fontsize = 14),
           row_title_rot = 0,
           top_annotation = top_anno[[3]],
           show_column_names = FALSE,
           row_names_max_width = max_text_width(
-            rownames(mat), gp = gpar(fontsize = 14)
+            rownames(mat), gp = gpar(fontsize = scale_range(nrow(mat)) + 1)
           ),
           cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = 11))
+            grid.text(sig[i, j], x = x, y = y, gp = gpar(fontsize = scale_range(nrow(mat))))
           },
           heatmap_legend_param = list(
             title = title, direction = "horizontal",
