@@ -356,7 +356,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_up", 23), height = "660px")
+    visNetworkOutput(paste0("vis_up", 23), height = "625px")
   ),
 
   server = function (input, output, session) {
@@ -909,7 +909,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_dn", 23), height = "660px")
+    visNetworkOutput(paste0("vis_dn", 23), height = "625px")
   ),
 
   server = function (input, output, session) {
@@ -8741,7 +8741,7 @@ shinyApp(
       paste0("deg", "_deg2"),
       label = "Type to Search Proteins:",
       choices = res_deg[[2]]$Gene,
-      selected = top_deg[[2]][1:8],
+      selected = top_deg[[2]][1:10],
       multiple = TRUE,
       width = "100%"
     ),
@@ -8757,8 +8757,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap2", height = "660px"),
-        sankeyNetworkOutput("sankey2", height = "690px")
+        plotOutput("heatmap2", height = "635px"),
+        sankeyNetworkOutput("sankey2", height = "655px")
       )
     )
   ),
@@ -8942,7 +8942,7 @@ shinyApp(
       paste0("deg", "_deg3"),
       label = "Type to Search Genes:",
       choices = res_deg[[3]]$Gene,
-      selected = top_deg[[3]][1:8],
+      selected = top_deg[[3]][1:5],
       multiple = TRUE,
       width = "100%"
     ),
@@ -8958,8 +8958,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap3", height = "660px"),
-        sankeyNetworkOutput("sankey3", height = "690px")
+        plotOutput("heatmap3", height = "635px"),
+        sankeyNetworkOutput("sankey3", height = "655px")
       )
     )
   ),
@@ -9159,8 +9159,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap2c", height = "660px"),
-        plotOutput("heatmap3c", height = "660px")
+        plotOutput("heatmap2c", height = "635px"),
+        plotOutput("heatmap3c", height = "635px")
       )
     )
   ),
