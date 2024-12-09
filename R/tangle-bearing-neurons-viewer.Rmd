@@ -1680,12 +1680,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 21)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 21)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -1727,16 +1729,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 21)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 21), click_action = click_21_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 21), click_action = click_21_unscaled
-        )
+      if (length(input[[paste0("gse", 21)]]) > 0) {
+        if (input[[paste0("scaling", 21)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 21), click_action = click_21_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 21), click_action = click_21_unscaled
+          )
+        }
       }
     })
   },
@@ -1960,12 +1964,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 22)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 22)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -2007,16 +2013,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 22)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 22), click_action = click_22_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 22), click_action = click_22_unscaled
-        )
+      if (length(input[[paste0("gse", 22)]]) > 0) {
+        if (input[[paste0("scaling", 22)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 22), click_action = click_22_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 22), click_action = click_22_unscaled
+          )
+        }
       }
     })
   },
@@ -2240,12 +2248,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 23)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 23)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -2287,16 +2297,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 23)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 23), click_action = click_23_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 23), click_action = click_23_unscaled
-        )
+      if (length(input[[paste0("gse", 23)]]) > 0) {
+        if (input[[paste0("scaling", 23)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 23), click_action = click_23_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 23), click_action = click_23_unscaled
+          )
+        }
       }
     })
   },
@@ -2520,12 +2532,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 24)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 24)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -2567,16 +2581,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 24)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 24), click_action = click_24_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 24), click_action = click_24_unscaled
-        )
+      if (length(input[[paste0("gse", 24)]]) > 0) {
+        if (input[[paste0("scaling", 24)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 24), click_action = click_24_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 24), click_action = click_24_unscaled
+          )
+        }
       }
     })
   },
@@ -2800,12 +2816,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 25)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 25)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -2847,16 +2865,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 25)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 25), click_action = click_25_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 25), click_action = click_25_unscaled
-        )
+      if (length(input[[paste0("gse", 25)]]) > 0) {
+        if (input[[paste0("scaling", 25)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 25), click_action = click_25_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 25), click_action = click_25_unscaled
+          )
+        }
       }
     })
   },
@@ -3080,12 +3100,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 26)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 26)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -3127,16 +3149,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 26)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 26), click_action = click_26_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 26), click_action = click_26_unscaled
-        )
+      if (length(input[[paste0("gse", 26)]]) > 0) {
+        if (input[[paste0("scaling", 26)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 26), click_action = click_26_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 26), click_action = click_26_unscaled
+          )
+        }
       }
     })
   },
@@ -3360,12 +3384,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 27)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 27)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -3407,16 +3433,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 27)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 27), click_action = click_27_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 27), click_action = click_27_unscaled
-        )
+      if (length(input[[paste0("gse", 27)]]) > 0) {
+        if (input[[paste0("scaling", 27)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 27), click_action = click_27_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 27), click_action = click_27_unscaled
+          )
+        }
       }
     })
   },
@@ -3640,12 +3668,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 28)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 28)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -3687,16 +3717,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 28)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 28), click_action = click_28_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 28), click_action = click_28_unscaled
-        )
+      if (length(input[[paste0("gse", 28)]]) > 0) {
+        if (input[[paste0("scaling", 28)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 28), click_action = click_28_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 28), click_action = click_28_unscaled
+          )
+        }
       }
     })
   },
@@ -3920,12 +3952,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 29)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 29)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -3967,16 +4001,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 29)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 29), click_action = click_29_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 29), click_action = click_29_unscaled
-        )
+      if (length(input[[paste0("gse", 29)]]) > 0) {
+        if (input[[paste0("scaling", 29)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 29), click_action = click_29_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 29), click_action = click_29_unscaled
+          )
+        }
       }
     })
   },
@@ -4200,12 +4236,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 210)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 210)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -4247,16 +4285,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 210)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 210), click_action = click_210_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 210), click_action = click_210_unscaled
-        )
+      if (length(input[[paste0("gse", 210)]]) > 0) {
+        if (input[[paste0("scaling", 210)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 210), click_action = click_210_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 210), click_action = click_210_unscaled
+          )
+        }
       }
     })
   },
@@ -4480,12 +4520,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 211)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 211)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -4527,16 +4569,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 211)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 211), click_action = click_211_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 211), click_action = click_211_unscaled
-        )
+      if (length(input[[paste0("gse", 211)]]) > 0) {
+        if (input[[paste0("scaling", 211)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 211), click_action = click_211_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 211), click_action = click_211_unscaled
+          )
+        }
       }
     })
   },
@@ -4760,12 +4804,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 212)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 212)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -4807,16 +4853,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 212)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 212), click_action = click_212_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 212), click_action = click_212_unscaled
-        )
+      if (length(input[[paste0("gse", 212)]]) > 0) {
+        if (input[[paste0("scaling", 212)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 212), click_action = click_212_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 212), click_action = click_212_unscaled
+          )
+        }
       }
     })
   },
@@ -5040,12 +5088,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 213)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 213)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -5087,16 +5137,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 213)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 213), click_action = click_213_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 213), click_action = click_213_unscaled
-        )
+      if (length(input[[paste0("gse", 213)]]) > 0) {
+        if (input[[paste0("scaling", 213)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 213), click_action = click_213_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 213), click_action = click_213_unscaled
+          )
+        }
       }
     })
   },
@@ -5320,12 +5372,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 214)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 214)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -5367,16 +5421,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 214)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 214), click_action = click_214_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 214), click_action = click_214_unscaled
-        )
+      if (length(input[[paste0("gse", 214)]]) > 0) {
+        if (input[[paste0("scaling", 214)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 214), click_action = click_214_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 214), click_action = click_214_unscaled
+          )
+        }
       }
     })
   },
@@ -5600,12 +5656,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 215)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 215)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -5647,16 +5705,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 215)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 215), click_action = click_215_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 215), click_action = click_215_unscaled
-        )
+      if (length(input[[paste0("gse", 215)]]) > 0) {
+        if (input[[paste0("scaling", 215)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 215), click_action = click_215_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 215), click_action = click_215_unscaled
+          )
+        }
       }
     })
   },
@@ -5880,12 +5940,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 216)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 216)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -5927,16 +5989,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 216)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 216), click_action = click_216_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 216), click_action = click_216_unscaled
-        )
+      if (length(input[[paste0("gse", 216)]]) > 0) {
+        if (input[[paste0("scaling", 216)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 216), click_action = click_216_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 216), click_action = click_216_unscaled
+          )
+        }
       }
     })
   },
@@ -6160,12 +6224,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 217)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 217)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[2 + 3])
       } else {
@@ -6207,16 +6273,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 217)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 217), click_action = click_217_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 217), click_action = click_217_unscaled
-        )
+      if (length(input[[paste0("gse", 217)]]) > 0) {
+        if (input[[paste0("scaling", 217)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 217), click_action = click_217_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 217), click_action = click_217_unscaled
+          )
+        }
       }
     })
   },
@@ -6449,12 +6517,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 31)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 31)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -6496,16 +6566,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 31)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 31), click_action = click_31_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 31), click_action = click_31_unscaled
-        )
+      if (length(input[[paste0("gse", 31)]]) > 0) {
+        if (input[[paste0("scaling", 31)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 31), click_action = click_31_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 31), click_action = click_31_unscaled
+          )
+        }
       }
     })
   },
@@ -6729,12 +6801,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 32)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 32)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -6776,16 +6850,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 32)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 32), click_action = click_32_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 32), click_action = click_32_unscaled
-        )
+      if (length(input[[paste0("gse", 32)]]) > 0) {
+        if (input[[paste0("scaling", 32)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 32), click_action = click_32_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 32), click_action = click_32_unscaled
+          )
+        }
       }
     })
   },
@@ -7009,12 +7085,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 33)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 33)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -7056,16 +7134,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 33)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 33), click_action = click_33_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 33), click_action = click_33_unscaled
-        )
+      if (length(input[[paste0("gse", 33)]]) > 0) {
+        if (input[[paste0("scaling", 33)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 33), click_action = click_33_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 33), click_action = click_33_unscaled
+          )
+        }
       }
     })
   },
@@ -7289,12 +7369,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 34)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 34)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -7336,16 +7418,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 34)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 34), click_action = click_34_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 34), click_action = click_34_unscaled
-        )
+      if (length(input[[paste0("gse", 34)]]) > 0) {
+        if (input[[paste0("scaling", 34)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 34), click_action = click_34_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 34), click_action = click_34_unscaled
+          )
+        }
       }
     })
   },
@@ -7569,12 +7653,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 35)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 35)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -7616,16 +7702,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 35)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 35), click_action = click_35_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 35), click_action = click_35_unscaled
-        )
+      if (length(input[[paste0("gse", 35)]]) > 0) {
+        if (input[[paste0("scaling", 35)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 35), click_action = click_35_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 35), click_action = click_35_unscaled
+          )
+        }
       }
     })
   },
@@ -7849,12 +7937,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 36)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 36)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -7896,16 +7986,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 36)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 36), click_action = click_36_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 36), click_action = click_36_unscaled
-        )
+      if (length(input[[paste0("gse", 36)]]) > 0) {
+        if (input[[paste0("scaling", 36)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 36), click_action = click_36_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 36), click_action = click_36_unscaled
+          )
+        }
       }
     })
   },
@@ -8129,12 +8221,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 37)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 37)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -8176,16 +8270,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 37)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 37), click_action = click_37_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 37), click_action = click_37_unscaled
-        )
+      if (length(input[[paste0("gse", 37)]]) > 0) {
+        if (input[[paste0("scaling", 37)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 37), click_action = click_37_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 37), click_action = click_37_unscaled
+          )
+        }
       }
     })
   },
@@ -8409,12 +8505,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 38)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 38)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -8456,16 +8554,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 38)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 38), click_action = click_38_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 38), click_action = click_38_unscaled
-        )
+      if (length(input[[paste0("gse", 38)]]) > 0) {
+        if (input[[paste0("scaling", 38)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 38), click_action = click_38_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 38), click_action = click_38_unscaled
+          )
+        }
       }
     })
   },
@@ -8689,12 +8789,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 39)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 39)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -8736,16 +8838,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 39)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 39), click_action = click_39_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 39), click_action = click_39_unscaled
-        )
+      if (length(input[[paste0("gse", 39)]]) > 0) {
+        if (input[[paste0("scaling", 39)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 39), click_action = click_39_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 39), click_action = click_39_unscaled
+          )
+        }
       }
     })
   },
@@ -8969,12 +9073,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 310)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 310)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -9016,16 +9122,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 310)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 310), click_action = click_310_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 310), click_action = click_310_unscaled
-        )
+      if (length(input[[paste0("gse", 310)]]) > 0) {
+        if (input[[paste0("scaling", 310)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 310), click_action = click_310_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 310), click_action = click_310_unscaled
+          )
+        }
       }
     })
   },
@@ -9249,12 +9357,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 311)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 311)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -9296,16 +9406,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 311)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 311), click_action = click_311_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 311), click_action = click_311_unscaled
-        )
+      if (length(input[[paste0("gse", 311)]]) > 0) {
+        if (input[[paste0("scaling", 311)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 311), click_action = click_311_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 311), click_action = click_311_unscaled
+          )
+        }
       }
     })
   },
@@ -9529,12 +9641,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 312)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 312)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -9576,16 +9690,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 312)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 312), click_action = click_312_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 312), click_action = click_312_unscaled
-        )
+      if (length(input[[paste0("gse", 312)]]) > 0) {
+        if (input[[paste0("scaling", 312)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 312), click_action = click_312_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 312), click_action = click_312_unscaled
+          )
+        }
       }
     })
   },
@@ -9809,12 +9925,14 @@ shinyApp(
       }
 
       if (input[[paste0("scaling", 313)]] == "Scaled") {
-        mat <- t(
-          apply(
-            mat, MARGIN = 1,
-            FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+        if (length(input[[paste0("gse", 313)]]) > 0) {
+          mat <- t(
+            apply(
+              mat, MARGIN = 1,
+              FUN = function (x) ((2 * (x - min(x)) / (max(x) - min(x))) - 1)
+            )
           )
-        )
+        }
         col <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title <- paste0("Scaled ", data_types[3 + 3])
       } else {
@@ -9856,16 +9974,18 @@ shinyApp(
         heatmap_legend_side = "top"
       )
 
-      if (input[[paste0("scaling", 313)]] == "Scaled") {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 313), click_action = click_313_scaled
-        )
-      } else {
-        makeInteractiveComplexHeatmap(
-          input, output, session, ht, res = 80,
-          heatmap_id = paste0("ht", 313), click_action = click_313_unscaled
-        )
+      if (length(input[[paste0("gse", 313)]]) > 0) {
+        if (input[[paste0("scaling", 313)]] == "Scaled") {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 313), click_action = click_313_scaled
+          )
+        } else {
+          makeInteractiveComplexHeatmap(
+            input, output, session, ht, res = 80,
+            heatmap_id = paste0("ht", 313), click_action = click_313_unscaled
+          )
+        }
       }
     })
   },
@@ -10012,21 +10132,30 @@ shinyApp(
       mat2 <- mat2[match(input[[paste0("deg", "_deg2")]], rownames(mat2)), ]
       sig2 <- sig2[match(input[[paste0("deg", "_deg2")]], rownames(sig2)), ]
 
+      if (length(features2) == 1) {
+        mat2 <- t(as.matrix(mat2))
+        sig2 <- t(as.matrix(sig2))
+        rownames(mat2) <- features2
+        rownames(sig2) <- features2
+      }
+
       if (input[[paste0("scaling", "_deg2")]] == "Scaled") {
-        mat2 <- t(
-          apply(
-            mat2,
-            MARGIN = 1,
-            FUN = function (x) {
-              (
+        if (length(features2) > 0) {
+          mat2 <- t(
+            apply(
+              mat2,
+              MARGIN = 1,
+              FUN = function (x) {
                 (
-                  2 * (x - min(x, na.rm = TRUE)) /
-                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-                ) - 1
-              )
-            }
+                  (
+                    2 * (x - min(x, na.rm = TRUE)) /
+                      (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                  ) - 1
+                )
+              }
+            )
           )
-        )
+        }
         col2 <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title2 <- paste0("Scaled ", data_types[2])
       } else {
@@ -10213,21 +10342,30 @@ shinyApp(
       mat3 <- mat3[match(input[[paste0("deg", "_deg3")]], rownames(mat3)), ]
       sig3 <- sig3[match(input[[paste0("deg", "_deg3")]], rownames(sig3)), ]
 
+      if (length(features3) == 1) {
+        mat3 <- t(as.matrix(mat3))
+        sig3 <- t(as.matrix(sig3))
+        rownames(mat3) <- features3
+        rownames(sig3) <- features3
+      }
+
       if (input[[paste0("scaling", "_deg3")]] == "Scaled") {
-        mat3 <- t(
-          apply(
-            mat3,
-            MARGIN = 1,
-            FUN = function (x) {
-              (
+        if (length(features3) > 0) {
+          mat3 <- t(
+            apply(
+              mat3,
+              MARGIN = 1,
+              FUN = function (x) {
                 (
-                  2 * (x - min(x, na.rm = TRUE)) /
-                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-                ) - 1
-              )
-            }
+                  (
+                    2 * (x - min(x, na.rm = TRUE)) /
+                      (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                  ) - 1
+                )
+              }
+            )
           )
-        )
+        }
         col3 <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title3 <- paste0("Scaled ", data_types[3])
       } else {
@@ -10414,21 +10552,30 @@ shinyApp(
       mat2c <- mat2c[match(input[[paste0("deg", "_deg")]], rownames(mat2c)), ]
       sig2c <- sig2c[match(input[[paste0("deg", "_deg")]], rownames(sig2c)), ]
 
+      if (length(features2c) == 1) {
+        mat2c <- t(as.matrix(mat2c))
+        sig2c <- t(as.matrix(sig2c))
+        rownames(mat2c) <- features2c
+        rownames(sig2c) <- features2c
+      }
+
       if (input[[paste0("scaling", "_deg")]] == "Scaled") {
-        mat2c <- t(
-          apply(
-            mat2c,
-            MARGIN = 1,
-            FUN = function (x) {
-              (
+        if (length(features2c) > 0) {
+          mat2c <- t(
+            apply(
+              mat2c,
+              MARGIN = 1,
+              FUN = function (x) {
                 (
-                  2 * (x - min(x, na.rm = TRUE)) /
-                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-                ) - 1
-              )
-            }
+                  (
+                    2 * (x - min(x, na.rm = TRUE)) /
+                      (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                  ) - 1
+                )
+              }
+            )
           )
-        )
+        }
         col2c <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title2c <- paste0("Scaled ", data_types[2])
       } else {
@@ -10515,21 +10662,30 @@ shinyApp(
       mat3c <- mat3c[match(input[[paste0("deg", "_deg")]], rownames(mat3c)), ]
       sig3c <- sig3c[match(input[[paste0("deg", "_deg")]], rownames(sig3c)), ]
 
+      if (length(features3c) == 1) {
+        mat3c <- t(as.matrix(mat3c))
+        sig3c <- t(as.matrix(sig3c))
+        rownames(mat3c) <- features3c
+        rownames(sig3c) <- features3c
+      }
+
       if (input[[paste0("scaling", "_deg")]] == "Scaled") {
-        mat3c <- t(
-          apply(
-            mat3c,
-            MARGIN = 1,
-            FUN = function (x) {
-              (
+        if (length(features3c) > 0) {
+          mat3c <- t(
+            apply(
+              mat3c,
+              MARGIN = 1,
+              FUN = function (x) {
                 (
-                  2 * (x - min(x, na.rm = TRUE)) /
-                    (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-                ) - 1
-              )
-            }
+                  (
+                    2 * (x - min(x, na.rm = TRUE)) /
+                      (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+                  ) - 1
+                )
+              }
+            )
           )
-        )
+        }
         col3c <- colorRamp2(c(-1, 0, 1), colors = c("blue", "white", "red"))
         title3c <- paste0("Scaled ", data_types[3])
       } else {
