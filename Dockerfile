@@ -37,6 +37,7 @@ RUN apt-get update \
         -e "install.packages('networkD3')" \
         -e "install.packages('tidyr')" \
         -e "install.packages('plotly')" \
+        -e "install.packages('flextable')" \
         -e "install.packages('BiocManager')" \
         -e "install.packages('remotes')" \
         -e "BiocManager::install('GSEABase')" \

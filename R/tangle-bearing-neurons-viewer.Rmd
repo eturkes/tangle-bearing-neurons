@@ -42,6 +42,7 @@ library(tidyr)
 library(ggplot2)
 library(plotly)
 library(scuttle)
+library(flextable)
 
 `%notin%` <- Negate(`%in%`)
 
@@ -348,6 +349,63 @@ priority_gse[[2]] <- c(
 priority_gse[[3]] <- c(
   priority_gse[[3]], `Other Significant` = NA, `All Pathways` = NA
 )
+
+n_gse <- vector("list", length = length(data_sets))
+n_gse_up <- vector("list", length = length(data_sets))
+n_gse_dn <- vector("list", length = length(data_sets))
+n_deg <- vector("list", length = length(data_sets))
+n_deg_up <- vector("list", length = length(data_sets))
+n_deg_dn <- vector("list", length = length(data_sets))
+for (i in seq_along(n_gse)) {
+  n_gse[[i]] <- res_gse[[i]][res_gse[[i]]$P.value.adj < 0.05, ]
+  n_gse_up[[i]] <- nrow(n_gse[[i]][n_gse[[i]]$Coef > 0, ])
+  n_gse_dn[[i]] <- nrow(n_gse[[i]][n_gse[[i]]$Coef < 0, ])
+  n_gse[[i]] <- nrow(n_gse[[i]])
+  n_deg[[i]] <- res_deg[[i]][res_deg[[i]]$P.value.adj < 0.05, ]
+  n_deg_up[[i]] <- nrow(n_deg[[i]][n_deg[[i]]$Coef > 0, ])
+  n_deg_dn[[i]] <- nrow(n_deg[[i]][n_deg[[i]]$Coef < 0, ])
+  n_deg[[i]] <- nrow(n_deg[[i]])
+}
+```
+
+Metrics
+===
+
+```{r}
+res <- data.frame(
+  `Dataset` = c("LCM Mass Spec", "FACS ssRNAseq"),
+  `N Pathways Differentially Enriched` = c(n_gse[[2]], n_gse[[3]]),
+  `N Genes/Proteins Differential Expressed` = c(n_deg[[2]], n_deg[[3]]),
+  `N Pathways DE UP` = c(n_gse_up[[2]], n_gse_up[[3]]),
+  `N Pathways DE DOWN` = c(n_gse_dn[[2]], n_gse_dn[[3]]),
+  `N Genes/Proteins DE UP` = c(n_deg_up[[2]], n_deg_up[[3]]),
+  `N Genes/Proteins DE DOWN` = c(n_deg_dn[[2]], n_deg_dn[[3]]),
+  `N Pathways Tested` = c(nrow(res_gse[[2]]), nrow(res_gse[[3]])),
+  `N Genes/Proteins Tested` = c(nrow(res_deg[[2]]), nrow(res_deg[[3]])),
+  `Percentage Pathways DE` = c(
+    percent(n_gse[[2]] / nrow(res_gse[[2]])),
+    percent(n_gse[[3]] / nrow(res_gse[[3]]))
+  ),
+  `Percentage Genes/Proteins DE` = c(
+    percent(n_deg[[2]] / nrow(res_deg[[2]])),
+    percent(n_deg[[3]] / nrow(res_deg[[3]]))
+  )
+)
+colnames(res) <- c(
+  "Dataset",
+  "N Pathways Differentially Enriched",
+  "N Genes/Proteins Differential Expressed",
+  "N Pathways DE UP",
+  "N Pathways DE DOWN",
+  "N Genes/Proteins UP",
+  "N Genes/Proteins DE DOWN",
+  "N Pathways Tested",
+  "N Genes/Proteins Tested",
+  "Percentage Pathways DE",
+  "Percentage Genes/Proteins DE"
+)
+
+flextable(res)
 ```
 
 Network Analysis
@@ -10796,7 +10854,8 @@ rm(
   gene_ids2, links2, links_orig2, links_comb2, links_list2, nodes2, gse_sub3,
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
   deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
-  gene_anno_sub2c, gene_anno_sub3c, df, hubs, pseudobulk_deg
+  gene_anno_sub2c, gene_anno_sub3c, df, hubs, pseudobulk_deg, n_gse, n_gse_up,
+  n_gse_dn, n_deg, n_deg_up, n_deg_dn, res
 )
 gc()
 ```
