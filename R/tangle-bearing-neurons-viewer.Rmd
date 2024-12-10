@@ -373,36 +373,36 @@ for (i in seq_along(n_gse)) {
 venn_col <- brewer.pal(3, name = "Pastel2")[1:2]
 
 res <- data.frame(
-  `Dataset` = c("LCM Mass Spec", "FACS ssRNAseq"),
-  `N Pathways Differentially Enriched` = c(n_gse[[2]], n_gse[[3]]),
-  `N Genes/Proteins Differential Expressed` = c(n_deg[[2]], n_deg[[3]]),
-  `N Pathways DE UP` = c(n_gse_up[[2]], n_gse_up[[3]]),
-  `N Pathways DE DOWN` = c(n_gse_dn[[2]], n_gse_dn[[3]]),
-  `N Genes/Proteins DE UP` = c(n_deg_up[[2]], n_deg_up[[3]]),
-  `N Genes/Proteins DE DOWN` = c(n_deg_dn[[2]], n_deg_dn[[3]]),
-  `N Pathways Tested` = c(nrow(res_gse[[2]]), nrow(res_gse[[3]])),
-  `N Genes/Proteins Tested` = c(nrow(res_deg[[2]]), nrow(res_deg[[3]])),
-  `Percentage Pathways DE` = c(
+  a = c("LCM\nMass Spec", "FACS\nssRNAseq"),
+  b = c(n_gse[[2]], n_gse[[3]]),
+  c = c(n_deg[[2]], n_deg[[3]]),
+  d = c(n_gse_up[[2]], n_gse_up[[3]]),
+  e = c(n_gse_dn[[2]], n_gse_dn[[3]]),
+  f = c(n_deg_up[[2]], n_deg_up[[3]]),
+  g = c(n_deg_dn[[2]], n_deg_dn[[3]]),
+  h = c(nrow(res_gse[[2]]), nrow(res_gse[[3]])),
+  i = c(nrow(res_deg[[2]]), nrow(res_deg[[3]])),
+  j = c(
     percent(n_gse[[2]] / nrow(res_gse[[2]])),
     percent(n_gse[[3]] / nrow(res_gse[[3]]))
   ),
-  `Percentage Genes/Proteins DE` = c(
+  k = c(
     percent(n_deg[[2]] / nrow(res_deg[[2]])),
     percent(n_deg[[3]] / nrow(res_deg[[3]]))
   )
 )
 colnames(res) <- c(
   "Dataset",
-  "N Pathways Differentially Enriched",
-  "N Genes/Proteins Differential Expressed",
-  "N Pathways DE UP",
-  "N Pathways DE DOWN",
-  "N Genes/Proteins UP",
-  "N Genes/Proteins DE DOWN",
-  "N Pathways Tested",
-  "N Genes/Proteins Tested",
-  "Percentage Pathways DE",
-  "Percentage Genes/Proteins DE"
+  "Pathway\nSets\nDifferentially Enriched",
+  "Genes/Proteins\nDifferential Expressed",
+  "Pathway\nSets\nDE UP",
+  "Pathway\nSets\nDE DOWN",
+  "Genes/Proteins\nDE UP",
+  "Genes/Proteins\nDE DOWN",
+  "Pathway\nSets\nTested",
+  "Genes/Proteins\nTested",
+  "Percentage\nPathway\nSets\nDE",
+  "Percentage\nGenes/Proteins\nDE"
 )
 
 venn_list_gse <- vector("list", length = 2)
@@ -425,7 +425,7 @@ Row
 ### Stats Summary Table
 
 ```{r}
-flextable(res)
+flextable(res, cwidth = 1)
 ```
 
 Row
