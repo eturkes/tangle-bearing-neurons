@@ -2,6 +2,7 @@
 title: "Tangle Bearing Neurons Viewer"
 output:
   flexdashboard::flex_dashboard:
+    orientation: rows
 runtime: shiny
 ---
 
@@ -43,6 +44,8 @@ library(ggplot2)
 library(plotly)
 library(scuttle)
 library(flextable)
+library(eulerr)
+library(RColorBrewer)
 
 `%notin%` <- Negate(`%in%`)
 
@@ -366,12 +369,9 @@ for (i in seq_along(n_gse)) {
   n_deg_dn[[i]] <- nrow(n_deg[[i]][n_deg[[i]]$Coef < 0, ])
   n_deg[[i]] <- nrow(n_deg[[i]])
 }
-```
 
-Metrics
-===
+venn_col <- brewer.pal(3, name = "Pastel2")[1:2]
 
-```{r}
 res <- data.frame(
   `Dataset` = c("LCM Mass Spec", "FACS ssRNAseq"),
   `N Pathways Differentially Enriched` = c(n_gse[[2]], n_gse[[3]]),
@@ -405,13 +405,62 @@ colnames(res) <- c(
   "Percentage Genes/Proteins DE"
 )
 
+venn_list_gse <- vector("list", length = 2)
+names(venn_list_gse) <- res$Dataset
+venn_list_gse[[1]] <- res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ]$GeneSet
+venn_list_gse[[2]] <- res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ]$GeneSet
+
+venn_list_deg <- vector("list", length = 2)
+names(venn_list_deg) <- res$Dataset
+venn_list_deg[[1]] <- res_deg[[2]][res_deg[[2]]$P.value.adj < 0.05, ]$Gene
+venn_list_deg[[2]] <- res_deg[[3]][res_deg[[3]]$P.value.adj < 0.05, ]$Gene
+```
+
+Stats Summary
+===
+
+Row
+---
+
+### Stats Summary Table
+
+```{r}
 flextable(res)
+```
+
+Row
+---
+
+### Pathway Enrichment Venn Diagram
+
+```{r}
+plot(
+  euler(venn_list_gse),
+  fills = list(
+    fill = c("Set1" = venn_col[1], "Set2" = venn_col[2]), alpha = 0.9
+  ),
+  labels = list(col = "black", font = 2),
+  quantities = list(col = "black", font = 2)
+)
+```
+
+### Differential Expression Venn Diagram
+
+```{r}
+plot(
+  euler(venn_list_deg),
+  fills = list(
+    fill = c("Set1" = venn_col[1], "Set2" = venn_col[2]), alpha = 0.9
+  ),
+  labels = list(col = "black", font = 2),
+  quantities = list(col = "black", font = 2)
+)
 ```
 
 Network Analysis
 ===
 
-Column
+Row
 ---
 
 ### Upregulated in Tangle-bearing Neurons
@@ -963,9 +1012,6 @@ shinyApp(
   }
 )
 ```
-
-Column
----
 
 ### Downregulated in Tangle-bearing Neurons
 
@@ -10053,7 +10099,7 @@ shinyApp(
 Gene / Protein Scatter Plots
 ===
 
-Column
+Row
 ---
 
 ### LCM Mass Spec
@@ -10080,9 +10126,6 @@ ggplotly(
     theme(plot.title = element_text(hjust = 0.5))
 )
 ```
-
-Column
----
 
 ### FACS ssRNAseq
 
@@ -10855,7 +10898,7 @@ rm(
   gene_ids3, links3, links_orig3, links_comb3, links_list3, nodes3, deg_sub2,
   deg_sub3, mat2c, mat3c, sig2c, sig3c, add2c, add3c, add_anno2c, add_anno3c,
   gene_anno_sub2c, gene_anno_sub3c, df, hubs, pseudobulk_deg, n_gse, n_gse_up,
-  n_gse_dn, n_deg, n_deg_up, n_deg_dn, res
+  n_gse_dn, n_deg, n_deg_up, n_deg_dn, res, venn_list_gse, venn_list_deg
 )
 gc()
 ```

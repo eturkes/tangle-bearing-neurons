@@ -38,6 +38,7 @@ RUN apt-get update \
         -e "install.packages('tidyr')" \
         -e "install.packages('plotly')" \
         -e "install.packages('flextable')" \
+        -e "install.packages('eulerr')" \
         -e "install.packages('BiocManager')" \
         -e "install.packages('remotes')" \
         -e "BiocManager::install('GSEABase')" \
