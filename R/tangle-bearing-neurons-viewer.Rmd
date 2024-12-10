@@ -180,7 +180,7 @@ hubs[[3]] <- c(
   "SNAP91", "HSP90AA1", "VPS35", "MEF2C"
 )
 
-priority_gse <- vector("list", length = 3)
+priority_gse <- vector("list", length = length(data_sets))
 priority_gse[[1]] <- NULL
 priority_gse[[2]] <- list(
   `APP Associated` = "APP",
