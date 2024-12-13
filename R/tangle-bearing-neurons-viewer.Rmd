@@ -492,7 +492,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_up", 23), height = "660px")
+    visNetworkOutput(paste0("vis_up", 23), height = "650px")
   ),
 
   server = function (input, output, session) {
@@ -1056,7 +1056,7 @@ shinyApp(
         style = "padding-top: 35px;"
       )
     ),
-    visNetworkOutput(paste0("vis_dn", 23), height = "660px")
+    visNetworkOutput(paste0("vis_dn", 23), height = "650px")
   ),
 
   server = function (input, output, session) {
@@ -7371,8 +7371,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap2", height = "670px"),
-        sankeyNetworkOutput("sankey2", height = "690px")
+        plotOutput("heatmap2", height = "660px"),
+        sankeyNetworkOutput("sankey2", height = "685px")
       )
     )
   ),
@@ -7581,8 +7581,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap3", height = "670px"),
-        sankeyNetworkOutput("sankey3", height = "690px")
+        plotOutput("heatmap3", height = "660px"),
+        sankeyNetworkOutput("sankey3", height = "685px")
       )
     )
   ),
@@ -7791,8 +7791,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        plotOutput("heatmap2c", height = "670px"),
-        plotOutput("heatmap3c", height = "670px")
+        plotOutput("heatmap2c", height = "660px"),
+        plotOutput("heatmap3c", height = "660px")
       )
     )
   ),
