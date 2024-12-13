@@ -74,6 +74,12 @@ datatable_download_exp_15 <- function(dt) {
   )
 }
 
+network_filt <- function(thresh, weight = 0.25) {
+  out1 <- 0.5 + (weight * (thresh - 0.5))
+  out2 <- 0.5 - (weight * (thresh - 0.5))
+  list(out1 = out1, out2 = out2)
+}
+
 scale_range <- function(x, from = c(1, 45), to = c(8, 16)) {
   to[1] + (from[2] - x) * diff(to) / diff(from)
 }
@@ -471,21 +477,29 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(
-        width = 3,
+        width = 4,
         sliderInput(
           paste0("conn_up", 23),
           label = "Stringency:",
-          min = 0.1,
-          max = 0.9,
-          value = 0.5,
+          min = 0,
+          max = 1,
+          value = 0.9,
           step = 0.1
         ),
       ),
       column(
-        width = 3,
+        width = 4,
         radioButtons(
           paste0("shared_up", 23), label = NULL,
-          c("All", "Shared Only"), inline = TRUE
+          c("All Features", "Shared Features Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
+      ),
+      column(
+        width = 4,
+        radioButtons(
+          paste0("comp_up", 23), label = NULL,
+          c("All Networks", "Main Network Only"), inline = TRUE
         ),
         style = "padding-top: 35px;"
       )
@@ -497,6 +511,7 @@ shinyApp(
     observeEvent({
       input[[paste0("conn_up", 23)]]
       input[[paste0("shared_up", 23)]]
+      input[[paste0("comp_up", 23)]]
     }, {
 
       inverse <- round(1 - input[[paste0("conn_up", 23)]], digits = 2)
@@ -561,19 +576,7 @@ shinyApp(
       net_data3 <- net_data
       net_data3_orig <- net_data3
 
-      if (input[[paste0("shared_up", 23)]] == "Shared Only") {
-        net_data2 <- net_data2[
-          net_data2$ensembl %in% net_data2$ensembl &
-            net_data2$ensembl %in% net_data3$ensembl,
-        ]
-        net_data3 <- net_data3[
-          net_data3$ensembl %in% net_data2$ensembl &
-            net_data3$ensembl %in% net_data3$ensembl,
-        ]
-      }
-
       net_data <- rbind(net_data2, net_data3)
-
       net_data_table2 <- table(net_data2$symbol)
       net_data_table3 <- table(net_data3$symbol)
 
@@ -635,7 +638,11 @@ shinyApp(
         net_data_sub <- net_data2[net_data2$gene_set %in% matched_gse, ]
         net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
         dup_table <- table(net_data_sub$symbol)
-        dup2 <- c(dup2, mean(dup_table))
+        if (length(dup_table) > 0) {
+          dup2 <- c(dup2, mean(dup_table))
+        } else {
+          dup2 <- c(dup2, 1)
+        }
       }
       names(dup2) <- unique(net_data2$symbol)
       dup2 <- dup2[match(names(net_data_table2), names(dup2))]
@@ -647,7 +654,11 @@ shinyApp(
         net_data_sub <- net_data3[net_data3$gene_set %in% matched_gse, ]
         net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
         dup_table <- table(net_data_sub$symbol)
-        dup3 <- c(dup3, mean(dup_table))
+        if (length(dup_table) > 0) {
+          dup3 <- c(dup3, mean(dup_table))
+        } else {
+          dup3 <- c(dup3, 1)
+        }
       }
       names(dup3) <- unique(net_data3$symbol)
       dup3 <- dup3[match(names(net_data_table3), names(dup3))]
@@ -672,7 +683,9 @@ shinyApp(
       )
 
       keep2 <- net_data_table2_scaled[
-        net_data_table2_scaled >= input[[paste0("conn_up", 23)]]
+        net_data_table2_scaled > (
+          inverse * ((length(net_data_table2) / length(net_data_table3)) * 1)
+        ) + ((length(net_data_table2) / length(net_data_table3)) * 1)
       ]
       net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
 
@@ -727,6 +740,7 @@ shinyApp(
       keep2_table <- net_data_table_sub * keep2_table * degree_sub
       keep2_table_unscaled <- keep2_table
       if (length(keep2_table) > 1) {
+        keep2_table <- rank(keep2_table)
         keep2_table <- (
           (keep2_table - min(keep2_table)) /
             (max(keep2_table) - min(keep2_table))
@@ -736,14 +750,18 @@ shinyApp(
       }
       if (length(keep2_table) > 1) {
         keep2 <- names(keep2_table)[
-          keep2_table >= input[[paste0("conn_up", 23)]]
+          keep2_table > network_filt(input[[paste0("conn_up", 23)]])[[1]]
         ]
       } else {
         keep2 <- names(keep2_table)
       }
 
       keep3 <- net_data_table3_scaled[
-        net_data_table3_scaled >= input[[paste0("conn_up", 23)]]
+        net_data_table3_scaled > (
+          input[[paste0("conn_up", 23)]] *
+            ((length(net_data_table2) / length(net_data_table3)) * 1)
+        ) +
+          1 - ((length(net_data_table2) / length(net_data_table3)) * 1)
       ]
       net_data3 <- net_data3[net_data3$symbol %in% names(keep3), ]
 
@@ -757,9 +775,6 @@ shinyApp(
 
       degree <- degree(graph)
       degree3 <- degree
-      degree <- ((degree - min(degree)) / (max(degree) - min(degree)))
-      degree <- names(degree)[degree >= input[[paste0("conn_up", 23)]]]
-      net_data3 <- net_data3[net_data3$symbol %in% degree, ]
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
@@ -801,6 +816,7 @@ shinyApp(
       keep3_table <- net_data_table_sub * keep3_table * degree_sub
       keep3_table_unscaled <- keep3_table
       if (length(keep3_table) > 1) {
+        keep3_table <- rank(keep3_table)
         keep3_table <- (
           (keep3_table - min(keep3_table)) /
             (max(keep3_table) - min(keep3_table))
@@ -810,16 +826,23 @@ shinyApp(
       }
       if (length(keep3_table) > 1) {
         keep3 <- names(keep3_table)[
-          keep3_table >= input[[paste0("conn_up", 23)]]
+          keep3_table > network_filt(input[[paste0("conn_up", 23)]])[[2]]
         ]
       } else {
         keep3 <- names(keep3_table)
       }
 
-      net_data <- net_data[
-        net_data$symbol %in% net_data2$symbol |
-          net_data$symbol %in% net_data3$symbol,
-      ]
+      if (input[[paste0("shared_up", 23)]] == "Shared Features Only") {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2_orig$symbol &
+            net_data$symbol %in% net_data3_orig$symbol,
+        ]
+      } else {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2$symbol |
+            net_data$symbol %in% net_data3$symbol,
+        ]
+      }
 
       hub_mat <- as.data.frame.matrix(table(net_data[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
@@ -838,9 +861,15 @@ shinyApp(
       keep_degree <- unique(c(keep_idx, keep_degree))
       graph <- induced_subgraph(graph, vids = keep_degree)
 
-      graph <- subgraph(graph, which(degree(graph) > 0))
-      edges <- get.edgelist(graph, names = FALSE)
+      if (input[[paste0("shared_up", 23)]] == "All Features") {
+        graph <- subgraph(graph, which(degree(graph) > 0))
+      }
 
+      if (input[[paste0("comp_up", 23)]] == "Main Network Only") {
+        graph <- subgraph(graph, which(components(graph)$membership == 1))
+      }
+
+      edges <- get.edgelist(graph, names = FALSE)
       layout <- qgraph.layout.fruchtermanreingold(
         edges, vcount = vcount(graph), weights = E(graph)$weight,
         area = vcount(graph), repulse.rad = vcount(graph) / 4
@@ -858,17 +887,8 @@ shinyApp(
         net_data_nodup$symbol %in% c(keep2, keep3), yes = "circle", no = "box"
       )
 
-      if (input[[paste0("shared_up", 23)]] == "Shared Only") {
-        keep2_table <- keep2_table_unscaled[
-          names(keep2_table_unscaled) %in% keep2
-        ]
-        keep3_table <- keep3_table_unscaled[
-          names(keep3_table_unscaled) %in% keep3
-        ]
-      } else {
-        keep2_table <- keep2_table[names(keep2_table) %in% keep2]
-        keep3_table <- keep3_table[names(keep3_table) %in% keep3]
-      }
+      keep2_table <- keep2_table[names(keep2_table) %in% keep2]
+      keep3_table <- keep3_table[names(keep3_table) %in% keep3]
       keep_table_comb <- c(keep2_table, keep3_table)
       keep_table_comb <- keep_table_comb[
         names(keep_table_comb) %in% vis$nodes$id
@@ -888,14 +908,14 @@ shinyApp(
           if (length(keep_table_sub > 0)) {
             keep_table_sub <- sum(keep_table_sub)
           }
-          keep_table_sub <- ((keep_table_sub + 2) ^ 4) + 14
+          keep_table_sub <- (((keep_table_sub + 2) ^ 6) / 8) + 22
           size <- c(size, keep_table_sub)
         } else {
           size <- c(size, 30)
         }
       }
       vis$nodes$size <- size
-      vis$edges$width <- (vis$edges$weight + 1) ^ 1.25
+      vis$edges$width <- (vis$edges$weight + 0) ^ 1.25
 
       if (length(names(V(graph))) > 0) {
         col <- case_when(
@@ -1021,21 +1041,29 @@ shinyApp(
   ui = fluidPage(
     fluidRow(
       column(
-        width = 3,
+        width = 4,
         sliderInput(
           paste0("conn_dn", 23),
           label = "Stringency:",
-          min = 0.1,
-          max = 0.9,
-          value = 0.5,
+          min = 0,
+          max = 1,
+          value = 0.1,
           step = 0.1
         ),
       ),
       column(
-        width = 3,
+        width = 4,
         radioButtons(
           paste0("shared_dn", 23), label = NULL,
-          c("All", "Shared Only"), inline = TRUE
+          c("All Features", "Shared Features Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
+      ),
+      column(
+        width = 4,
+        radioButtons(
+          paste0("comp_dn", 23), label = NULL,
+          c("All Networks", "Main Network Only"), inline = TRUE
         ),
         style = "padding-top: 35px;"
       )
@@ -1047,6 +1075,7 @@ shinyApp(
     observeEvent({
       input[[paste0("conn_dn", 23)]]
       input[[paste0("shared_dn", 23)]]
+      input[[paste0("comp_dn", 23)]]
     }, {
 
       inverse <- round(1 - input[[paste0("conn_dn", 23)]], digits = 2)
@@ -1111,19 +1140,7 @@ shinyApp(
       net_data3 <- net_data
       net_data3_orig <- net_data3
 
-      if (input[[paste0("shared_dn", 23)]] == "Shared Only") {
-        net_data2 <- net_data2[
-          net_data2$ensembl %in% net_data2$ensembl &
-            net_data2$ensembl %in% net_data3$ensembl,
-        ]
-        net_data3 <- net_data3[
-          net_data3$ensembl %in% net_data2$ensembl &
-            net_data3$ensembl %in% net_data3$ensembl,
-        ]
-      }
-
       net_data <- rbind(net_data2, net_data3)
-
       net_data_table2 <- table(net_data2$symbol)
       net_data_table3 <- table(net_data3$symbol)
 
@@ -1185,7 +1202,11 @@ shinyApp(
         net_data_sub <- net_data2[net_data2$gene_set %in% matched_gse, ]
         net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
         dup_table <- table(net_data_sub$symbol)
-        dup2 <- c(dup2, mean(dup_table))
+        if (length(dup_table) > 0) {
+          dup2 <- c(dup2, mean(dup_table))
+        } else {
+          dup2 <- c(dup2, 1)
+        }
       }
       names(dup2) <- unique(net_data2$symbol)
       dup2 <- dup2[match(names(net_data_table2), names(dup2))]
@@ -1197,7 +1218,11 @@ shinyApp(
         net_data_sub <- net_data3[net_data3$gene_set %in% matched_gse, ]
         net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
         dup_table <- table(net_data_sub$symbol)
-        dup3 <- c(dup3, mean(dup_table))
+        if (length(dup_table) > 0) {
+          dup3 <- c(dup3, mean(dup_table))
+        } else {
+          dup3 <- c(dup3, 1)
+        }
       }
       names(dup3) <- unique(net_data3$symbol)
       dup3 <- dup3[match(names(net_data_table3), names(dup3))]
@@ -1220,6 +1245,13 @@ shinyApp(
         (net_data_table3_scaled - min(net_data_table3_scaled)) /
           (max(net_data_table3_scaled) - min(net_data_table3_scaled))
       )
+
+      keep2 <- net_data_table2_scaled[
+        net_data_table2_scaled > (
+          inverse * ((length(net_data_table2) / length(net_data_table3)) / 1)
+        ) + ((length(net_data_table2) / length(net_data_table3)) / 1)
+      ]
+      net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
 
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
@@ -1272,6 +1304,7 @@ shinyApp(
       keep2_table <- net_data_table_sub * keep2_table * degree_sub
       keep2_table_unscaled <- keep2_table
       if (length(keep2_table) > 1) {
+        keep2_table <- rank(keep2_table)
         keep2_table <- (
           (keep2_table - min(keep2_table)) /
             (max(keep2_table) - min(keep2_table))
@@ -1281,14 +1314,18 @@ shinyApp(
       }
       if (length(keep2_table) > 1) {
         keep2 <- names(keep2_table)[
-          keep2_table >= input[[paste0("conn_dn", 23)]]
+          keep2_table > network_filt(input[[paste0("conn_dn", 23)]])[[1]]
         ]
       } else {
         keep2 <- names(keep2_table)
       }
 
       keep3 <- net_data_table3_scaled[
-        net_data_table3_scaled >= input[[paste0("conn_dn", 23)]]
+        net_data_table3_scaled > (
+          input[[paste0("conn_dn", 23)]] *
+            ((length(net_data_table2) / length(net_data_table3)) / 1)
+        ) +
+          1 - ((length(net_data_table2) / length(net_data_table3)) / 1)
       ]
       net_data3 <- net_data3[net_data3$symbol %in% names(keep3), ]
 
@@ -1302,9 +1339,6 @@ shinyApp(
 
       degree <- degree(graph)
       degree3 <- degree
-      degree <- ((degree - min(degree)) / (max(degree) - min(degree)))
-      degree <- names(degree)[degree >= input[[paste0("conn_dn", 23)]]]
-      net_data3 <- net_data3[net_data3$symbol %in% degree, ]
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
@@ -1346,6 +1380,7 @@ shinyApp(
       keep3_table <- net_data_table_sub * keep3_table * degree_sub
       keep3_table_unscaled <- keep3_table
       if (length(keep3_table) > 1) {
+        keep3_table <- rank(keep3_table)
         keep3_table <- (
           (keep3_table - min(keep3_table)) /
             (max(keep3_table) - min(keep3_table))
@@ -1355,16 +1390,23 @@ shinyApp(
       }
       if (length(keep3_table) > 1) {
         keep3 <- names(keep3_table)[
-          keep3_table >= input[[paste0("conn_dn", 23)]]
+          keep3_table > network_filt(input[[paste0("conn_dn", 23)]])[[2]]
         ]
       } else {
         keep3 <- names(keep3_table)
       }
 
-      net_data <- net_data[
-        net_data$symbol %in% net_data2$symbol |
-          net_data$symbol %in% net_data3$symbol,
-      ]
+      if (input[[paste0("shared_dn", 23)]] == "Shared Features Only") {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2_orig$symbol &
+            net_data$symbol %in% net_data3_orig$symbol,
+        ]
+      } else {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2$symbol |
+            net_data$symbol %in% net_data3$symbol,
+        ]
+      }
 
       hub_mat <- as.data.frame.matrix(table(net_data[ , c(3, 2)]))
       hub_mat <- hub_mat == 1
@@ -1383,9 +1425,15 @@ shinyApp(
       keep_degree <- unique(c(keep_idx, keep_degree))
       graph <- induced_subgraph(graph, vids = keep_degree)
 
-      graph <- subgraph(graph, which(degree(graph) > 0))
-      edges <- get.edgelist(graph, names = FALSE)
+      if (input[[paste0("shared_dn", 23)]] == "All Features") {
+        graph <- subgraph(graph, which(degree(graph) > 0))
+      }
 
+      if (input[[paste0("comp_dn", 23)]] == "Main Network Only") {
+        graph <- subgraph(graph, which(components(graph)$membership == 1))
+      }
+
+      edges <- get.edgelist(graph, names = FALSE)
       layout <- qgraph.layout.fruchtermanreingold(
         edges, vcount = vcount(graph), weights = E(graph)$weight,
         area = vcount(graph), repulse.rad = vcount(graph) / 4
@@ -1403,17 +1451,8 @@ shinyApp(
         net_data_nodup$symbol %in% c(keep2, keep3), yes = "circle", no = "box"
       )
 
-      if (input[[paste0("shared_dn", 23)]] == "Shared Only") {
-        keep2_table <- keep2_table_unscaled[
-          names(keep2_table_unscaled) %in% keep2
-        ]
-        keep3_table <- keep3_table_unscaled[
-          names(keep3_table_unscaled) %in% keep3
-        ]
-      } else {
-        keep2_table <- keep2_table[names(keep2_table) %in% keep2]
-        keep3_table <- keep3_table[names(keep3_table) %in% keep3]
-      }
+      keep2_table <- keep2_table[names(keep2_table) %in% keep2]
+      keep3_table <- keep3_table[names(keep3_table) %in% keep3]
       keep_table_comb <- c(keep2_table, keep3_table)
       keep_table_comb <- keep_table_comb[
         names(keep_table_comb) %in% vis$nodes$id
@@ -1433,14 +1472,14 @@ shinyApp(
           if (length(keep_table_sub > 0)) {
             keep_table_sub <- sum(keep_table_sub)
           }
-          keep_table_sub <- ((keep_table_sub + 2) ^ 4) + 14
+          keep_table_sub <- (((keep_table_sub + 2) ^ 5) / 4) + 22
           size <- c(size, keep_table_sub)
         } else {
           size <- c(size, 30)
         }
       }
       vis$nodes$size <- size
-      vis$edges$width <- (vis$edges$weight + 1) ^ 1.25
+      vis$edges$width <- (vis$edges$weight + 0) ^ 1.25
 
       if (length(names(V(graph))) > 0) {
         col <- case_when(
