@@ -4313,7 +4313,7 @@ shinyApp(
       paste0("gse", comb_idx),
       label = "Type to Search Pathways:",
       choices = top_gse[[idx]][[sub_idx]],
-      selected = top_gse[[idx]][[sub_idx]][1:20],
+      selected = NULL,
       multiple = TRUE,
       width = "100%"
     ),
@@ -7162,7 +7162,7 @@ shinyApp(
       paste0("gse", comb_idx),
       label = "Type to Search Pathways:",
       choices = top_gse[[idx]][[sub_idx]],
-      selected = top_gse[[idx]][[sub_idx]][1:20],
+      selected = NULL,
       multiple = TRUE,
       width = "100%"
     ),
