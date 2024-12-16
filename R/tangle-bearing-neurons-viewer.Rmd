@@ -90,6 +90,12 @@ map_range <- function (x) {
   )
 }
 
+add_newline <- function(string) {
+  words <- strsplit(string, split = " ")[[1]]
+  chunks <- split(words, f = ceiling(seq_along(words) / 2))
+  paste(sapply(chunks, FUN = paste, collapse = " "), collapse = "\n")
+}
+
 data_sets <- c(
   "LCM Mass Spec - Human AD BA9 - Single-cell",
   "LCM Mass Spectrometry - Human AD BA9",
@@ -451,23 +457,22 @@ shinyApp(
         style = "padding-top: 35px;"
       ),
       column(
-        width = 4,
-        radioButtons(
-          paste0("path_up", 23), label = NULL,
-          c(
-            "Pathways Shared Between Datasets",
-            "Pathways Shared Between Genes/Proteins"
-          ),
-          inline = TRUE
+        width = 2,
+        sliderInput(
+          paste0("degree_up", 23),
+          label = "Connectivity:",
+          min = 0,
+          max = 1,
+          value = 0.9,
+          step = 0.1
         ),
-        style = "padding-top: 35px;"
       )
     ),
     fluidPage(
       div(
         style = "display:flex;",
-        visNetworkOutput(paste0("vis_up", 23), height = "650px", width = "50%"),
-        visNetworkOutput(paste0("vis2_up", 23), height = "650px", width = "50%")
+        visNetworkOutput(paste0("vis_up", 23), height = "650px", width = "57%"),
+        visNetworkOutput(paste0("vis2_up", 23), height = "650px", width = "43%")
       )
     )
   ),
@@ -477,7 +482,7 @@ shinyApp(
       input[[paste0("conn_up", 23)]]
       input[[paste0("shared_up", 23)]]
       input[[paste0("comp_up", 23)]]
-      input[[paste0("path_up", 23)]]
+      input[[paste0("degree_up", 23)]]
     }, {
 
       inverse <- round(1 - input[[paste0("conn_up", 23)]], digits = 2)
@@ -968,7 +973,7 @@ shinyApp(
         )
         lnodes <- data.frame(
           label = c(
-            "Upregulated\nGenes/Proteins\n\n\nLegend",
+            "Upregulated\nGenes/Proteins/\nPathways\n\nLegend",
             "Differentially\nExpressed",
             "Network\nHub",
             "LCM\nMass Spec",
@@ -994,7 +999,7 @@ shinyApp(
       }
       output$vis_up23 <- renderVisNetwork({vis})
 
-      net_data <- net_data[net_data$symbol %in% V(graph)$name, ]
+      net_data <- net_data[net_data$symbol %in% c(keep2, keep3), ]
       vertices <- data.frame(
         name = c(unique(net_data$symbol), unique(net_data$gene_set)),
         type = c(
@@ -1004,15 +1009,6 @@ shinyApp(
       )
       edges <- as.data.frame(as.matrix(net_data[ , c(3, 2)]))
       colnames(edges) <- c("from", "to")
-
-      dup <- which(duplicated(edges))
-      if (
-        input[[paste0("path_up", 23)]] == "Pathways Shared Between Genes/Proteins"
-      ) {
-        edges <- edges[-dup, ]
-      } else {
-        edges <- edges[dup, ]
-      }
 
       graph <- graph_from_data_frame(
         edges, vertices = vertices, directed = FALSE
@@ -1029,23 +1025,56 @@ shinyApp(
 
       graph <- subgraph(graph, which(degree(graph) > 0))
 
-      if (
-        input[[paste0("path_up", 23)]] == "Pathways Shared Between Genes/Proteins"
-      ) {
-        graph_sub <- V(graph)[which(V(graph)$type == "gse")]
-        degree <- degree(graph, v = graph_sub)
-        graph_sub <- graph_sub[degree >= 2]
-        graph <- induced_subgraph(
-          graph, vids = unlist(
-            neighborhood(graph, order = 1, nodes = graph_sub)
-          )
-        )
-      }
+      graph_sub <- V(graph)[which(V(graph)$type == "gse")]
+      degree <- degree(graph, v = graph_sub)
 
+      pval2 <- res_gse[[2]]
+      pval2 <- pval2[pval2$GeneSet %in% names(degree), ]
+      degree_sub <- degree[names(degree) %in% pval2$GeneSet]
+      pval2 <- pval2[match(names(degree_sub), pval2$GeneSet), ]
+      pval2 <- pval2$Coef
+      names(pval2) <- names(degree_sub)
+
+      pval3 <- res_gse[[3]]
+      pval3 <- pval3[pval3$GeneSet %in% names(degree), ]
+      degree_sub <- degree[names(degree) %in% pval3$GeneSet]
+      pval3 <- pval3[match(names(degree_sub), pval3$GeneSet), ]
+      pval3 <- pval3$Coef
+      names(pval3) <- names(degree_sub)
+
+      pval <- c(pval2, pval3)
+      pval <- tapply(pval, INDEX = names(pval), FUN = sum)
+      pval <- pval[match(names(degree), names(pval))]
+      pval <- (pval - min(pval)) / (max(pval) - min(pval))
+      pval <- rank(pval)
+      pval <- ((pval - min(pval)) / (max(pval) - min(pval))) / 100000000000
+
+      degree <- degree + pval
+      degree <- (degree - min(degree)) / (max(degree) - min(degree))
+      degree <- rank(degree)
+      degree <- (degree - min(degree)) / (max(degree) - min(degree))
+
+      graph_sub <- graph_sub[degree >= input[[paste0("degree_up", 23)]]]
+      graph <- induced_subgraph(
+        graph, vids = unlist(neighborhood(graph, order = 1, nodes = graph_sub))
+      )
+
+      edge_counts <- table(
+        apply(
+          get.edgelist(graph), MARGIN = 1,
+          FUN = function(x) paste(sort(x), collapse = "-")
+        )
+      )
+      E(graph)$weight <- edge_counts[
+        apply(
+          get.edgelist(graph), MARGIN = 1,
+          FUN = function(x) paste(sort(x), collapse = "-")
+        )
+      ]
       edges <- get.edgelist(graph, names = FALSE)
       layout <- qgraph.layout.fruchtermanreingold(
         edges, vcount = vcount(graph), weights = E(graph)$weight,
-        area = vcount(graph) / 4, repulse.rad = vcount(graph)
+        area = vcount(graph), repulse.rad = vcount(graph) / 4
       )
       vis2 <- toVisNetworkData(graph)
 
@@ -1068,37 +1097,20 @@ shinyApp(
         keep_table_comb <- 1
       }
       size <- c()
-      if (
-        input[[paste0("path_up", 23)]] == "Pathways Shared Between Genes/Proteins"
-      ) {
-        for (gene in vis2$nodes$id) {
-          if (gene %in% names(keep_table_comb)) {
-            keep_table_sub <- keep_table_comb[names(keep_table_comb) %in% gene]
-            if (length(keep_table_sub > 0)) {
-              keep_table_sub <- sum(keep_table_sub)
-            }
-            keep_table_sub <- (((keep_table_sub + 2) ^ 4) / 4) + 16
-            size <- c(size, keep_table_sub)
-          } else {
-            size <- c(size, 20)
+      for (gene in vis2$nodes$id) {
+        if (gene %in% names(keep_table_comb)) {
+          keep_table_sub <- keep_table_comb[names(keep_table_comb) %in% gene]
+          if (length(keep_table_sub > 0)) {
+            keep_table_sub <- sum(keep_table_sub)
           }
-        }
-      } else {
-        for (gene in vis2$nodes$id) {
-          if (gene %in% names(keep_table_comb)) {
-            keep_table_sub <- keep_table_comb[names(keep_table_comb) %in% gene]
-            if (length(keep_table_sub > 0)) {
-              keep_table_sub <- sum(keep_table_sub)
-            }
-            keep_table_sub <- (((keep_table_sub + 2) ^ 4) / 4) + 26
-            size <- c(size, keep_table_sub)
-          } else {
-            size <- c(size, 30)
-          }
+          keep_table_sub <- (((keep_table_sub + 2) ^ 6) / 16) + 11
+          size <- c(size, keep_table_sub)
+        } else {
+          size <- c(size, 35)
         }
       }
       vis2$nodes$size <- size
-      vis2$edges$width <- rep(5, times = nrow(vis2$edges))
+      vis2$edges$width <- (vis2$edges$weight + 0.5) ^ 3.5
 
       if (length(names(V(graph))) > 0) {
         col <- case_when(
@@ -1113,10 +1125,14 @@ shinyApp(
         )
         vis2$nodes$group <- col
 
-        f <- pmax((max(nchar(net_data$symbol)) - nchar(vis2$nodes$id)) / 2, 0)
-        vis2$nodes$label <- sprintf(
-          "%-*s%s%*s", f, "", vis2$nodes$id, ceiling(f), ""
+        deg_string <- vis2$nodes$id[vis2$nodes$id %in% net_data$symbol]
+        f <- pmax((max(nchar(net_data$symbol)) - nchar(deg_string)) / 2, 0)
+        deg_string <- sprintf(
+          "%-*s%s%*s", f, "", deg_string, ceiling(f), ""
         )
+        gse_string <- vis2$nodes$id[vis2$nodes$id %in% net_data$gene_set]
+        gse_string <- sapply(gse_string, FUN = add_newline)
+        vis2$nodes$label <- c(deg_string, gse_string)
         vis2$nodes$font.size <- vis2$nodes$size
 
         vis2 <- visNetwork(vis2$nodes, vis2$edges, background = "black")
@@ -1171,31 +1187,6 @@ shinyApp(
               border = "rgba(255, 165, 0, 1)"
             )
           )
-        )
-        lnodes <- data.frame(
-          label = c(
-            "Upregulated\nGenes/Proteins/\nPathways\n\nLegend",
-            "Differentially\nExpressed",
-            "Network\nHub",
-            "LCM\nMass Spec",
-            "FACS\nssRNAseq",
-            "Both\nDatasets"
-          ),
-          color.background = c(
-            "black", "black", "black", "black", "black", "black"
-          ),
-          color.border = c(
-            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
-            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
-            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
-          ),
-          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
-          font.color = "white",
-          font.size = c(15, 12, 12, 12, 12, 12)
-        )
-        vis2 <- visLegend(
-          vis2, addNodes = lnodes, position = "right",
-          useGroups = FALSE, stepY = 60, zoom = FALSE
         )
       }
       output$vis2_up23 <- renderVisNetwork({vis2})
