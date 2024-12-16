@@ -918,7 +918,9 @@ shinyApp(
         vis <- visEdges(
           vis, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
         )
-        vis <- visIgraphLayout(vis, "layout.norm", layoutMatrix = layout)
+        vis <- visIgraphLayout(
+          vis, layout = "layout.norm", layoutMatrix = layout
+        )
         vis <- visOptions(
           vis,
           highlightNearest = list(
@@ -1140,7 +1142,9 @@ shinyApp(
         vis2 <- visEdges(
           vis2, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
         )
-        vis2 <- visIgraphLayout(vis2, "layout.norm", layoutMatrix = layout)
+        vis2 <- visIgraphLayout(
+          vis2, layout = "layout.norm", layoutMatrix = layout
+        )
         vis2 <- visOptions(
           vis2,
           highlightNearest = list(
@@ -1692,7 +1696,9 @@ shinyApp(
         vis <- visEdges(
           vis, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
         )
-        vis <- visIgraphLayout(vis, "layout.norm", layoutMatrix = layout)
+        vis <- visIgraphLayout(
+          vis, layout = "layout.norm", layoutMatrix = layout
+        )
         vis <- visOptions(
           vis,
           highlightNearest = list(
@@ -1914,7 +1920,9 @@ shinyApp(
         vis2 <- visEdges(
           vis2, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
         )
-        vis2 <- visIgraphLayout(vis2, "layout.norm", layoutMatrix = layout)
+        vis2 <- visIgraphLayout(
+          vis2, layout = "layout.norm", layoutMatrix = layout
+        )
         vis2 <- visOptions(
           vis2,
           highlightNearest = list(
