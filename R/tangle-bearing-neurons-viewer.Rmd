@@ -471,8 +471,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        visNetworkOutput(paste0("vis_up", 23), height = "650px", width = "57%"),
-        visNetworkOutput(paste0("vis2_up", 23), height = "650px", width = "43%")
+        visNetworkOutput(paste0("vis_up", 23), height = "650px", width = "50%"),
+        visNetworkOutput(paste0("vis2_up", 23), height = "650px", width = "50%")
       )
     )
   ),
@@ -975,7 +975,7 @@ shinyApp(
         )
         lnodes <- data.frame(
           label = c(
-            "Upregulated\nGenes/Proteins/\nPathways\n\nLegend",
+            "Upregulated\nGenes/Proteins\n\n\nLegend",
             "Differentially\nExpressed",
             "Network\nHub",
             "LCM\nMass Spec",
@@ -1192,6 +1192,31 @@ shinyApp(
             )
           )
         )
+        lnodes <- data.frame(
+          label = c(
+            "Upregulated\nPathways\n\n\nLegend",
+            "Differentially\nEnriched",
+            "Network\nHub",
+            "LCM\nMass Spec",
+            "FACS\nssRNAseq",
+            "Both\nDatasets"
+          ),
+          color.background = c(
+            "black", "black", "black", "black", "black", "black"
+          ),
+          color.border = c(
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
+            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
+          ),
+          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
+          font.color = "white",
+          font.size = c(15, 12, 12, 12, 12, 12)
+        )
+        vis2 <- visLegend(
+          vis2, addNodes = lnodes, position = "right",
+          useGroups = FALSE, stepY = 60, zoom = FALSE
+        )
       }
       output$vis2_up23 <- renderVisNetwork({vis2})
 
@@ -1249,8 +1274,8 @@ shinyApp(
     fluidPage(
       div(
         style = "display:flex;",
-        visNetworkOutput(paste0("vis_dn", 23), height = "650px", width = "57%"),
-        visNetworkOutput(paste0("vis2_dn", 23), height = "650px", width = "43%")
+        visNetworkOutput(paste0("vis_dn", 23), height = "650px", width = "50%"),
+        visNetworkOutput(paste0("vis2_dn", 23), height = "650px", width = "50%")
       )
     )
   ),
@@ -1753,7 +1778,7 @@ shinyApp(
         )
         lnodes <- data.frame(
           label = c(
-            "Downregulated\nGenes/Proteins/\nPathways\n\nLegend",
+            "Downregulated\nGenes/Proteins\n\n\nLegend",
             "Differentially\nExpressed",
             "Network\nHub",
             "LCM\nMass Spec",
@@ -1969,6 +1994,31 @@ shinyApp(
               border = "rgba(255, 165, 0, 1)"
             )
           )
+        )
+        lnodes <- data.frame(
+          label = c(
+            "Downregulated\nPathways\n\n\nLegend",
+            "Differentially\nEnriched",
+            "Network\nHub",
+            "LCM\nMass Spec",
+            "FACS\nssRNAseq",
+            "Both\nDatasets"
+          ),
+          color.background = c(
+            "black", "black", "black", "black", "black", "black"
+          ),
+          color.border = c(
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
+            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
+          ),
+          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
+          font.color = "white",
+          font.size = c(15, 12, 12, 12, 12, 12)
+        )
+        vis2 <- visLegend(
+          vis2, addNodes = lnodes, position = "right",
+          useGroups = FALSE, stepY = 60, zoom = FALSE
         )
       }
       output$vis2_dn23 <- renderVisNetwork({vis2})
