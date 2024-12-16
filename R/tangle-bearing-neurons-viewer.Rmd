@@ -1196,6 +1196,780 @@ shinyApp(
 )
 ```
 
+### Downregulated in Tangle-bearing Neurons {.no-title}
+
+```{r}
+shinyApp(
+
+  ui = fluidPage(
+    fluidRow(
+      column(
+        width = 2,
+        sliderInput(
+          paste0("conn_dn", 23),
+          label = "Stringency:",
+          min = 0,
+          max = 1,
+          value = 0.1,
+          step = 0.1
+        ),
+      ),
+      column(
+        width = 2,
+        radioButtons(
+          paste0("shared_dn", 23), label = NULL,
+          c("All Features", "Shared Features Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
+      ),
+      column(
+        width = 2,
+        radioButtons(
+          paste0("comp_dn", 23), label = NULL,
+          c("All Networks", "Main Network Only"), inline = TRUE
+        ),
+        style = "padding-top: 35px;"
+      ),
+      column(
+        width = 2,
+        sliderInput(
+          paste0("degree_dn", 23),
+          label = "Connectivity:",
+          min = 0,
+          max = 1,
+          value = 0.1,
+          step = 0.1
+        ),
+      )
+    ),
+    fluidPage(
+      div(
+        style = "display:flex;",
+        visNetworkOutput(paste0("vis_dn", 23), height = "650px", width = "57%"),
+        visNetworkOutput(paste0("vis2_dn", 23), height = "650px", width = "43%")
+      )
+    )
+  ),
+
+  server = function (input, output, session) {
+    observeEvent({
+      input[[paste0("conn_dn", 23)]]
+      input[[paste0("shared_dn", 23)]]
+      input[[paste0("comp_dn", 23)]]
+      input[[paste0("degree_dn", 23)]]
+    }, {
+
+      inverse <- round(1 - input[[paste0("conn_dn", 23)]], digits = 2)
+
+      de_gse <- rownames(res_gse[[2]][res_gse[[2]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[2]][res_gse[[2]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[2]][res_deg[[2]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[2]][res_deg[[2]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- "LCM Mass Spec"
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data <- net_data[which(net_data$gse_direction == "down"), ]
+      net_data2 <- net_data
+      net_data2_orig <- net_data2
+
+      de_gse <- rownames(res_gse[[3]][res_gse[[3]]$P.value.adj < 0.05, ])
+      up_gse <- rownames(res_gse[[3]][res_gse[[3]]$Coef > 0, ])
+      de_deg <- rownames(res_deg[[3]][res_deg[[3]]$P.value.adj < 0.05, ])
+      up_deg <- rownames(res_deg[[3]][res_deg[[3]]$Coef > 0, ])
+
+      net_data <- melt(geneIds(gene_sets[names(gene_sets) %in% de_gse]))
+      names(net_data)[1] <- "ensembl"
+      names(net_data)[2] <- "gene_set"
+
+      gene_anno_sub <- gene_anno[gene_anno$ensembl %in% net_data$ensembl, ]
+      net_data <- left_join(net_data, gene_anno_sub, by = "ensembl")
+      net_data$gse_direction <- ifelse(
+        net_data$gene_set %in% up_gse, yes = "up", no = "down"
+      )
+      net_data$gene_DE <- ifelse(
+        net_data$ensembl %in% de_deg, yes = "yes", no = "no"
+      )
+      net_data$gene_direction <- ifelse(
+        net_data$ensembl %in% up_deg, yes = "up", no = "down"
+      )
+      net_data$dataset <- "FACS ssRNAseq"
+
+      remove <- which(net_data$gse_direction != net_data$gene_direction)
+      net_data <- net_data[-remove, ]
+      net_data <- net_data[net_data$gene_DE == "yes", ]
+
+      net_data <- net_data[which(net_data$gse_direction == "down"), ]
+      net_data3 <- net_data
+      net_data3_orig <- net_data3
+
+      net_data <- rbind(net_data2, net_data3)
+      net_data_table2 <- table(net_data2$symbol)
+      net_data_table3 <- table(net_data3$symbol)
+
+      gene_sets_sub <- gene_sets[names(gene_sets) %in% rownames(gse[[2]])]
+      gene_sets_table2 <- table(unlist(geneIds(gene_sets_sub)))
+      gene_sets_sub <- gene_sets[names(gene_sets) %in% rownames(gse[[3]])]
+      gene_sets_table3 <- table(unlist(geneIds(gene_sets_sub)))
+
+      gene_anno_sub <- gene_anno[
+        gene_anno$ensembl %in% names(gene_sets_table2),
+      ]
+      gene_anno_sub <- gene_anno_sub[
+        match(names(gene_sets_table2), gene_anno_sub$ensembl),
+      ]
+      names(gene_sets_table2) <- gene_anno_sub$symbol
+
+      gene_anno_sub <- gene_anno[
+        gene_anno$ensembl %in% names(gene_sets_table3),
+      ]
+      gene_anno_sub <- gene_anno_sub[
+        match(names(gene_sets_table3), gene_anno_sub$ensembl),
+      ]
+      names(gene_sets_table3) <- gene_anno_sub$symbol
+
+      gene_sets_table2 <- gene_sets_table2[
+        names(gene_sets_table2) %in% names(net_data_table2)
+      ]
+      gene_sets_table3 <- gene_sets_table3[
+        names(gene_sets_table3) %in% names(net_data_table3)
+      ]
+      gene_sets_table2 <- gene_sets_table2[
+        match(names(net_data_table2), names(gene_sets_table2))
+      ]
+      gene_sets_table3 <- gene_sets_table3[
+        match(names(net_data_table3), names(gene_sets_table3))
+      ]
+
+      pval2 <- res_deg[[2]]
+      pval2 <- pval2[pval2$Gene %in% names(net_data_table2), ]
+      pval2 <- pval2[match(names(net_data_table2), pval2$Gene), ]
+      pval2 <- pval2$Coef
+      pval2 <- (pval2 - min(pval2)) / (max(pval2) - min(pval2))
+      pval2 <- rank(pval2)
+      pval2 <- ((pval2 - min(pval2)) / (max(pval2) - min(pval2))) / 100000000000
+      names(pval2) <- names(net_data_table2)
+
+      pval3 <- res_deg[[3]]
+      pval3 <- pval3[pval3$Gene %in% names(net_data_table3), ]
+      pval3 <- pval3[match(names(net_data_table3), pval3$Gene), ]
+      pval3 <- pval3$Coef
+      pval3 <- (pval3 - min(pval3)) / (max(pval3) - min(pval3))
+      pval3 <- rank(pval3)
+      pval3 <- ((pval3 - min(pval3)) / (max(pval3) - min(pval3))) / 100000000000
+      names(pval3) <- names(net_data_table3)
+
+      dup2 <- c()
+      for (gene in unique(net_data2$symbol)) {
+        matched_gse <- net_data2[net_data2$symbol %in% gene, ]$gene_set
+        net_data_sub <- net_data2[net_data2$gene_set %in% matched_gse, ]
+        net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
+        dup_table <- table(net_data_sub$symbol)
+        if (length(dup_table) > 0) {
+          dup2 <- c(dup2, mean(dup_table))
+        } else {
+          dup2 <- c(dup2, 1)
+        }
+      }
+      names(dup2) <- unique(net_data2$symbol)
+      dup2 <- dup2[match(names(net_data_table2), names(dup2))]
+
+      dup3 <- c()
+      set_size3 <- c()
+      for (gene in unique(net_data3$symbol)) {
+        matched_gse <- net_data3[net_data3$symbol %in% gene, ]$gene_set
+        net_data_sub <- net_data3[net_data3$gene_set %in% matched_gse, ]
+        net_data_sub <- net_data_sub[net_data_sub$symbol %notin% gene, ]
+        dup_table <- table(net_data_sub$symbol)
+        if (length(dup_table) > 0) {
+          dup3 <- c(dup3, mean(dup_table))
+        } else {
+          dup3 <- c(dup3, 1)
+        }
+      }
+      names(dup3) <- unique(net_data3$symbol)
+      dup3 <- dup3[match(names(net_data_table3), names(dup3))]
+
+      net_data_table2 <- (
+        ((net_data_table2 / gene_sets_table2) * net_data_table2) / dup2
+      ) + pval2
+      net_data_table3 <- (
+        ((net_data_table3 / gene_sets_table3) * net_data_table3) / dup3
+      ) + pval3
+      net_data_table2_scaled <- net_data_table2
+      net_data_table3_scaled <- net_data_table3
+      net_data_table2_scaled <- rank(net_data_table2_scaled)
+      net_data_table3_scaled <- rank(net_data_table3_scaled)
+      net_data_table2_scaled <- (
+        (net_data_table2_scaled - min(net_data_table2_scaled)) /
+          (max(net_data_table2_scaled) - min(net_data_table2_scaled))
+      )
+      net_data_table3_scaled <- (
+        (net_data_table3_scaled - min(net_data_table3_scaled)) /
+          (max(net_data_table3_scaled) - min(net_data_table3_scaled))
+      )
+
+      keep2 <- net_data_table2_scaled[
+        net_data_table2_scaled > (
+          inverse * ((length(net_data_table2) / length(net_data_table3)) * 1)
+        ) + ((length(net_data_table2) / length(net_data_table3)) * 1)
+      ]
+      net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
+
+      hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+
+      degree <- degree(graph)
+      degree2 <- degree
+
+      hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+      graph <- subgraph(graph, which(degree(graph) > 0))
+
+      keep2 <- c()
+      for (i in seq_along(V(graph))) {
+        neighbors <- c(V(graph)[i], neighbors(graph, V(graph)[i]))
+        net_data_table_sub <- net_data_table2[
+          names(net_data_table2) %in% names(neighbors)
+        ]
+        keep2 <- c(
+          keep2,
+          names(net_data_table_sub)[
+            which(net_data_table_sub == max(net_data_table_sub))
+          ]
+        )
+      }
+      keep2_table <- table(keep2)
+      keep2_ref <- c()
+      for (name in names(keep2_table)) {
+        neighbors <- c(
+          V(graph)$name[which(V(graph)$name == name)],
+          names(neighbors(graph, V(graph)$name[which(V(graph)$name == name)]))
+        )
+        keep2_ref <- c(keep2_ref, length(neighbors))
+      }
+      degree_sub <- degree2[names(degree2) %in% names(keep2_table)]
+      degree_sub <- (keep2_table / degree_sub)
+      keep2_table <- (keep2_table / keep2_ref)
+      net_data_table_sub <- net_data_table2[
+        names(net_data_table2) %in% names(keep2_table)
+      ]
+      keep2_table <- net_data_table_sub * keep2_table * degree_sub
+      keep2_table_unscaled <- keep2_table
+      if (length(keep2_table) > 1) {
+        keep2_table <- rank(keep2_table)
+        keep2_table <- (
+          (keep2_table - min(keep2_table)) /
+            (max(keep2_table) - min(keep2_table))
+        )
+      } else {
+        keep2_table <- 1
+      }
+      if (length(keep2_table) > 1) {
+        keep2 <- names(keep2_table)[
+          keep2_table > network_filt(input[[paste0("conn_dn", 23)]])[[1]]
+        ]
+      } else {
+        keep2 <- names(keep2_table)
+      }
+
+      keep3 <- net_data_table3_scaled[
+        net_data_table3_scaled > (
+          input[[paste0("conn_dn", 23)]] *
+            ((length(net_data_table2) / length(net_data_table3)) * 1)
+        ) +
+          1 - ((length(net_data_table2) / length(net_data_table3)) * 1)
+      ]
+      net_data3 <- net_data3[net_data3$symbol %in% names(keep3), ]
+
+      hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+
+      degree <- degree(graph)
+      degree3 <- degree
+
+      hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+      graph <- subgraph(graph, which(degree(graph) > 0))
+
+      keep3 <- c()
+      for (i in seq_along(V(graph))) {
+        neighbors <- c(V(graph)[i], neighbors(graph, V(graph)[i]))
+        net_data_table_sub <- net_data_table3[
+          names(net_data_table3) %in% names(neighbors)
+        ]
+        keep3 <- c(
+          keep3,
+          names(net_data_table_sub)[
+            which(net_data_table_sub == max(net_data_table_sub))
+          ]
+        )
+      }
+      keep3_table <- table(keep3)
+      keep3_ref <- c()
+      for (name in names(keep3_table)) {
+        neighbors <- c(
+          V(graph)$name[which(V(graph)$name == name)],
+          names(neighbors(graph, V(graph)$name[which(V(graph)$name == name)]))
+        )
+        keep3_ref <- c(keep3_ref, length(neighbors))
+      }
+      degree_sub <- degree3[names(degree3) %in% names(keep3_table)]
+      degree_sub <- (keep3_table / degree_sub)
+      keep3_table <- (keep3_table / keep3_ref)
+      net_data_table_sub <- net_data_table3[
+        names(net_data_table3) %in% names(keep3_table)
+      ]
+      keep3_table <- net_data_table_sub * keep3_table * degree_sub
+      keep3_table_unscaled <- keep3_table
+      if (length(keep3_table) > 1) {
+        keep3_table <- rank(keep3_table)
+        keep3_table <- (
+          (keep3_table - min(keep3_table)) /
+            (max(keep3_table) - min(keep3_table))
+        )
+      } else {
+        keep3_table <- 1
+      }
+      if (length(keep3_table) > 1) {
+        keep3 <- names(keep3_table)[
+          keep3_table > network_filt(input[[paste0("conn_dn", 23)]])[[2]]
+        ]
+      } else {
+        keep3 <- names(keep3_table)
+      }
+
+      if (input[[paste0("shared_dn", 23)]] == "Shared Features Only") {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2_orig$symbol &
+            net_data$symbol %in% net_data3_orig$symbol,
+        ]
+      } else {
+        net_data <- net_data[
+          net_data$symbol %in% net_data2$symbol |
+            net_data$symbol %in% net_data3$symbol,
+        ]
+      }
+
+      hub_mat <- as.data.frame.matrix(table(net_data[ , c(3, 2)]))
+      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat %*% t(hub_mat)
+      diag(hub_mat) <- 0
+      graph <- graph_from_adjacency_matrix(
+        hub_mat, mode = "upper", weighted = TRUE
+      )
+
+      keep_idx <- which(V(graph)$name %in% c(keep2, keep3))
+      keep_degree <- unique(
+        unlist(
+          neighborhood(graph, order = map_range(inverse), nodes = keep_idx)
+        )
+      )
+      keep_degree <- unique(c(keep_idx, keep_degree))
+      graph <- induced_subgraph(graph, vids = keep_degree)
+
+      if (input[[paste0("shared_dn", 23)]] == "All Features") {
+        graph <- subgraph(graph, which(degree(graph) > 0))
+      }
+
+      if (input[[paste0("comp_dn", 23)]] == "Main Network Only") {
+        graph <- subgraph(graph, which(components(graph)$membership == 1))
+      }
+
+      edges <- get.edgelist(graph, names = FALSE)
+      layout <- qgraph.layout.fruchtermanreingold(
+        edges, vcount = vcount(graph), weights = E(graph)$weight,
+        area = vcount(graph), repulse.rad = vcount(graph) / 4
+      )
+      vis <- toVisNetworkData(graph)
+
+      net_data_nodup <- net_data[-which(duplicated(net_data$symbol)), ]
+      net_data_nodup <- net_data_nodup[
+        net_data_nodup$symbol %in% vis$nodes$id,
+      ]
+      net_data_nodup <- net_data_nodup[
+        match(vis$nodes$id, net_data_nodup$symbol),
+      ]
+      vis$nodes$shape <- ifelse(
+        net_data_nodup$symbol %in% c(keep2, keep3), yes = "circle", no = "box"
+      )
+
+      keep2_table <- keep2_table[names(keep2_table) %in% keep2]
+      keep3_table <- keep3_table[names(keep3_table) %in% keep3]
+      keep_table_comb <- c(keep2_table, keep3_table)
+      keep_table_comb <- keep_table_comb[
+        names(keep_table_comb) %in% vis$nodes$id
+      ]
+      if (length(keep_table_comb) > 1 & all(keep_table_comb != 1)) {
+        keep_table_comb <- (
+          (keep_table_comb - min(keep_table_comb)) /
+            (max(keep_table_comb) - min(keep_table_comb))
+        )
+      } else if (length(keep_table_comb) == 1) {
+        keep_table_comb <- 1
+      }
+      size <- c()
+      for (gene in vis$nodes$id) {
+        if (gene %in% names(keep_table_comb)) {
+          keep_table_sub <- keep_table_comb[names(keep_table_comb) %in% gene]
+          if (length(keep_table_sub > 0)) {
+            keep_table_sub <- sum(keep_table_sub)
+          }
+          keep_table_sub <- (((keep_table_sub + 2) ^ 5) / 4) + 22
+          size <- c(size, keep_table_sub)
+        } else {
+          size <- c(size, 30)
+        }
+      }
+      vis$nodes$size <- size
+      vis$edges$width <- (vis$edges$weight + 1) ^ 1.25
+
+      if (length(names(V(graph))) > 0) {
+        col <- case_when(
+          names(V(graph)) %in% net_data2_orig$symbol &
+            names(V(graph)) %in% net_data3_orig$symbol ~ "green",
+          names(V(graph)) %in% net_data2_orig$symbol ~ "yellow",
+          names(V(graph)) %in% net_data3_orig$symbol ~ "orange"
+        )
+        vis$nodes$group <- col
+
+        f <- pmax((max(nchar(vis$nodes$id)) - nchar(vis$nodes$id)) / 2, 0)
+        vis$nodes$label <- sprintf(
+          "%-*s%s%*s", f, "", vis$nodes$id, ceiling(f), ""
+        )
+        vis$nodes$font.size <- vis$nodes$size
+
+        title <- vector(length = length(vis$nodes$id))
+        for (j in seq_along(title)) {
+          net_data_sub <- net_data[net_data$symbol == vis$nodes$id[j], ]
+          title[j] <- paste0(
+            net_data_sub$gene_set, " - ",
+            net_data_sub$dataset, collapse = "<br>"
+          )
+        }
+        vis$nodes$title <- title
+
+        vis <- visNetwork(vis$nodes, vis$edges, background = "black")
+        vis <- visPhysics(vis, stabilization = FALSE)
+        vis <- visEdges(
+          vis, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+        )
+        vis <- visIgraphLayout(vis, "layout.norm", layoutMatrix = layout)
+        vis <- visOptions(
+          vis,
+          highlightNearest = list(
+            enabled = TRUE,
+            degree = ifelse(
+              map_range(inverse) - 1 < 1, yes = 1, no = map_range(inverse) - 1
+            )
+          ),
+          nodesIdSelection = TRUE
+        )
+        vis <- visNodes(vis, font = list(color = "white"))
+        vis <- visGroups(
+          vis,
+          groupname = "green",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(0, 255, 0, 1)",
+            highlight = list(
+              background = "rgba(0, 255, 0, 0.5)",
+              border = "rgba(0, 255, 0, 1)"
+            )
+          )
+        )
+        vis <- visGroups(
+          vis,
+          groupname = "yellow",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(255, 255, 0, 1)",
+            highlight = list(
+              background = "rgba(255, 255, 0, 0.5)",
+              border = "rgba(255, 255, 0, 1)"
+            )
+          )
+        )
+        vis <- visGroups(
+          vis,
+          groupname = "orange",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(255, 165, 0, 1)",
+            highlight = list(
+              background = "rgba(255, 165, 0, 0.5)",
+              border = "rgba(255, 165, 0, 1)"
+            )
+          )
+        )
+        vis <- visInteraction(
+          vis,
+          tooltipStyle =
+            "width: max-content;position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #ffffff;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);opacity: 1;"
+        )
+        lnodes <- data.frame(
+          label = c(
+            "Downregulated\nGenes/Proteins/\nPathways\n\nLegend",
+            "Differentially\nExpressed",
+            "Network\nHub",
+            "LCM\nMass Spec",
+            "FACS\nssRNAseq",
+            "Both\nDatasets"
+          ),
+          color.background = c(
+            "black", "black", "black", "black", "black", "black"
+          ),
+          color.border = c(
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 1)",
+            "rgba(255, 255, 255, 1)", "rgba(255, 255, 0, 1)",
+            "rgba(255, 165, 0, 1)", "rgba(0, 255, 0, 1)"
+          ),
+          shape = c("text", "box", "circle", "ellipse", "ellipse", "ellipse"),
+          font.color = "white",
+          font.size = c(15, 12, 12, 12, 12, 12)
+        )
+        vis <- visLegend(
+          vis, addNodes = lnodes, position = "right",
+          useGroups = FALSE, stepY = 60, zoom = FALSE
+        )
+      }
+      output$vis_dn23 <- renderVisNetwork({vis})
+
+      net_data <- net_data[net_data$symbol %in% c(keep2, keep3), ]
+      vertices <- data.frame(
+        name = c(unique(net_data$symbol), unique(net_data$gene_set)),
+        type = c(
+          rep("deg", length(unique(net_data$symbol))),
+          rep("gse", length(unique(net_data$gene_set)))
+        )
+      )
+      edges <- as.data.frame(as.matrix(net_data[ , c(3, 2)]))
+      colnames(edges) <- c("from", "to")
+
+      graph <- graph_from_data_frame(
+        edges, vertices = vertices, directed = FALSE
+      )
+
+      keep_idx <- which(V(graph)$name %in% c(keep2, keep3))
+      keep_degree <- unique(
+        unlist(
+          neighborhood(graph, order = map_range(inverse), nodes = keep_idx)
+        )
+      )
+      keep_degree <- unique(c(keep_idx, keep_degree))
+      graph <- induced_subgraph(graph, vids = keep_degree)
+
+      graph <- subgraph(graph, which(degree(graph) > 0))
+
+      graph_sub <- V(graph)[which(V(graph)$type == "gse")]
+      degree <- degree(graph, v = graph_sub)
+
+      pval2 <- res_gse[[2]]
+      pval2 <- pval2[pval2$GeneSet %in% names(degree), ]
+      degree_sub <- degree[names(degree) %in% pval2$GeneSet]
+      pval2 <- pval2[match(names(degree_sub), pval2$GeneSet), ]
+      pval2 <- pval2$Coef
+      names(pval2) <- names(degree_sub)
+
+      pval3 <- res_gse[[3]]
+      pval3 <- pval3[pval3$GeneSet %in% names(degree), ]
+      degree_sub <- degree[names(degree) %in% pval3$GeneSet]
+      pval3 <- pval3[match(names(degree_sub), pval3$GeneSet), ]
+      pval3 <- pval3$Coef
+      names(pval3) <- names(degree_sub)
+
+      pval <- c(pval2, pval3)
+      pval <- tapply(pval, INDEX = names(pval), FUN = sum)
+      pval <- pval[match(names(degree), names(pval))]
+      pval <- (pval - min(pval)) / (max(pval) - min(pval))
+      pval <- rank(pval)
+      pval <- ((pval - min(pval)) / (max(pval) - min(pval))) / 100000000000
+
+      degree <- degree + pval
+      degree <- (degree - min(degree)) / (max(degree) - min(degree))
+      degree <- rank(degree)
+      degree <- (degree - min(degree)) / (max(degree) - min(degree))
+
+      graph_sub <- graph_sub[degree >= input[[paste0("degree_dn", 23)]]]
+      graph <- induced_subgraph(
+        graph, vids = unlist(neighborhood(graph, order = 1, nodes = graph_sub))
+      )
+
+      edge_counts <- table(
+        apply(
+          get.edgelist(graph), MARGIN = 1,
+          FUN = function(x) paste(sort(x), collapse = "-")
+        )
+      )
+      E(graph)$weight <- edge_counts[
+        apply(
+          get.edgelist(graph), MARGIN = 1,
+          FUN = function(x) paste(sort(x), collapse = "-")
+        )
+      ]
+      edges <- get.edgelist(graph, names = FALSE)
+      layout <- qgraph.layout.fruchtermanreingold(
+        edges, vcount = vcount(graph), weights = E(graph)$weight,
+        area = vcount(graph), repulse.rad = vcount(graph) / 4
+      )
+      vis2 <- toVisNetworkData(graph)
+
+      vis2$nodes$shape <- ifelse(
+        vis2$nodes$id %in% c(keep2, keep3), yes = "circle", no = "box"
+      )
+
+      keep2_table <- keep2_table[names(keep2_table) %in% keep2]
+      keep3_table <- keep3_table[names(keep3_table) %in% keep3]
+      keep_table_comb <- c(keep2_table, keep3_table)
+      keep_table_comb <- keep_table_comb[
+        names(keep_table_comb) %in% vis2$nodes$id
+      ]
+      if (length(keep_table_comb) > 1 & all(keep_table_comb != 1)) {
+        keep_table_comb <- (
+          (keep_table_comb - min(keep_table_comb)) /
+            (max(keep_table_comb) - min(keep_table_comb))
+        )
+      } else if (length(keep_table_comb) == 1) {
+        keep_table_comb <- 1
+      }
+      size <- c()
+      for (gene in vis2$nodes$id) {
+        if (gene %in% names(keep_table_comb)) {
+          keep_table_sub <- keep_table_comb[names(keep_table_comb) %in% gene]
+          if (length(keep_table_sub > 0)) {
+            keep_table_sub <- sum(keep_table_sub)
+          }
+          keep_table_sub <- (((keep_table_sub + 2) ^ 6) / 16) + 11
+          size <- c(size, keep_table_sub)
+        } else {
+          size <- c(size, 35)
+        }
+      }
+      vis2$nodes$size <- size
+      vis2$edges$width <- (vis2$edges$weight + 0.5) ^ 2
+
+      if (length(names(V(graph))) > 0) {
+        col <- case_when(
+          names(V(graph)) %in% net_data2_orig$symbol &
+            names(V(graph)) %in% net_data3_orig$symbol ~ "green",
+          names(V(graph)) %in% net_data2_orig$symbol ~ "yellow",
+          names(V(graph)) %in% net_data3_orig$symbol ~ "orange",
+          names(V(graph)) %in% net_data2_orig$gene_set &
+            names(V(graph)) %in% net_data3_orig$gene_set ~ "green",
+          names(V(graph)) %in% net_data2_orig$gene_set ~ "yellow",
+          names(V(graph)) %in% net_data3_orig$gene_set ~ "orange"
+        )
+        vis2$nodes$group <- col
+
+        deg_string <- vis2$nodes$id[vis2$nodes$id %in% net_data$symbol]
+        f <- pmax((max(nchar(net_data$symbol)) - nchar(deg_string)) / 2, 0)
+        deg_string <- sprintf(
+          "%-*s%s%*s", f, "", deg_string, ceiling(f), ""
+        )
+        gse_string <- vis2$nodes$id[vis2$nodes$id %in% net_data$gene_set]
+        gse_string <- sapply(gse_string, FUN = add_newline)
+        vis2$nodes$label <- c(deg_string, gse_string)
+        vis2$nodes$font.size <- vis2$nodes$size
+
+        vis2 <- visNetwork(vis2$nodes, vis2$edges, background = "black")
+        vis2 <- visPhysics(vis2, stabilization = FALSE)
+        vis2 <- visEdges(
+          vis2, smooth = FALSE, color = list(opacity = 0.8, inherit = "both")
+        )
+        vis2 <- visIgraphLayout(vis2, "layout.norm", layoutMatrix = layout)
+        vis2 <- visOptions(
+          vis2,
+          highlightNearest = list(
+            enabled = TRUE,
+            degree = ifelse(
+              map_range(inverse) - 1 < 1, yes = 1, no = map_range(inverse) - 1
+            )
+          ),
+          nodesIdSelection = TRUE
+        )
+        vis2 <- visNodes(vis2, font = list(color = "white"))
+        vis2 <- visGroups(
+          vis2,
+          groupname = "green",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(0, 255, 0, 1)",
+            highlight = list(
+              background = "rgba(0, 255, 0, 0.5)",
+              border = "rgba(0, 255, 0, 1)"
+            )
+          )
+        )
+        vis2 <- visGroups(
+          vis2,
+          groupname = "yellow",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(255, 255, 0, 1)",
+            highlight = list(
+              background = "rgba(255, 255, 0, 0.5)",
+              border = "rgba(255, 255, 0, 1)"
+            )
+          )
+        )
+        vis2 <- visGroups(
+          vis2,
+          groupname = "orange",
+          color = list(
+            background = "rgba(0, 0, 0, 0.5)",
+            border = "rgba(255, 165, 0, 1)",
+            highlight = list(
+              background = "rgba(255, 165, 0, 0.5)",
+              border = "rgba(255, 165, 0, 1)"
+            )
+          )
+        )
+      }
+      output$vis2_dn23 <- renderVisNetwork({vis2})
+
+    })
+  }
+)
+```
+
 ```{r, include = FALSE}
 rm(
   deg, edges, gene_anno, gene_anno_sub, gene_sets, gene_sets_sub, graph, gse,
