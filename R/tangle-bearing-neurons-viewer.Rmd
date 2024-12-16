@@ -422,7 +422,7 @@ Network Analysis
 Row {.tabset}
 ---
 
-### Upregulated in Tangle-bearing Neurons {.no-title}
+### Upregulated in Tangle-bearing Neurons
 
 ```{r}
 shinyApp(
@@ -1200,7 +1200,7 @@ shinyApp(
 )
 ```
 
-### Downregulated in Tangle-bearing Neurons {.no-title}
+### Downregulated in Tangle-bearing Neurons
 
 ```{r}
 shinyApp(
