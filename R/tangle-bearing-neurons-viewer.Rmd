@@ -8442,25 +8442,25 @@ datatable_download_exp_15(res_deg[[3]][res_deg[[3]]$Coef > 0, ])
 datatable_download_exp_15(res_deg[[3]][res_deg[[3]]$Coef < 0, ])
 ```
 
-### LCM Mass Spec Gene Sets - UP
+### LCM Mass Spec Pathways - UP
 
 ```{r}
 datatable_download_exp_15(res_gse_fmt[[2]][res_gse_fmt[[2]]$Coef > 0, ])
 ```
 
-### LCM Mass Spec Gene Sets - DOWN
+### LCM Mass Spec Pathways - DOWN
 
 ```{r}
 datatable_download_exp_15(res_gse_fmt[[2]][res_gse_fmt[[2]]$Coef < 0, ])
 ```
 
-### FACS ssRNAseq Gene Sets - UP
+### FACS ssRNAseq Pathways - UP
 
 ```{r}
 datatable_download_exp_15(res_gse_fmt[[3]][res_gse_fmt[[3]]$Coef > 0, ])
 ```
 
-### FACS ssRNAseq Gene Sets - DOWN
+### FACS ssRNAseq Pathways - DOWN
 
 ```{r}
 datatable_download_exp_15(res_gse_fmt[[3]][res_gse_fmt[[3]]$Coef < 0, ])
