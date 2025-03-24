@@ -80,7 +80,7 @@ network_filt <- function(thresh, weight = 0.25) {
   list(out1 = out1, out2 = out2)
 }
 
-scale_range <- function(x, from = c(1, 45), to = c(8, 16)) {
+scale_range <- function(x, from = c(1, 45), to = c(8, 14)) {
   to[1] + (from[2] - x) * diff(to) / diff(from)
 }
 
@@ -661,7 +661,7 @@ shinyApp(
       net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
 
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -672,7 +672,7 @@ shinyApp(
       degree2 <- degree
 
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -737,7 +737,7 @@ shinyApp(
       net_data3 <- net_data3[net_data3$symbol %in% names(keep3), ]
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -748,7 +748,7 @@ shinyApp(
       degree3 <- degree
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -816,7 +816,7 @@ shinyApp(
       }
 
       hub_mat <- as.data.frame.matrix(table(net_data[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -1464,7 +1464,7 @@ shinyApp(
       net_data2 <- net_data2[net_data2$symbol %in% names(keep2), ]
 
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -1475,7 +1475,7 @@ shinyApp(
       degree2 <- degree
 
       hub_mat <- as.data.frame.matrix(table(net_data2[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -1540,7 +1540,7 @@ shinyApp(
       net_data3 <- net_data3[net_data3$symbol %in% names(keep3), ]
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -1551,7 +1551,7 @@ shinyApp(
       degree3 <- degree
 
       hub_mat <- as.data.frame.matrix(table(net_data3[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -1619,7 +1619,7 @@ shinyApp(
       }
 
       hub_mat <- as.data.frame.matrix(table(net_data[ , c(3, 2)]))
-      hub_mat <- hub_mat == 1
+      hub_mat <- hub_mat > 0
       hub_mat <- hub_mat %*% t(hub_mat)
       diag(hub_mat) <- 0
       graph <- graph_from_adjacency_matrix(
@@ -4756,7 +4756,7 @@ shinyApp(
       paste0("gse", comb_idx),
       label = "Type to Search Pathways:",
       choices = top_gse[[idx]][[sub_idx]],
-      selected = NULL,
+      selected = top_gse[[idx]][[sub_idx]][1:10],
       multiple = TRUE,
       width = "100%"
     ),
@@ -7605,7 +7605,7 @@ shinyApp(
       paste0("gse", comb_idx),
       label = "Type to Search Pathways:",
       choices = top_gse[[idx]][[sub_idx]],
-      selected = NULL,
+      selected = top_gse[[idx]][[sub_idx]][1:10],
       multiple = TRUE,
       width = "100%"
     ),
